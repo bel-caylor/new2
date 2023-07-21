@@ -1,0 +1,15 @@
+/**
+ * Local Dev Configuration File
+ *
+ * 1. Edit the variables as per your project requirements.
+ * 2. DO NOT commit this file.
+ *
+ * @package WPGulp
+ */
+
+module.exports = {
+
+	// Project options.
+	localdevURL: 'localhost:3000', // Local project URL of your WordPress site. Could be something like clientname.localdev, clientname:8888, or localhost (depending upon your local WordPress setup, i.e. whether you're using MAMP, Local by Flywheel, Docker, or something else).
+
+};

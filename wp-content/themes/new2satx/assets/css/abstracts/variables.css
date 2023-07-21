@@ -1,0 +1,109 @@
+/**
+ * Set any theme-specific variables here.
+ *
+ * You can use either CSS custom properties with the `--css-var-name` syntax, 
+ * or SASS-style variables with the `$variable-name` syntax.
+ */
+body {
+	--wrapper-max-width: 90rem;
+	--wrapper-narrow-max-width: 80rem;
+	--wrapper-wide-max-width: 100rem;
+	--wrapper-padding: 2rem;
+
+	--line-height--xs: 1.333333333333333;
+	--line-height--sm: 1.428571428571429;
+	--line-height--base: 1.5;
+	--line-height--lg: 1.555555555555556;
+	--line-height--xl: 1.4;
+	--line-height--2-xl: 1.333333333333333;
+	--line-height--3-xl: 1.2;
+	--line-height--4-xl: 1.111111111111111;
+	--line-height--5-xl: 1;
+	--line-height--6-xl: 1;
+	--line-height--7-xl: 1;
+	--line-height--8-xl: 1;
+	--line-height--9-xl: 1;
+}
+
+@media (max-width: theme('screens.md')) {
+	body {
+		--wrapper-padding: 1.5rem;
+
+		--wp--preset--font-size--large: 1rem;
+		--wp--preset--font-size--x-large: 1.125rem;
+		--wp--preset--font-size--2-xl: 1.25rem;
+		--wp--preset--font-size--3-xl: 1.5rem;
+		--wp--preset--font-size--4-xl: 1.875rem;
+		--wp--preset--font-size--5-xl: 2.25rem;
+		--wp--preset--font-size--6-xl: 3rem;
+		--wp--preset--font-size--7-xl: 3.75rem;
+		--wp--preset--font-size--8-xl: 4.5rem;
+		--wp--preset--font-size--9-xl: 6rem;
+
+		--line-height--lg: 1.5;
+		--line-height--xl: 1.555555555555556;
+		--line-height--2-xl: 1.4;
+		--line-height--3-xl: 1.333333333333333;
+		--line-height--4-xl: 1.2;
+		--line-height--5-xl: 1.111111111111111;
+		--line-height--6-xl: 1;
+		--line-height--7-xl: 1;
+		--line-height--8-xl: 1;
+		--line-height--9-xl: 1;
+	}
+}
+
+/**
+ * Colors
+ *
+ * These are commented out because WordPress makes them 
+ * available by default via the theme.json. If you change
+ * the theme.json, these names and values will change.
+ */
+
+/*
+--wp--preset--color--background: #ffffff;
+--wp--preset--color--foreground: #404040;
+--wp--preset--color--primary: #b91c1c;
+--wp--preset--color--secondary: #15803d;
+--wp--preset--color--tertiary: #0369a1;
+*/
+
+
+/**
+ * Font Families
+ *
+ * These are commented out because WordPress makes them 
+ * available by default via the theme.json. If you change
+ * the theme.json, these names and values will change.
+ */
+
+/*
+--wp--preset--font-family--sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+--wp--preset--font-family--serif: font-family: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+}
+
+
+/**
+ * Font Sizes
+ *
+ * These are commented out because WordPress makes them 
+ * available by default via the theme.json. If you change
+ * the theme.json, these names and values will change.
+ */
+
+/*
+--wp--preset--font-size--x-small: 0.75rem;
+--wp--preset--font-size--small: 0.875rem;
+--wp--preset--font-size--medium: 1rem;
+--wp--preset--font-size--large: 1.125rem;
+--wp--preset--font-size--x-large: 1.25rem;
+--wp--preset--font-size--2-xl: 1.5rem;
+--wp--preset--font-size--3-xl: 1.875rem;
+--wp--preset--font-size--4-xl: 2.25rem;
+--wp--preset--font-size--5-xl: 3rem;
+--wp--preset--font-size--6-xl: 3.75rem;
+--wp--preset--font-size--7-xl: 4.5rem;
+--wp--preset--font-size--8-xl: 6rem;
+--wp--preset--font-size--9-xl: 8rem;
+*/

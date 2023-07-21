@@ -1,0 +1,5 @@
+#welcome-kit {
+    img {
+        @apply m-auto
+    }
+}

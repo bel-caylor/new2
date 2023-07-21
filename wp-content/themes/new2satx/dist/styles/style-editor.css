@@ -1,0 +1,9 @@
+#editor .edit-post-visual-editor__post-title-wrapper h1 {
+  font-size: 16px;
+  font-weight: 700
+}
+
+#editor .edit-post-visual-editor__post-title-wrapper {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem
+}

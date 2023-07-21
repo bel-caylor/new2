@@ -1,0 +1,57 @@
+/**
+ * This injects Tailwind's base styles and any base styles registered by
+ * plugins, then adds custom base styles.
+ */
+@import "tailwindcss/base";
+
+/**
+ * This injects Tailwind's component classes and any component classes
+ * registered by plugins, then adds custom component classes.
+ */
+@import "tailwindcss/components";
+
+/**
+ * This injects Tailwind's utility classes and any utility classes registered
+ * by plugins, then adds custom utility classes.
+ */
+@import "tailwindcss/utilities";
+
+/**
+ * Configuration and helpers.
+ */
+@import "./abstracts/abstracts";
+
+/**
+ * Base stuff.
+ */
+@import "./base/base";
+
+/**
+ * Layout-related sections.
+ */
+@import "./layout/layout";
+
+/**
+ * Gutenberg.
+ */
+@import "./gutenberg/gutenberg";
+
+/**
+ * Components.
+ */
+@import "./components/components";
+
+/**
+ * Pages.
+ */
+@import "./pages/pages";
+
+/**
+ * Templates.
+ */
+@import "./templates/templates";
+
+/**
+ * Gutenberg Editor.
+ */
+@import "./editor/editor";

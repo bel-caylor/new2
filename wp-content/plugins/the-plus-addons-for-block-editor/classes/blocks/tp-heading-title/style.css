@@ -1,0 +1,13 @@
+.heading-title .editor-rich-text, .heading-title .block-editor-rich-text__editable { display:inline-block}
+.heading_style .heading-sub-title,.heading_style .heading-title{
+	margin-top: 5px;
+	margin-bottom: 5px;
+	word-break: break-word;
+}
+.tpgb-heading-title{
+	text-align: center;
+}
+.heading_style .heading-title {
+    display: inline-block;
+	position: relative;
+}

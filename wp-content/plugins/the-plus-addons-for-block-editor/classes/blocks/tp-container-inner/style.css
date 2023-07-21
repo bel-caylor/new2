@@ -1,0 +1,9 @@
+.tpgb-container-col {
+    position: relative;
+    min-height: 1px;
+    display: flex
+}
+
+.tpgb-container-col.tpgb-col-link {
+    cursor: pointer
+}

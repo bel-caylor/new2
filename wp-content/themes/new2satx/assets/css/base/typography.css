@@ -1,0 +1,95 @@
+@layer base {
+	h1, h2, h3, h4, h5, h6 {
+    	font-family: var(--wp--preset--font-family--sans);
+	}
+	h1 {
+		font-size: var(--wp--preset--font-size--8-xl);
+		line-height: var(--line-height--8-xl);
+	}
+	h2 {
+		font-size: var(--wp--preset--font-size--7-xl);
+		line-height: var(--line-height--7-xl);
+	}
+	h3 {
+		font-size: var(--wp--preset--font-size--6-xl);
+		line-height: var(--line-height--6-xl);
+	}
+	h4 {
+		font-size: var(--wp--preset--font-size--5-xl);
+		line-height: var(--line-height--5-xl);
+	}
+	h5 {
+		font-size: var(--wp--preset--font-size--4-xl);
+		line-height: var(--line-height--4-xl);
+	}
+	h6 {
+		font-size: var(--wp--preset--font-size--3-xl);
+		line-height: var(--line-height--3-xl);
+	}
+}
+
+.text-9xl,
+.has-9-xl-font-size {
+	font-size: var(--wp--preset--font-size--9-xl);
+	line-height: var(--line-height--9-xl);
+}
+.text-8xl,
+.has-8-xl-font-size {
+	font-size: var(--wp--preset--font-size--8-xl);
+	line-height: var(--line-height--8-xl);
+}
+.text-7xl,
+.has-7-xl-font-size {
+	font-size: var(--wp--preset--font-size--7-xl);
+	line-height: var(--line-height--7-xl);
+}
+.text-6xl,
+.has-6-xl-font-size {
+	font-size: var(--wp--preset--font-size--6-xl);
+	line-height: var(--line-height--6-xl);
+}
+.text-5xl,
+.has-5-xl-font-size {
+	font-size: var(--wp--preset--font-size--5-xl);
+	line-height: var(--line-height--5-xl);
+}
+.text-4xl,
+.has-4-xl-font-size {
+	font-size: var(--wp--preset--font-size--4-xl);
+	line-height: var(--line-height--4-xl);
+}
+.text-3xl,
+.has-3-xl-font-size {
+	font-size: var(--wp--preset--font-size--3-xl);
+	line-height: var(--line-height--3-xl);
+}
+.text-2xl,
+.has-2-xl-font-size {
+	font-size: var(--wp--preset--font-size--2-xl);
+	line-height: var(--line-height--2-xl);
+}
+.text-xl,
+.has-x-large-font-size {
+	font-size: var(--wp--preset--font-size--x-large);
+	line-height: var(--line-height--xl);
+}
+.text-lg,
+.has-large-font-size {
+	font-size: var(--wp--preset--font-size--large);
+	line-height: var(--line-height--lg);
+}
+.text-base,
+.has-medium-font-size {
+	font-size: var(--wp--preset--font-size--medium);
+	line-height: var(--line-height--base);
+}
+.text-sm,
+.has-small-font-size {
+	font-size: var(--wp--preset--font-size--small);
+	line-height: var(--line-height--sm);
+}
+.text-xs,
+.has-x-small-font-size {
+	font-size: var(--wp--preset--font-size--x-small);
+	line-height: var(--line-height--xs);
+}

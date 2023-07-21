@@ -1,0 +1,17 @@
+.tpgb-pro-paragraph {
+    position: relative;
+    display: block
+}
+
+.tpgb-pro-paragraph .pro-heading-inner,.tpgb-pro-paragraph .pro-paragraph-inner,.tpgb-pro-paragraph .pro-paragraph-inner a {
+    transition: all .3s linear
+}
+
+.tpgb-pro-paragraph .pro-heading-inner,.tpgb-pro-paragraph .pro-paragraph-inner * {
+    margin: 0;
+    padding: 0
+}
+
+.tpgb-pro-paragraph .pro-paragraph-inner p {
+    margin: 0
+}

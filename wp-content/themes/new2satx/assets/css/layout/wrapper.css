@@ -1,0 +1,18 @@
+.wrapper {
+    max-width: var(--wrapper-max-width);
+    padding-left: var(--wrapper-padding);
+    padding-right: var(--wrapper-padding);
+    @apply w-full mx-auto relative;
+
+    &--no-pad {
+		@apply px-0;
+    }
+
+    &--narrow {
+        max-width: var(--wrapper-narrow-max-width);
+    }
+
+    &--wide {
+        max-width: var(--wrapper-wide-max-width);
+    }
+}

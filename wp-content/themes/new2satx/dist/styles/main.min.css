@@ -1,0 +1,949 @@
+/**
+ * This injects Tailwind's base styles and any base styles registered by
+ * plugins, then adds custom base styles.
+ */
+
+/*! tailwindcss v3.0.24 | MIT License | https://tailwindcss.com
+ */
+
+/*
+1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
+2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
+*/
+
+*,
+::before,
+::after {
+  box-sizing: border-box;
+  /* 1 */
+  border-width: 0;
+  /* 2 */
+  border-style: solid;
+  /* 2 */
+  border-color: #e5e7eb;
+  /* 2 */
+}
+
+::before,
+::after {
+  --tw-content: '';
+}
+
+/*
+1. Use a consistent sensible line-height in all browsers.
+2. Prevent adjustments of font size after orientation changes in iOS.
+3. Use a more readable tab size.
+4. Use the user's configured `sans` font-family by default.
+*/
+
+html {
+  line-height: 1.5;
+  /* 1 */
+  -webkit-text-size-adjust: 100%;
+  /* 2 */
+  -moz-tab-size: 4;
+  /* 3 */
+  -o-tab-size: 4;
+     tab-size: 4;
+  /* 3 */
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  /* 4 */
+}
+
+/*
+1. Remove the margin in all browsers.
+2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.
+*/
+
+body {
+  margin: 0;
+  /* 1 */
+  line-height: inherit;
+  /* 2 */
+}
+
+/*
+1. Add the correct height in Firefox.
+2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)
+3. Ensure horizontal rules are visible by default.
+*/
+
+hr {
+  height: 0;
+  /* 1 */
+  color: inherit;
+  /* 2 */
+  border-top-width: 1px;
+  /* 3 */
+}
+
+/*
+Add the correct text decoration in Chrome, Edge, and Safari.
+*/
+
+abbr:where([title]) {
+  -webkit-text-decoration: underline dotted;
+          text-decoration: underline dotted;
+}
+
+/*
+Remove the default font size and weight for headings.
+*/
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+/*
+Reset links to optimize for opt-in styling instead of opt-out.
+*/
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+/*
+Add the correct font weight in Edge and Safari.
+*/
+
+b,
+strong {
+  font-weight: bolder;
+}
+
+/*
+1. Use the user's configured `mono` font family by default.
+2. Correct the odd `em` font sizing in all browsers.
+*/
+
+code,
+kbd,
+samp,
+pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  /* 1 */
+  font-size: 1em;
+  /* 2 */
+}
+
+/*
+Add the correct font size in all browsers.
+*/
+
+small {
+  font-size: 80%;
+}
+
+/*
+Prevent `sub` and `sup` elements from affecting the line height in all browsers.
+*/
+
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+sup {
+  top: -0.5em;
+}
+
+/*
+1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)
+2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)
+3. Remove gaps between table borders by default.
+*/
+
+table {
+  text-indent: 0;
+  /* 1 */
+  border-color: inherit;
+  /* 2 */
+  border-collapse: collapse;
+  /* 3 */
+}
+
+/*
+1. Change the font styles in all browsers.
+2. Remove the margin in Firefox and Safari.
+3. Remove default padding in all browsers.
+*/
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit;
+  /* 1 */
+  font-size: 100%;
+  /* 1 */
+  line-height: inherit;
+  /* 1 */
+  color: inherit;
+  /* 1 */
+  margin: 0;
+  /* 2 */
+  padding: 0;
+  /* 3 */
+}
+
+/*
+Remove the inheritance of text transform in Edge and Firefox.
+*/
+
+button,
+select {
+  text-transform: none;
+}
+
+/*
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Remove default button styles.
+*/
+
+button,
+[type='button'],
+[type='reset'],
+[type='submit'] {
+  -webkit-appearance: button;
+  /* 1 */
+  background-color: transparent;
+  /* 2 */
+  background-image: none;
+  /* 2 */
+}
+
+/*
+Use the modern Firefox focus style for all focusable elements.
+*/
+
+:-moz-focusring {
+  outline: auto;
+}
+
+/*
+Remove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)
+*/
+
+:-moz-ui-invalid {
+  box-shadow: none;
+}
+
+/*
+Add the correct vertical alignment in Chrome and Firefox.
+*/
+
+progress {
+  vertical-align: baseline;
+}
+
+/*
+Correct the cursor style of increment and decrement buttons in Safari.
+*/
+
+::-webkit-inner-spin-button,
+::-webkit-outer-spin-button {
+  height: auto;
+}
+
+/*
+1. Correct the odd appearance in Chrome and Safari.
+2. Correct the outline style in Safari.
+*/
+
+[type='search'] {
+  -webkit-appearance: textfield;
+  /* 1 */
+  outline-offset: -2px;
+  /* 2 */
+}
+
+/*
+Remove the inner padding in Chrome and Safari on macOS.
+*/
+
+::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/*
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Change font properties to `inherit` in Safari.
+*/
+
+::-webkit-file-upload-button {
+  -webkit-appearance: button;
+  /* 1 */
+  font: inherit;
+  /* 2 */
+}
+
+/*
+Add the correct display in Chrome and Safari.
+*/
+
+summary {
+  display: list-item;
+}
+
+/*
+Removes the default spacing and border for appropriate elements.
+*/
+
+blockquote,
+dl,
+dd,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+hr,
+figure,
+p,
+pre {
+  margin: 0;
+}
+
+fieldset {
+  margin: 0;
+  padding: 0;
+}
+
+legend {
+  padding: 0;
+}
+
+ol,
+ul,
+menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/*
+Prevent resizing textareas horizontally by default.
+*/
+
+textarea {
+  resize: vertical;
+}
+
+/*
+1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)
+2. Set the default placeholder color to the user's configured gray 400 color.
+*/
+
+input::-moz-placeholder, textarea::-moz-placeholder {
+  opacity: 1;
+  /* 1 */
+  color: #9ca3af;
+  /* 2 */
+}
+
+input:-ms-input-placeholder, textarea:-ms-input-placeholder {
+  opacity: 1;
+  /* 1 */
+  color: #9ca3af;
+  /* 2 */
+}
+
+input::placeholder,
+textarea::placeholder {
+  opacity: 1;
+  /* 1 */
+  color: #9ca3af;
+  /* 2 */
+}
+
+/*
+Set the default cursor for buttons.
+*/
+
+button,
+[role="button"] {
+  cursor: pointer;
+}
+
+/*
+Make sure disabled buttons don't get the pointer cursor.
+*/
+
+:disabled {
+  cursor: default;
+}
+
+/*
+1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)
+2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)
+   This can trigger a poorly considered lint error in some tools but is included by design.
+*/
+
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+  display: block;
+  /* 1 */
+  vertical-align: middle;
+  /* 2 */
+}
+
+/*
+Constrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)
+*/
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+/*
+Ensure the default browser behavior of the `hidden` attribute.
+*/
+
+[hidden] {
+  display: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--wp--preset--font-family--sans);
+}
+
+h1 {
+  font-size: var(--wp--preset--font-size--8-xl);
+  line-height: var(--line-height--8-xl);
+}
+
+h2 {
+  font-size: var(--wp--preset--font-size--7-xl);
+  line-height: var(--line-height--7-xl);
+}
+
+h3 {
+  font-size: var(--wp--preset--font-size--6-xl);
+  line-height: var(--line-height--6-xl);
+}
+
+h4 {
+  font-size: var(--wp--preset--font-size--5-xl);
+  line-height: var(--line-height--5-xl);
+}
+
+h5 {
+  font-size: var(--wp--preset--font-size--4-xl);
+  line-height: var(--line-height--4-xl);
+}
+
+h6 {
+  font-size: var(--wp--preset--font-size--3-xl);
+  line-height: var(--line-height--3-xl);
+}
+
+*, ::before, ::after {
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-pan-x:  ;
+  --tw-pan-y:  ;
+  --tw-pinch-zoom:  ;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-ordinal:  ;
+  --tw-slashed-zero:  ;
+  --tw-numeric-figure:  ;
+  --tw-numeric-spacing:  ;
+  --tw-numeric-fraction:  ;
+  --tw-ring-inset:  ;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-blur:  ;
+  --tw-brightness:  ;
+  --tw-contrast:  ;
+  --tw-grayscale:  ;
+  --tw-hue-rotate:  ;
+  --tw-invert:  ;
+  --tw-saturate:  ;
+  --tw-sepia:  ;
+  --tw-drop-shadow:  ;
+  --tw-backdrop-blur:  ;
+  --tw-backdrop-brightness:  ;
+  --tw-backdrop-contrast:  ;
+  --tw-backdrop-grayscale:  ;
+  --tw-backdrop-hue-rotate:  ;
+  --tw-backdrop-invert:  ;
+  --tw-backdrop-opacity:  ;
+  --tw-backdrop-saturate:  ;
+  --tw-backdrop-sepia:  ;
+}
+
+/**
+ * This injects Tailwind's component classes and any component classes
+ * registered by plugins, then adds custom component classes.
+ */
+
+/**
+ * This injects Tailwind's utility classes and any utility classes registered
+ * by plugins, then adds custom utility classes.
+ */
+
+.static {
+  position: static;
+}
+
+.block {
+  display: block;
+}
+
+.hidden {
+  display: none;
+}
+
+.transform {
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.italic {
+  font-style: italic;
+}
+
+.underline {
+  -webkit-text-decoration-line: underline;
+          text-decoration-line: underline;
+}
+
+.filter {
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
+/**
+ * Configuration and helpers.
+ */
+
+/**
+ * Set any theme-specific variables here.
+ *
+ * You can use either CSS custom properties with the `--css-var-name` syntax, 
+ * or SASS-style variables with the `$variable-name` syntax.
+ */
+
+body {
+  --wrapper-max-width: 90rem;
+  --wrapper-narrow-max-width: 80rem;
+  --wrapper-wide-max-width: 100rem;
+  --wrapper-padding: 2rem;
+  --line-height--xs: 1.333333333333333;
+  --line-height--sm: 1.428571428571429;
+  --line-height--base: 1.5;
+  --line-height--lg: 1.555555555555556;
+  --line-height--xl: 1.4;
+  --line-height--2-xl: 1.333333333333333;
+  --line-height--3-xl: 1.2;
+  --line-height--4-xl: 1.111111111111111;
+  --line-height--5-xl: 1;
+  --line-height--6-xl: 1;
+  --line-height--7-xl: 1;
+  --line-height--8-xl: 1;
+  --line-height--9-xl: 1;
+}
+
+@media (max-width: 768px) {
+  body {
+    --wrapper-padding: 1.5rem;
+    --wp--preset--font-size--large: 1rem;
+    --wp--preset--font-size--x-large: 1.125rem;
+    --wp--preset--font-size--2-xl: 1.25rem;
+    --wp--preset--font-size--3-xl: 1.5rem;
+    --wp--preset--font-size--4-xl: 1.875rem;
+    --wp--preset--font-size--5-xl: 2.25rem;
+    --wp--preset--font-size--6-xl: 3rem;
+    --wp--preset--font-size--7-xl: 3.75rem;
+    --wp--preset--font-size--8-xl: 4.5rem;
+    --wp--preset--font-size--9-xl: 6rem;
+    --line-height--lg: 1.5;
+    --line-height--xl: 1.555555555555556;
+    --line-height--2-xl: 1.4;
+    --line-height--3-xl: 1.333333333333333;
+    --line-height--4-xl: 1.2;
+    --line-height--5-xl: 1.111111111111111;
+    --line-height--6-xl: 1;
+    --line-height--7-xl: 1;
+    --line-height--8-xl: 1;
+    --line-height--9-xl: 1;
+  }
+}
+
+/**
+ * Colors
+ *
+ * These are commented out because WordPress makes them 
+ * available by default via the theme.json. If you change
+ * the theme.json, these names and values will change.
+ */
+
+/*
+--wp--preset--color--background: #ffffff;
+--wp--preset--color--foreground: #404040;
+--wp--preset--color--primary: #b91c1c;
+--wp--preset--color--secondary: #15803d;
+--wp--preset--color--tertiary: #0369a1;
+*/
+
+/**
+ * Font Families
+ *
+ * These are commented out because WordPress makes them 
+ * available by default via the theme.json. If you change
+ * the theme.json, these names and values will change.
+ */
+
+/*
+--wp--preset--font-family--sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+--wp--preset--font-family--serif: font-family: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+}
+
+
+/**
+ * Font Sizes
+ *
+ * These are commented out because WordPress makes them 
+ * available by default via the theme.json. If you change
+ * the theme.json, these names and values will change.
+ */
+
+/*
+--wp--preset--font-size--x-small: 0.75rem;
+--wp--preset--font-size--small: 0.875rem;
+--wp--preset--font-size--medium: 1rem;
+--wp--preset--font-size--large: 1.125rem;
+--wp--preset--font-size--x-large: 1.25rem;
+--wp--preset--font-size--2-xl: 1.5rem;
+--wp--preset--font-size--3-xl: 1.875rem;
+--wp--preset--font-size--4-xl: 2.25rem;
+--wp--preset--font-size--5-xl: 3rem;
+--wp--preset--font-size--6-xl: 3.75rem;
+--wp--preset--font-size--7-xl: 4.5rem;
+--wp--preset--font-size--8-xl: 6rem;
+--wp--preset--font-size--9-xl: 8rem;
+*/
+
+/**
+ * Base stuff.
+ */
+
+::-moz-selection {
+  background: rgba(0,0,0, .1);
+  color: inherit;
+  text-shadow: none;
+}
+
+::selection {
+  background: rgba(0,0,0, .1);
+  color: inherit;
+  text-shadow: none;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-feature-settings: 'liga' on;
+  -moz-font-feature-settings: 'liga' on;
+  text-rendering: optimizeLegibility;
+}
+
+html {
+  font-size: 1em;
+  scroll-behavior: smooth;
+}
+
+body {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+  --tw-text-opacity: 1;
+  color: rgb(64 64 64 / var(--tw-text-opacity));
+  font-family: var(--wp--preset--font-family--sans);
+  font-size: var(--wp--preset--font-size--medium);
+  line-height: var(--line-height--base);
+}
+
+.wp-site-blocks {
+  overflow: hidden;
+}
+
+main {
+  font-size: 100%;
+  min-height: 24rem;
+  position: relative;
+}
+
+span {
+  white-space: nowrap;
+}
+
+.entry-content {
+  position: relative;
+  z-index: 0;
+}
+
+a, .wp-block-navigation .wp-block-navigation-item__content {
+  font-weight: 700;
+  --tw-text-opacity: 1;
+  color: rgb(77 131 182 / var(--tw-text-opacity));
+}
+
+.wp-block-navigation .wp-block-navigation-item__content {
+  padding-right: 0.75rem;
+  font-weight: 700;
+}
+
+p {
+  padding-bottom: 0.75rem;
+}
+
+.text-9xl,
+.has-9-xl-font-size {
+  font-size: var(--wp--preset--font-size--9-xl);
+  line-height: var(--line-height--9-xl);
+}
+
+.text-8xl,
+.has-8-xl-font-size {
+  font-size: var(--wp--preset--font-size--8-xl);
+  line-height: var(--line-height--8-xl);
+}
+
+.text-7xl,
+.has-7-xl-font-size {
+  font-size: var(--wp--preset--font-size--7-xl);
+  line-height: var(--line-height--7-xl);
+}
+
+.text-6xl,
+.has-6-xl-font-size {
+  font-size: var(--wp--preset--font-size--6-xl);
+  line-height: var(--line-height--6-xl);
+}
+
+.text-5xl,
+.has-5-xl-font-size {
+  font-size: var(--wp--preset--font-size--5-xl);
+  line-height: var(--line-height--5-xl);
+}
+
+.text-4xl,
+.has-4-xl-font-size {
+  font-size: var(--wp--preset--font-size--4-xl);
+  line-height: var(--line-height--4-xl);
+}
+
+.text-3xl,
+.has-3-xl-font-size {
+  font-size: var(--wp--preset--font-size--3-xl);
+  line-height: var(--line-height--3-xl);
+}
+
+.text-2xl,
+.has-2-xl-font-size {
+  font-size: var(--wp--preset--font-size--2-xl);
+  line-height: var(--line-height--2-xl);
+}
+
+.text-xl,
+.has-x-large-font-size {
+  font-size: var(--wp--preset--font-size--x-large);
+  line-height: var(--line-height--xl);
+}
+
+.text-lg,
+.has-large-font-size {
+  font-size: var(--wp--preset--font-size--large);
+  line-height: var(--line-height--lg);
+}
+
+.text-base,
+.has-medium-font-size {
+  font-size: var(--wp--preset--font-size--medium);
+  line-height: var(--line-height--base);
+}
+
+.text-sm,
+.has-small-font-size {
+  font-size: var(--wp--preset--font-size--small);
+  line-height: var(--line-height--sm);
+}
+
+.text-xs,
+.has-x-small-font-size {
+  font-size: var(--wp--preset--font-size--x-small);
+  line-height: var(--line-height--xs);
+}
+
+/**
+ * Layout-related sections.
+ */
+
+.wrapper {
+  max-width: var(--wrapper-max-width);
+  padding-left: var(--wrapper-padding);
+  padding-right: var(--wrapper-padding);
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+.wrapper--no-pad {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.wrapper--narrow {
+  max-width: var(--wrapper-narrow-max-width);
+}
+
+.wrapper--wide {
+  max-width: var(--wrapper-wide-max-width);
+}
+
+/**
+ * Gutenberg.
+ */
+
+.row .innerblocks-wrap, .wp-block-kadence-rowlayout .innerblocks-wrap {
+  max-width: var(--wrapper-max-width);
+  padding-left: var(--wrapper-padding);
+  padding-right: var(--wrapper-padding);
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+.row .alignfull > .kt-row-layout-inner > .kt-row-column-wrap, .wp-block-kadence-rowlayout .alignfull > .kt-row-layout-inner > .kt-row-column-wrap {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.row:not(.alignfull) > .kt-row-layout-inner > .kt-row-column-wrap, .wp-block-kadence-rowlayout:not(.alignfull) > .kt-row-layout-inner > .kt-row-column-wrap {
+  max-width: var(--wrapper-max-width);
+  padding-left: var(--wrapper-padding);
+  padding-right: var(--wrapper-padding);
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+.row.alignwide > .kt-row-layout-inner > .kt-row-column-wrap, .wp-block-kadence-rowlayout.alignwide > .kt-row-layout-inner > .kt-row-column-wrap {
+  max-width: var(--wrapper-max-width);
+  padding-left: var(--wrapper-padding);
+  padding-right: var(--wrapper-padding);
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  max-width: var(--wrapper-wide-max-width);
+}
+
+.row.aligncenter > .kt-row-layout-inner > .kt-row-column-wrap, .wp-block-kadence-rowlayout.aligncenter > .kt-row-layout-inner > .kt-row-column-wrap {
+  align-items: center;
+}
+
+.row.no-center > .kt-row-layout-inner > .kt-row-column-wrap, .wp-block-kadence-rowlayout.no-center > .kt-row-layout-inner > .kt-row-column-wrap {
+  margin-left: initial !important;
+  margin-right: initial !important;
+}
+
+.wp-block[data-align="wide"] > .wp-block-kadence-rowlayout > .innerblocks-wrap {
+  max-width: var(--wrapper-wide-max-width);
+}
+
+.wp-block[data-align="full"] > .wp-block-kadence-rowlayout > .innerblocks-wrap {
+  max-width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/**
+ * Components.
+ */
+
+.button,
+.wp-block-button .wp-block-button__link {
+}
+
+/**
+ * Pages.
+ */
+
+#welcome-kit img {
+  margin: auto;
+}
+
+/**
+ * Templates.
+ */
+
+/**
+ * Gutenberg Editor.
+ */
+
+/* ACF Color Picker style overrides. */
+
+.iris-picker {
+  padding: 0.625rem !important;
+  height: auto !important;
+}
+
+.iris-picker .iris-palette-container {
+  left: auto !important;
+  bottom: auto !important;
+  position: relative;
+  width: 100%;
+}
+
+.iris-picker .iris-picker-inner {
+  position: relative !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  overflow: auto !important;
+  padding-bottom: 0.625rem !important;
+}
+
+.iris-picker .iris-palette {
+  width: 1rem !important;
+  height: 1rem !important;
+  float: none !important;
+  display: inline-block;
+}

@@ -1,0 +1,8 @@
+#editor {
+    .edit-post-visual-editor__post-title-wrapper {
+        h1 {
+            @apply text-[16px] font-bold
+        }
+        @apply my-1
+    }
+}

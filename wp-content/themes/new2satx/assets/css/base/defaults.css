@@ -1,0 +1,51 @@
+::selection {
+    background: rgba(#000, .1);
+    color: inherit;
+	text-shadow: none;
+}
+
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-feature-settings: 'liga' on;
+    -moz-font-feature-settings: 'liga' on;
+    text-rendering: optimizeLegibility;
+}
+
+html {
+    font-size: 1em;
+    scroll-behavior: smooth;
+}
+
+body {
+	@apply bg-background text-foreground;
+    font-family: var(--wp--preset--font-family--sans);
+    font-size: var(--wp--preset--font-size--medium);
+    line-height: var(--line-height--base);
+}
+.wp-site-blocks {
+    overflow: hidden;
+}
+
+main {
+    font-size: 100%;
+    min-height: 24rem;
+    position: relative;
+}
+span {
+    white-space: nowrap;
+}
+.entry-content {
+    position: relative;
+    z-index: 0;
+}
+
+a, .wp-block-navigation .wp-block-navigation-item__content {
+    @apply text-[#4D83B6] font-bold 
+}
+.wp-block-navigation .wp-block-navigation-item__content {
+    @apply font-bold pr-3
+}
+p {
+    @apply pb-3
+}
