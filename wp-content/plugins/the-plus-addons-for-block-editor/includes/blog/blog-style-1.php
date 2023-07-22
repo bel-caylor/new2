@@ -6,7 +6,7 @@
 	<div class="tpgb-content-bottom">
 
 		<?php if(!empty($showPostMeta) && $showPostMeta=='yes'){ ?>
-			<?php include TPGB_INCLUDES_URL. 'blog/post-meta-'.$postMetaStyle.'.php'; ?>
+			<?php include TPGB_INCLUDES_URL. 'blog/'.sanitize_file_name('post-meta-'.$postMetaStyle.'.php'); ?>
 		<?php } ?>
 
 		<?php if(!empty($ShowTitle) && $ShowTitle=='yes'){

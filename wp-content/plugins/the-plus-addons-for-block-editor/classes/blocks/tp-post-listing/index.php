@@ -110,8 +110,8 @@ function tpgb_tp_post_listing_render_callback( $attributes ) {
 					$output .= '<div class="grid-item tpgb-col '.esc_attr($column_class).' ">';
 					if(!empty($style) && $style!=='custom'){
 						ob_start();
-						if(file_exists(TPGB_PATH. 'includes/blog/blog-'.esc_attr($style).'.php')){
-							include TPGB_PATH. 'includes/blog/blog-'.esc_attr($style).'.php'; 
+						if(file_exists(TPGB_PATH. 'includes/blog/'.sanitize_file_name('blog-'.$style.'.php'))){
+							include TPGB_PATH. 'includes/blog/'.sanitize_file_name('blog-'.$style.'.php');
 						}
 						$output .= ob_get_contents();
 						ob_end_clean();

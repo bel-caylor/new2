@@ -59,15 +59,13 @@ function tpgb_tp_heading_title_render_callback( $attributes, $content) {
 					$Title = (class_exists('Tpgbp_Pro_Blocks_Helper')) ? Tpgbp_Pro_Blocks_Helper::tpgb_dynamic_val($Title) : $Title;
 					if($titleLimitOn=='char'){												
 						$getTitle .= substr($Title,0,$titleCount);
-						if(!empty($titleDots)){
+						if(!empty($titleDots) && strlen($Title) > $titleCount){
 							$getTitle .= '...';
 						}
 					}else if($titleLimitOn=='word'){
 						$getTitle .= tpgb_limit_words($Title,$titleCount);
-						if(!empty($titleDots)){
-							if(str_word_count($Title) > $titleCount){
-								$getTitle .= '...';
-							}
+						if(!empty($titleDots) && str_word_count($Title) > $titleCount){
+							$getTitle .= '...';
 						}
 					}
 				}else{
@@ -111,15 +109,13 @@ function tpgb_tp_heading_title_render_callback( $attributes, $content) {
 					$subTitle = (class_exists('Tpgbp_Pro_Blocks_Helper')) ? Tpgbp_Pro_Blocks_Helper::tpgb_dynamic_val($subTitle) : $subTitle;
 					if($subTitleLimitOn=='char'){												
 						$getSubTitle .= substr($subTitle,0,$subTitleCount);
-						if(!empty($subTitleDots)){
+						if(!empty($subTitleDots) && strlen($subTitle) > $subTitleCount){
 							$getSubTitle .= '...';
 						}
 					}else if($subTitleLimitOn=='word'){
 						$getSubTitle .= tpgb_limit_words($subTitle,$subTitleCount);
-						if(str_word_count($subTitle) > $subTitleCount){
-							if(!empty($subTitleDots)){
-								$getSubTitle .= '...';
-							}
+						if(!empty($subTitleDots) && str_word_count($subTitle) > $subTitleCount){
+							$getSubTitle .= '...';
 						}
 					}
 				}else{
@@ -265,13 +261,12 @@ function tpgb_tp_heading_title_render_callback( $attributes, $content) {
 				$output .= wp_kses_post($Title);
 			$output .='</'.Tp_Blocks_Helper::validate_html_tag($titleType).'>';
 		}
+		if(!empty($styleCss)){
+			$output .= '<style>'.$styleCss.'</style>';
+		}
 	$output .= '</div>';
 	
 	$output = Tpgb_Blocks_Global_Options::block_Wrap_Render($attributes, $output);
-
-	if(!empty($styleCss)){
-		$output .= '<style>'.$styleCss.'</style>';
-	}
 	
     return $output;
 }

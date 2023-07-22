@@ -6,7 +6,9 @@
     position: relative;
     align-items: inherit;
     justify-content: inherit;
-    align-content: inherit
+    align-content: inherit;
+    --tpgb-padding-top : 0;
+    --tpgb-padding-bottom : 0
 }
 .tpgb-container-wide {
     --tpgb-padding-left: 0px;
@@ -17,7 +19,7 @@
     padding-top: var(--tpgb-padding-top);
     padding-bottom: var(--tpgb-padding-bottom)
 }
-.tpgb-container-row-editor.tpgb-container-inline>.block-editor-inner-blocks>.block-editor-block-list__layout>.wp-block>div:not(.tpgb-container-col-editor.tpgb-container-col,.block-editor-inner-blocks,.block-editor-block-list__layout,.tpgb-row-background,.tpgb-container-row,.tpgb-flipbox,.tpgb-google-map,.tpgb-social-feed,.tpgb-social-reviews,.tp-video,.tpgb-mailchimp,.tpgb-post-listing,.tpgb-testimonials,.tpgb-pricing-list,.tpgb-pricing-table,.tpgb-progress-bar,.tpgb-social-icons),.tpgb-container-row.tpgb-container-inline:not(.tpgb-container-row-editor)>div:not(.tpgb-container-col,.tpgb-row-background,.tpgb-container-row,.tpgb-flipbox,.tpgb-google-map,.tpgb-social-feed,.tpgb-social-reviews,.tp-video,.tpgb-mailchimp,.tpgb-post-listing,.tpgb-testimonials,.tpgb-pricing-list,.tpgb-pricing-table,.tpgb-progress-bar,.tpgb-social-icons) {
+.tpgb-container-row-editor.tpgb-container-inline>.block-editor-inner-blocks>.block-editor-block-list__layout>.wp-block>div:not(.tpgb-container-col-editor.tpgb-container-col,.block-editor-inner-blocks,.block-editor-block-list__layout,.tpgb-row-background,.tpgb-container-row,.tpgb-flipbox,.tpgb-google-map,.tpgb-social-feed,.tpgb-social-reviews,.tp-video,.tpgb-mailchimp,.tpgb-post-listing,.tpgb-testimonials,.tpgb-pricing-list,.tpgb-pricing-table,.tpgb-progress-bar,.tpgb-social-icons,.tpgb-post-image,.tpgb-external-form-styler,.tpgb-infobox.tpgb-carousel),.tpgb-container-row.tpgb-container-inline:not(.tpgb-container-row-editor)>div:not(.tpgb-container-col,.tpgb-row-background,.tpgb-container-row,.tpgb-flipbox,.tpgb-google-map,.tpgb-social-feed,.tpgb-social-reviews,.tp-video,.tpgb-mailchimp,.tpgb-post-listing,.tpgb-testimonials,.tpgb-pricing-list,.tpgb-pricing-table,.tpgb-progress-bar,.tpgb-social-icons,.tpgb-post-image,.tpgb-external-form-styler,.tpgb-infobox.tpgb-carousel) {
     display: inline-block;
     width: auto
 }
@@ -54,3 +56,9 @@
     width: 100% !important;
 }
 /* Blocksy Theme Compatibility */
+
+/* TP Container Gutenberg Sepator Css */
+.tpgb-container-row .wp-block-separator{
+    width: 100%;
+}
+/* TP Container Gutenberg Sepator Css */

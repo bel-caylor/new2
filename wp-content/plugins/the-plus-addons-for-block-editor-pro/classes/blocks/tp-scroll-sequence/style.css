@@ -24,8 +24,13 @@
     width: 100% !important;
     height: 100%;
 }
-.tpgb-scroll-sequence .tpgb-scroll-sequence-canvas, .tpgb-scroll-sequence .tpgb-scroll-seq-inner {
+.tpgb-scroll-sequence .tpgb-scroll-sequence-canvas {
     position: relative;
     height: max-content;
     width: max-content !important;
+}
+.tpgb-scroll-sequence .tpgb-scroll-seq-inner {
+    position: relative;
+    width: 300px;
+    height: 300px;
 }

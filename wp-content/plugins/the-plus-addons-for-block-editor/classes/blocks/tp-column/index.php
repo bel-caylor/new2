@@ -322,7 +322,6 @@ function tpgb_tp_section_column() {
 				],
 				'style' => [
 					(object) [
-						'condition' => [(object) ['key' => 'columnLay', 'relation' => '==', 'value' => 'default']],
 						'selector' => '{{PLUS_WRAP}} > .tpgb-column-wrap',
 					],
 					(object) [

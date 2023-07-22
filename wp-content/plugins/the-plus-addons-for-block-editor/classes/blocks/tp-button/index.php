@@ -27,8 +27,13 @@ function tpgb_button_render_callback( $attributes ) {
 	$shakeAnimate = (!empty($attributes['shakeAnimate'])) ? $attributes['shakeAnimate'] : false;
 	$btnHvrCnt = (!empty($attributes['btnHvrCnt'])) ? $attributes['btnHvrCnt'] : false;
 	$selectHvrCnt = (!empty($attributes['selectHvrCnt'])) ? $attributes['selectHvrCnt'] : '';
+	$fancyBox = (!empty($attributes['fancyBox'])) ? $attributes['fancyBox'] : '';
 	
 	$blockClass = Tp_Blocks_Helper::block_wrapper_classes( $attributes );
+	
+	if(class_exists('Tpgbp_Pro_Blocks_Helper')){
+		$btnLink = (isset($attributes['btnLink']['dynamic'])) ? Tpgbp_Pro_Blocks_Helper::tpgb_dynamic_repeat_url($attributes['btnLink']) : (!empty($attributes['btnLink']['url']) ? $attributes['btnLink']['url'] : '');
+	}
 
 	$IShakeAnimate='';
 	if(!empty($shakeAnimate)){
@@ -191,10 +196,29 @@ function tpgb_button_render_callback( $attributes ) {
 		$contentHvrClass = ' tpgb_cnt_hvr_effect cnt_hvr_'.esc_attr($selectHvrCnt);
 	}
 
+	$extrAttr = ''; 
+	$fancyData = [];
+	 
+	if(!empty($fancyBox)){
+		global $post;
+		$extrAttr .= 'data-src="#tpgb-query-'.(isset($post->ID) ? $post->ID : get_queried_object_id() ).'" data-touch="false" href="javascript:;" ';
+		
+		$autoDimen = (!empty($attributes['autoDimen'])) ? $attributes['autoDimen'] : false ;
+
+
+		$fancyData['autoDimensions'] = (int) $autoDimen ;
+		$fancyData = htmlspecialchars(json_encode($fancyData), ENT_QUOTES, 'UTF-8');
+
+		$extrAttr .= ' data-fancy-opt= \'' .$fancyData. '\' ';
+
+	}else{
+		$extrAttr = 'href="'.esc_url($btnLink).'" target="'.esc_attr($target).'" rel="'.esc_attr($nofollow).'" ';
+	}
+
 	$ariaLabelT = (!empty($ariaLabel)) ? esc_attr($ariaLabel) : ((!empty($btnText)) ? esc_attr($btnText) : esc_attr__("Button", 'tpgb'));
     $output .= '<div class="tpgb-plus-button tpgb-relative-block tpgb-block-'.esc_attr($block_id).' button-'.esc_attr($styleType).' '.esc_attr($iconHover).' '.esc_attr($blockClass).' ">';
 		$output .='<div class="animted-content-inner'.esc_attr($contentHvrClass).'">';
-			$output .='<a href="'.esc_url($btnLink).'" target="'.esc_attr($target).'" rel="'.esc_attr($nofollow).'" class="button-link-wrap '.esc_attr($translin).' '.esc_attr($IShakeAnimate).' '.esc_attr($s23VrtclCntr).'" role="button" aria-label="'.$ariaLabelT.'" data-hover="'.wp_kses_post($hoverText).'" '.$link_attr.'>';
+			$output .='<a '.$extrAttr.' class="button-link-wrap '.esc_attr($translin).' '.esc_attr($IShakeAnimate).' '.esc_attr($s23VrtclCntr).' '.(!empty($fancyBox) ? ' tpgb-fancy-popup' : '').' " role="button" aria-label="'.$ariaLabelT.'" data-hover="'.wp_kses_post($hoverText).'" '.$link_attr.'>';
 				if($styleType != 'style-17' && $styleType != 'style-23'){
 					$output .='<span>'.$getButtonSource.'</span>';
 				}
@@ -203,6 +227,18 @@ function tpgb_button_render_callback( $attributes ) {
 				}
 			$output .='</a>';
 		$output .='</div>';
+
+		// Load Fancy Box Content 
+		if(!empty($fancyBox)){
+			$output .= '<div class="tpgb-btn-fpopup" id="tpgb-query-'.(isset($post->ID) ? $post->ID : get_queried_object_id() ).'" >';
+				ob_start();
+				if(!empty($attributes['templates']) && $attributes['templates'] != 'none') {
+					echo Tpgb_Library()->plus_do_block($attributes['templates']);
+				}
+				$output .= ob_get_contents();
+				ob_end_clean();
+			$output .= '</div>';
+		}
     $output .= '</div>';
 
 	$output = Tpgb_Blocks_Global_Options::block_Wrap_Render($attributes, $output);
@@ -238,6 +274,18 @@ function tpgb_tp_button() {
 			'btnTagText' => [
 				'type' => 'string',
 				'default' => 'Click Here',	
+			],
+			'fancyBox' => [
+				'type' => 'boolean',
+				'default' => false,	
+			],
+			'backendVisi' => [
+				'type' => 'boolean',
+				'default' => false,	
+			],
+			'templates' => [
+				'type' => 'string',
+           		'default' => '',	
 			],
 			'btnLink' => [
 				'type'=> 'object',
@@ -965,7 +1013,7 @@ function tpgb_tp_button() {
 					],
 					(object) [
 						'condition' => [(object) ['key' => 'styleType', 'relation' => '==', 'value' => 'style-16' ]],
-						'selector' => '{{PLUS_WRAP}}.tpgb-plus-button.button-style-16 .button-link-wrap::before',
+						'selector' => '{{PLUS_WRAP}}.tpgb-plus-button.button-style-16 .button-link-wrap:hover, {{PLUS_WRAP}}.tpgb-plus-button.button-style-16 .button-link-wrap::before',
 					],
 					(object) [
 						'condition' => [(object) ['key' => 'styleType', 'relation' => '==', 'value' => 'style-17' ]],
@@ -1161,6 +1209,29 @@ function tpgb_tp_button() {
 					],
 				],
 				'scopy' => true,
+			],
+			'fancWidth' => [
+				'type' => 'object',
+				'default' => [ 
+					'md' => '',
+					"unit" => 'px',
+				],
+				'style' => [
+					(object) [
+						'condition' => [(object) ['key' => 'fancyBox', 'relation' => '==', 'value' => true]],
+						'selector' => '.tpgb-button-fancy .tpgb-btn-fpopup { width: 100%; max-width : {{fancWidth}} }',
+					],
+				],
+			],
+			'fanoverlay' => [
+				'type' => 'string',
+				'default' => '',
+				'style' => [
+					(object) [
+						'condition' => [(object) ['key' => 'fancyBox', 'relation' => '==', 'value' => true]],
+						'selector' => '.tpgb-button-fancy .fancybox-bg { background : {{fanoverlay}} }',
+					],
+				],
 			],
 		);
 	$attributesOptions = array_merge($attributesOptions,$globalPlusExtrasOption,$globalBgOption,$globalpositioningOption);

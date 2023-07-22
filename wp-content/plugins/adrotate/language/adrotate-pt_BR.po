@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AdRotate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-15 17:49-0700\n"
-"PO-Revision-Date: 2023-04-15 17:53-0700\n"
+"POT-Creation-Date: 2023-05-25 00:25-0600\n"
+"PO-Revision-Date: 2023-05-25 00:26-0600\n"
 "Last-Translator: Arnan de Gans <support@ajdg.solutions>\n"
 "Language-Team: Português do Brasil\n"
 "Language: pt_BR\n"
@@ -443,20 +443,20 @@ msgid "Buy now"
 msgstr "Comprar agora"
 
 #: adrotate-output.php:928
-msgid "Two Site License"
-msgstr "Licença de dois sites"
+msgid "Duo License"
+msgstr "Duo Licença"
 
 #: adrotate-output.php:928
 msgid "Use on TWO WordPress installations."
 msgstr "Uso em DOIS instalações WordPress."
 
 #: adrotate-output.php:939
-msgid "Need help fast? Or do you have a question?"
-msgstr "Precisa de ajuda rápido? Ou você tem uma pergunta?"
+msgid "Do you have a question?"
+msgstr "Você tem alguma pergunta?"
 
 #: adrotate-output.php:940
-msgid "Help AdRotate Banner Manager Grow"
-msgstr "Ajude o AdRotate Banner Manager a crescer"
+msgid "Support AdRotate Banner Manager"
+msgstr "Suporte AdRotate Banner Manager"
 
 #: adrotate-output.php:947
 msgid ""
@@ -485,8 +485,7 @@ msgstr "Comprar Ticket de Suporte"
 msgid ""
 "Arnan needs your help. Please consider writing a review or sharing AdRotate "
 "in Social media if you find the plugin useful. Writing a review and sharing "
-"AdRotate on social media costs you nothing but doing so is super helpful to "
-"ensure future development."
+"AdRotate on social media costs you nothing but doing so is super helpful."
 msgstr ""
 "Arnan precisa da sua ajuda. Por favor, considere escrever um comentário ou "
 "compartilhar AdRotate nas mídias sociais se você achar o plugin útil. "
@@ -3448,6 +3447,9 @@ msgstr ""
 "especial, código ou estilos de layout podem ser aplicados no invólucro do "
 "grupo ao editar o grupo."
 
+#~ msgid "Two Site License"
+#~ msgstr "Licença de dois sites"
+
 #~ msgid "Write review on wordpress.org"
 #~ msgstr "Escreva revisão sobre WordPress.org"
 
@@ -3474,9 +3476,6 @@ msgstr ""
 #~ "gerenciamento de publicidade. Confira o recurso de comparação de guia em "
 #~ "qualquer uma das páginas de produto para ver o que AdRotate Pro tem a "
 #~ "oferecer para você!"
-
-#~ msgid "Multi License"
-#~ msgstr "Multi-Licença"
 
 #~ msgid "Use on up to FIVE WordPress installations."
 #~ msgstr "Utilizar em até CINCO instalações WordPress."

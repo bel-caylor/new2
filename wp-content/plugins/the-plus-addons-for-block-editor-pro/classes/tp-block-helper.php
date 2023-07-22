@@ -77,8 +77,23 @@ class Tpgbp_Pro_Blocks_Helper {
 		add_action('wp_ajax_nopriv_Tp_delete_transient', array($this, 'Tp_delete_transient'));
 		
 		add_filter( 'body_class', array( $this,'tpgb_body_class') );
+		add_filter( 'tpgb_event_tracking', array( $this,'event_tracking_attr') );
 	}
-	
+
+	/*
+	 * Check Event Tracking Array
+	 * @since 2.0.9
+	 * */
+	public function event_tracking_attr(){
+		$event_tracking_data = get_option( 'tpgb_connection_data' );
+		$eventTrackArr = [
+			'switch' => (!empty($event_tracking_data) && isset($event_tracking_data['tpgb_event_tracking']) && $event_tracking_data['tpgb_event_tracking']=== 'disable') ? false : true,
+			'google_track' => (!empty($event_tracking_data) && !empty($event_tracking_data['event_track_google'])) ? $event_tracking_data['event_track_google'] : '',
+			'facebook_track' => (!empty($event_tracking_data) && !empty($event_tracking_data['event_track_facebook'])) ? $event_tracking_data['event_track_facebook'] : ''
+		];
+		return $eventTrackArr;
+	}
+
 	/*
 	 * Preloader enable add body class
 	 * @since 1.3.0
@@ -129,7 +144,14 @@ class Tpgbp_Pro_Blocks_Helper {
 				$advBorderRadius = true;
 			}
 
-			if( !empty($filterEffect) || !empty($Plus3DTilt) || !empty($PlusMouseParallax) || !empty($contentHoverEffect) || !empty($continueAnimation) || !empty($globalTooltip) || !empty($advBorderRadius) ){
+			/** Event Tracking */
+			$check_event_tracker = get_option( 'tpgb_connection_data' );
+			$eventTracker = false;
+			if(!empty($check_event_tracker) && isset($check_event_tracker['tpgb_event_tracking']) && ($check_event_tracker['tpgb_event_tracking']==='enable' && (!empty($attr['etFacebook']) || !empty($attr['etGoogle'])))){
+				$eventTracker = true;
+			}
+
+			if( !empty($filterEffect) || !empty($Plus3DTilt) || !empty($PlusMouseParallax) || !empty($contentHoverEffect) || !empty($continueAnimation) || !empty($globalTooltip) || !empty($advBorderRadius) || !empty($eventTracker)){
 				$wrapper = true;
 			}
 
@@ -161,6 +183,12 @@ class Tpgbp_Pro_Blocks_Helper {
         if(!empty($attr['PlusMagicScroll']) ){
 			$classes .= ' tpgb_magic_scroll';
 		}
+
+		$check_event_tracker = get_option( 'tpgb_connection_data' );
+		if(!empty($check_event_tracker) && isset($check_event_tracker['tpgb_event_tracking']) && ($check_event_tracker['tpgb_event_tracking']==='enable' && (!empty($attr['etFacebook']) || !empty($attr['etGoogle'])))){
+			$classes .= ' tpgb-event-tracker';
+		}
+
 		return $classes;
 	}
 
@@ -327,6 +355,37 @@ class Tpgbp_Pro_Blocks_Helper {
 			$advBdrAllCss = $advBdrNCss.' '.$advBdrHCss;
 		}
 
+		$check_event_tracker = get_option( 'tpgb_connection_data' );
+		$eventTracker = false;
+		$eventTattr = '';
+		if(!empty($check_event_tracker) && isset($check_event_tracker['tpgb_event_tracking']) && ($check_event_tracker['tpgb_event_tracking']==='enable' && (!empty($attr['etFacebook']) || !empty($attr['etGoogle'])))){
+			$eventTracker = true;
+			$wrapInnerClass .= ' tpgb-event-tracker-inner';
+
+			$propertiesAttr =[];
+			if(!empty($attr['eventProperties'])){
+				foreach ( $attr['eventProperties'] as $index => $item ) :
+					if(!empty($item['eProName'])){
+						$propertiesAttr[] =[
+							$item['eProName'] => $item['eProValue']
+						];
+					} 
+				endforeach;
+			}
+			
+			$eAttr = [
+				'facebook' => !empty($attr['etFacebook']) ? true : false,
+				'fbEventType' => !empty($attr['fbEventType']) ? $attr['fbEventType'] : 'ViewContent',
+				'fbCsmEventName' => !empty($attr['fbCsmEventName']) ? $attr['fbCsmEventName'] : '',
+				'google' => !empty($attr['etGoogle']) ? true : false,
+				'gglEventType' => !empty($attr['gglEventType']) ? $attr['gglEventType'] : 'recommended',
+				'gglSelEvent' => !empty($attr['gglSelEvent']) ? $attr['gglSelEvent'] : 'ad_impression',
+				'gCsmEventName' => !empty($attr['gCsmEventName']) ? $attr['gCsmEventName'] : '',
+				'eventProperties' => $propertiesAttr,
+			];
+			$eventTattr .= 'data-event-opt=\'' .htmlspecialchars(json_encode($eAttr), ENT_QUOTES, 'UTF-8'). '\'';
+		}
+
 		$PlusMouseParallax = false;
 		$MouseParallaxAttr = '';
 		if(!empty($attr['PlusMouseParallax']) && !empty($attr['PlusMouseParallax']['tpgbReset'])){
@@ -338,8 +397,8 @@ class Tpgbp_Pro_Blocks_Helper {
 		}
 		
 		$output = '';
-		if(!empty($Plus3DTilt) || !empty($PlusMouseParallax) || !empty($globalTooltip) || !empty($advBorderRadius)){
-			$output .= '<div class="'.$wrapInnerClass.'" '.$tiltAttr.' '.$MouseParallaxAttr.' '.$gblTooltip.' '.$gTooltipAttr.' '.$ttId.'>';
+		if(!empty($Plus3DTilt) || !empty($PlusMouseParallax) || !empty($globalTooltip) || !empty($advBorderRadius) || !empty($eventTracker)){
+			$output .= '<div class="'.$wrapInnerClass.'" '.$tiltAttr.' '.$MouseParallaxAttr.' '.$gblTooltip.' '.$gTooltipAttr.' '.$ttId.' '.$eventTattr.'>';
 		}
 		
 		if((!empty($attr['globalCssFilter']) && !empty($attr['globalCssFilter']['openFilter'])) || (!empty($attr['globalHCssFilter']['openFilter']) && !empty($attr['globalHCssFilter']))){
@@ -374,6 +433,12 @@ class Tpgbp_Pro_Blocks_Helper {
 			$advBorderRadius = true;
 		}
 
+		$check_event_tracker = get_option( 'tpgb_connection_data' );
+		$eventTracker = false;
+		if(!empty($check_event_tracker) && isset($check_event_tracker['tpgb_event_tracking']) && ($check_event_tracker['tpgb_event_tracking']==='enable' && (!empty($attr['etFacebook']) || !empty($attr['etGoogle'])))){
+			$eventTracker = true;
+		}
+
 		$PlusMouseParallax = false;
 		if(!empty($attr['PlusMouseParallax']) && !empty($attr['PlusMouseParallax']['tpgbReset'])){
 			$PlusMouseParallax = true;
@@ -383,7 +448,7 @@ class Tpgbp_Pro_Blocks_Helper {
 		if((!empty($attr['globalCssFilter']) && !empty($attr['globalCssFilter']['openFilter'])) || (!empty($attr['globalHCssFilter']['openFilter']) && !empty($attr['globalHCssFilter']))){
 			$output .= '</div>';
 		}
-		if(!empty($Plus3DTilt) || !empty($PlusMouseParallax) || !empty($globalTooltip) || !empty($advBorderRadius)){
+		if(!empty($Plus3DTilt) || !empty($PlusMouseParallax) || !empty($globalTooltip) || !empty($advBorderRadius) || !empty($eventTracker)){
 			$output .= '</div>';
 		}
 		
@@ -480,8 +545,12 @@ class Tpgbp_Pro_Blocks_Helper {
 					$pro_blocks[] = 'tpgx-carousel-tooltip';
 				}
 
-			}else if( isset($options['showpagi']) && !empty($options['showpagi']) ){
+			}
+			if( isset($options['showpagi']) && !empty($options['showpagi']) ){
 				$pro_blocks[] = 'tpgx-carousel-pagination';
+			}
+			if( isset($options['carobtn']) && !empty($options['carobtn']) ){
+				$pro_blocks[] = 'tpgx-carousel-button';
 			}else{
 				$pro_blocks[] = 'tpgx-carousel-button';
 			}
@@ -544,26 +613,49 @@ class Tpgbp_Pro_Blocks_Helper {
 			if(!empty($options) && ( !empty($options['deepBgopt']) && $options['deepBgopt'] == 'bg_color' ) ){	//Animated Color
 				$pro_blocks[] = 'tpgb-row-animated-color';   
 			}
-			if(!empty($options) && !empty($options['deepBgopt']) && ( $options['deepBgopt'] == 'bg_image' || $options['deepBgopt'] == 'bg_video' || $options['deepBgopt'] == 'bg_gallery' ) ) {	//Bg Image/Video/Gallery
-				$pro_blocks[] = 'tpgb-row-background';   
+			
+			if( !empty($options) && !empty($options['deepBgopt']) && $options['deepBgopt'] == 'bg_image' && isset($options['imgeffect']) && !isset($options['craBgeffect']) && !empty($options['imgeffect']) && ( $options['imgeffect'] == 'style-1' || $options['imgeffect'] == 'style-2' ) ) {
+				$pro_blocks[] = 'tpgb-image-parallax'; 
 			}
-			if(!empty($options) && !empty($options['midOption']) && ( $options['midOption'] == 'canvas' || $options['midOption'] == 'mordern_image_effect' || $options['midOption'] == 'moving_image' ) ) {	//Middle LayerLayer
-				$pro_blocks[] = 'tpgb-row-background';   
+
+			if( !empty($options) && ( (!empty($options['deepBgopt']) && $options['deepBgopt'] == 'bg_image' && isset($options['craBgeffect']) && !empty($options['craBgeffect']) && $options['craBgeffect'] = 'columns_animated_bg') || ( !empty($options['midOption']) && $options['midOption'] == 'moving_image' ) ) ){
+				$pro_blocks[] = 'tpgb-image-moving';
+			}	
+
+			if( !empty($options) && !empty($options['deepBgopt']) && $options['deepBgopt'] == 'bg_image'  && isset($options['scrollPara']) && !empty($options['scrollPara']) ){
+				$pro_blocks[] = 'tpgb-scroll-parallax';
+			} 
+
+			if( !empty($options) && !empty($options['deepBgopt']) && $options['deepBgopt'] == 'bg_video' && !isset($options['videosour'])  && isset($options['youtubeId']) && !empty($options['youtubeId']) ){
+				$pro_blocks[] = 'tpgb-youtube-video';
 			}
+
+			if( !empty($options) && !empty($options['deepBgopt']) && $options['deepBgopt'] == 'bg_video' && isset($options['videosour']) && !empty($options['videosour']) && $options['videosour'] == 'vimeo' ){
+				$pro_blocks[] = 'tpgb-vimeo-video';
+			}
+
+			if( !empty($options) && !empty($options['deepBgopt']) && $options['deepBgopt'] == 'bg_gallery' ){
+				$pro_blocks[] = 'tpgb-bg-gallery';
+			}
+
 			if( !empty($options) && !empty($options['midOption']) && ( $options['midOption'] == 'mordern_image_effect' ) ){
 				$pro_blocks[] = 'tpgb-magic-scroll';
             	$pro_blocks[] = 'tpgb-magic-scroll-custom';
+				$pro_blocks[] = 'tpgb-mordern-parallax';
 			}
 			
 			if(!empty($options) && ( !empty($options['scrollPara']) || ( !empty($options['midOption']) && $options['midOption'] == 'mordern_image_effect') ) ){	//scroll Parallax/Mordern Parallax
 				$pro_blocks[] = 'tpgb-magic-scroll';
 			}
-			if(!empty($options) && !empty($options['midOption']) && $options['midOption'] == 'canvas'  ){	//Canvas
-				$pro_blocks[] = 'tpgb-canvas-particle';   
+
+			if( !empty($options) && !empty($options['midOption']) && $options['midOption'] == 'canvas' && isset($options['canvasSty']) && !empty($options['canvasSty']) ){	//Canvas
+				$pro_blocks[] = 'tpgb-canvas-particle';
 			}
-			if(!empty($options) && !empty($options['deepBgopt']) && $options['deepBgopt'] == 'bg_gallery' ){	//Gallery Vegas
-				$pro_blocks[] = 'tpgb-bg-gallery';   
+
+			if( !empty($options) && !empty($options['midOption']) && $options['midOption'] == 'canvas' && isset($options['canvasSty']) && !empty($options['canvasSty']) && $options['canvasSty'] == 'style-4' ){
+				$pro_blocks[] = 'tpgb-canvas-particleground';   
 			}
+
 			if(!empty($options) && !empty($options['deepBgopt']) && ($options['deepBgopt'] == 'bg_animate_gradient' || $options['deepBgopt'] == 'scroll_animate_color' ) ){	//scroll bg color
 				$pro_blocks[] = 'tpgb-scrollbg-animation';   
 			}
@@ -1136,8 +1228,15 @@ class Tpgbp_Pro_Blocks_Helper {
 		if(!empty($fontawesome_pro)){
 			$fontAwesomePro = $fontawesome_pro;
 		}
+		$splineJsSrc = '';
+		if (defined('TPGBP_URL')) {
+			$splineJsSrc = TPGBP_URL.'assets/js/main/spline-3d-viewer/spline-viewer.js';
+		}
 		
+		$eventTracker = apply_filters( 'tpgb_event_tracking', [] );
+
 		$pro_data = array(
+			'splinejsurl' => (!empty($splineJsSrc)) ? esc_url($splineJsSrc) : '',
 			'menu_lists' => $this->get_menu_lists(),
 			'shapeDivider' => $this->getShapeDivider(),
 			'fontawesome' => $fontAwesomePro,
@@ -1145,6 +1244,10 @@ class Tpgbp_Pro_Blocks_Helper {
 			'tpgb_page_list' => $this->tpgb_get_page_list(),
 			'tpgb_user_role' => $this->tpgbp_get_user_role(),
 			'tpgb_current_user' => $this->tpgbp_get_current_user(),
+			'tpgb_developer' => TPGBP_DEVELOPER,
+			'tpgb_event_tracking' => $eventTracker['switch'],
+			'event_track_google' => $eventTracker['google_track'],
+			'event_track_facebook' => $eventTracker['facebook_track'],
 		);
 		
 		$pro_data = array_merge($data, $pro_data);
@@ -1192,6 +1295,7 @@ class Tpgbp_Pro_Blocks_Helper {
 			'tp-popup-builder' => TPGBP_CATEGORY.'/tp-popup-builder',
 			'tp-post-navigation' => TPGBP_CATEGORY.'/tp-post-navigation',
 			'tp-preloader' => TPGBP_CATEGORY.'/tp-preloader',
+			'tp-pricing-table' => TPGBP_CATEGORY.'/tp-pricing-table',
 			'tp-process-steps' => TPGBP_CATEGORY.'/tp-process-steps',
 			'tp-product-listing' => TPGBP_CATEGORY.'/tp-product-listing',
 			'tp-scroll-navigation' => TPGBP_CATEGORY.'/tp-scroll-navigation',
@@ -1199,6 +1303,7 @@ class Tpgbp_Pro_Blocks_Helper {
 			'tp-social-feed' => TPGBP_CATEGORY.'/tp-social-feed',
 			'tp-social-sharing' => TPGBP_CATEGORY.'/tp-social-sharing',
 			'tp-social-reviews' => TPGBP_CATEGORY.'/tp-social-reviews',
+			'tp-spline-3d-viewer' => TPGBP_CATEGORY.'/tp-spline-3d-viewer',
 			'tp-switcher' => TPGBP_CATEGORY.'/tp-switcher',
 			'tp-table-content' => TPGBP_CATEGORY.'/tp-table-content',
 			'tp-team-listing' => TPGBP_CATEGORY.'/tp-team-listing',
@@ -1222,7 +1327,7 @@ class Tpgbp_Pro_Blocks_Helper {
 		$tpgb_free = TPGB_PATH . DIRECTORY_SEPARATOR;
 
 		$pro_blocks_register = [
-			'tpgb_lazyLoad' => [
+			/* 'tpgb_lazyLoad' => [
 				'css' => [
 					$tpgb_pro .'assets/css/main/lazy_load/tpgb-lazy_load.css',
 				],
@@ -1230,7 +1335,7 @@ class Tpgbp_Pro_Blocks_Helper {
 					$tpgb_pro . 'assets/js/extra/lazyload.min.js',
 					$tpgb_pro . 'assets/js/main/lazy_load/tpgb-lazy_load.js',
 				],
-			],
+			], */
 			TPGBP_CATEGORY.'/tp-row' => [
 				'css' => [
 					$tpgb_pro .'assets/css/main/plus-extras/plus-row-bg.css',
@@ -1257,9 +1362,31 @@ class Tpgbp_Pro_Blocks_Helper {
 					$tpgb_pro . 'assets/js/main/row-background/tpgb-row-animate.min.js',
 				],
 			],
-			'tpgb-row-background' => [
+			'tpgb-image-parallax' => [
 				'js' => [
-					$tpgb_pro . 'assets/js/main/row-background/tpgb-row-background.min.js',
+					$tpgb_pro . 'assets/js/main/row-background/tpgb-image-parellax.min.js',
+				],
+			],
+			'tpgb-image-moving' => [
+				'js' => [
+					$tpgb_pro . 'assets/js/main/row-background/tpgb-image-moving.min.js',
+				],
+			],
+			'tpgb-scroll-parallax' => [
+				'js' => [
+					$tpgb_pro . 'assets/js/main/row-background/tpgb-scroll-parallax.min.js',
+				],
+			],
+			'tpgb-youtube-video' => [
+				'js' => [
+					$tpgb_pro . 'assets/js/main/row-background/tpgb-video-common.min.js',
+					$tpgb_pro . 'assets/js/main/row-background/tpgb-youtube-video.min.js',
+				],
+			],
+			'tpgb-vimeo-video' => [
+				'js' => [
+					$tpgb_pro . 'assets/js/main/row-background/tpgb-video-common.min.js',
+					$tpgb_pro . 'assets/js/main/row-background/tpgb-vimeo-video.min.js',
 				],
 			],
 			'tpgb-bg-gallery' => [
@@ -1268,6 +1395,8 @@ class Tpgbp_Pro_Blocks_Helper {
 				],
 				'js' => [					
 					$tpgb_pro . 'assets/js/extra/vegas.js',
+					$tpgb_pro . 'assets/js/main/row-background/tpgb-imge-slide.min.js',
+
 				],
 			],
 			'tpgb-magic-scroll' => [
@@ -1293,7 +1422,18 @@ class Tpgbp_Pro_Blocks_Helper {
 			'tpgb-canvas-particle' => [
 				'js' => [
 					$tpgb_pro . 'assets/js/extra/particles.min.js',
+					$tpgb_pro . 'assets/js/main/row-background/tpgb-canvas.min.js',
+				],
+			],
+			'tpgb-canvas-particleground' => [
+				'js' => [
 					$tpgb_pro . 'assets/js/extra/jquery.particleground.js',
+					$tpgb_pro . 'assets/js/main/row-background/tpgb-canvas-particle-ground.min.js',
+				],
+			],
+			'tpgb-mordern-parallax' => [
+				'js' => [
+					$tpgb_pro . 'assets/js/main/row-background/tpgb-mordern-parallax.min.js',
 				],
 			],
 			TPGBP_CATEGORY.'/tp-column' => [
@@ -1355,10 +1495,13 @@ class Tpgbp_Pro_Blocks_Helper {
 				]
 			],
 			'tpx-adv-btn-cta-style-5' => [
-				'css' => [
-					$tpgb_pro .'classes/blocks/tp-advanced-buttons/cta/style-5.css',
-				]
-			],
+                'css' => [
+                    $tpgb_pro .'classes/blocks/tp-advanced-buttons/cta/style-5.css',
+                ],
+                'js' => [
+                    $tpgb_pro . 'assets/js/main/advanced-buttons/tpgb-advanced-button-style-5.min.js',
+                ],
+            ],
 			'tpx-adv-btn-cta-style-6' => [
 				'css' => [
 					$tpgb_pro .'classes/blocks/tp-advanced-buttons/cta/style-6.css',
@@ -1445,7 +1588,7 @@ class Tpgbp_Pro_Blocks_Helper {
 					$tpgb_pro . 'assets/js/extra/tweenmax/gsap.min.js',
 					$tpgb_pro . 'assets/js/extra/imagerevealdemo.js',
 					$tpgb_pro . 'assets/js/extra/circletype.min.js',
-					$tpgb_pro . 'assets/js/main/adv-typo/adv-typo.js',
+					$tpgb_pro . 'assets/js/main/adv-typo/adv-typo.min.js',
 				],
 			],
 			'tpx-adv-typo-normal-overlay' => [
@@ -1808,6 +1951,7 @@ class Tpgbp_Pro_Blocks_Helper {
 				'js' => [
 					$tpgb_free . 'assets/js/extra/isotope.pkgd.min.js',
 					$tpgb_pro . 'assets/js/extra/imagesloaded.pkgd.min.js',
+					$tpgb_free . 'assets/js/main/common-created/tpgb-slidetoggle-block.min.js',
 					$tpgb_pro . 'assets/js/main/post-listing/post-masonry.min.js',
 					$tpgb_pro . 'assets/js/main/post-listing/post-listing.min.js',
 				],
@@ -1963,6 +2107,7 @@ class Tpgbp_Pro_Blocks_Helper {
 				],
 				'js' => [
 					$tpgb_pro .'assets/js/extra/tocbot.min.js',
+					$tpgb_free . 'assets/js/main/common-created/tpgb-slidetoggle-block.min.js',
 					$tpgb_pro .'assets/js/main/table-content/tp-table-content.min.js',
 				],
 			],
@@ -2400,6 +2545,11 @@ class Tpgbp_Pro_Blocks_Helper {
 					$tpgb_pro .'classes/blocks/tp-social-reviews/beach/style-3.css',
 				],
 			],
+			TPGBP_CATEGORY.'/tp-spline-3d-viewer' => [
+				'css' => [				
+					$tpgb_pro .'classes/blocks/tp-spline-3d-viewer/style.css',
+				],
+			],
 			TPGBP_CATEGORY.'/tp-timeline' => [
 				'css' => [				
 					$tpgb_pro .'classes/blocks/tp-timeline/style.css',
@@ -2828,6 +2978,7 @@ class Tpgbp_Pro_Blocks_Helper {
 			TPGBP_CATEGORY.'/tp-popup-builder' => TPGBP_CATEGORY.'/tp-popup-builder',
 			TPGBP_CATEGORY.'/tp-post-navigation' => TPGBP_CATEGORY.'/tp-post-navigation',
 			TPGBP_CATEGORY.'/tp-preloader' => TPGBP_CATEGORY.'/tp-preloader',
+			TPGBP_CATEGORY.'/tp-pricing-table' => TPGBP_CATEGORY.'/tp-pricing-table',
 			TPGBP_CATEGORY.'/tp-process-steps' => TPGBP_CATEGORY.'/tp-process-steps',
 			TPGBP_CATEGORY.'/tp-product-listing' => TPGBP_CATEGORY.'/tp-product-listing',
 			TPGBP_CATEGORY.'/tp-scroll-navigation' => TPGBP_CATEGORY.'/tp-scroll-navigation',
@@ -2835,6 +2986,7 @@ class Tpgbp_Pro_Blocks_Helper {
 			TPGBP_CATEGORY.'/tp-social-feed' => TPGBP_CATEGORY.'/tp-social-feed',
 			TPGBP_CATEGORY.'/tp-social-sharing' => TPGBP_CATEGORY.'/tp-social-sharing',
 			TPGBP_CATEGORY.'/tp-social-reviews' => TPGBP_CATEGORY.'/tp-social-reviews',
+			TPGBP_CATEGORY.'/tp-spline-3d-viewer' => TPGBP_CATEGORY.'/tp-spline-3d-viewer',
 			TPGBP_CATEGORY.'/tp-switcher' => TPGBP_CATEGORY.'/tp-switcher',
 			TPGBP_CATEGORY.'/tp-switch-inner' => TPGBP_CATEGORY.'/tp-switch-inner',
 			TPGBP_CATEGORY.'/tp-table-content' => TPGBP_CATEGORY.'/tp-table-content',
@@ -3356,6 +3508,74 @@ class Tpgbp_Pro_Blocks_Helper {
 			}
 		}
 		
+		/* Jet Engine Meta Box */
+		if ( class_exists( 'Jet_Engine' ) ) {
+			$output = array();
+
+			$tpgb_jet_ex = [
+				'iconpicker',
+				'html',
+				'repeater',
+				'gallery',
+			];
+
+			$tpgb_jet_ex_obj = [
+				'tab',
+				'accordion',
+				'endpoint',
+			];
+
+			$tpgb_jet_groups = jet_engine()->meta_boxes->data->raw;
+			$uni_groups = jet_engine()->meta_boxes->data->db->query_cache;
+
+			foreach ( $tpgb_jet_groups as $field_group ) {
+
+				$tpgbjetfield = [];
+				$tpgbjetUrl = [];
+				$tpgbjetImg = [];
+				$tpgbjetColor = [];
+
+				foreach ( $field_group['meta_fields'] as $field ) {
+					if ( ! in_array( $field['type'], $tpgb_jet_ex ) && ! in_array( $field['object_type'], $tpgb_jet_ex_obj ) ) {
+						if( !empty( $field['name'] ) && in_array( $field['type'], ['text','date','time','datetime-local','textarea','wysiwyg','number' , 'radio' , 'select'] )){
+							$tpgbjetfield[] = [  $field['name'], $field['title']];
+						}
+						if(!empty( $field['name'] ) && in_array($field['type'] , ['media','gallery'])){
+							$tpgbjetImg[] = [ $field['name'] , $field['title'] ];
+						}
+						if(!empty( $field['name'] ) && $field['type'] == 'colorpicker'){
+							$tpgbjetColor[] = [ $field['name'] , $field['title'] ];
+						}
+					}
+				}
+
+				if(!empty($tpgbjetfield)){
+					$dynamicList['text'][] = [
+						[
+							'label' => esc_html('JetEngine('.$field_group['args']['name'].')'),
+							'options' => $tpgbjetfield,
+						]
+					];
+				}
+				if(!empty($tpgbjetImg) ) {
+					$dynamicList['image'][] = [ 
+						[ 
+							'label' => esc_html('JetEngine('.$field_group['args']['name'].')'),
+							'options' => $tpgbjetImg
+						]
+					];
+				}
+				if(!empty($tpgbjetColor) ) {
+					$dynamicList['color'][] = [
+						[ 
+							'label' => esc_html('JetEngine('.$field_group['args']['name'].')'),
+							'options' => $tpgbjetColor
+						]
+					];
+				}
+			}
+		}
+
 		return $dynamicList;
 	}
 	
@@ -3412,6 +3632,24 @@ class Tpgbp_Pro_Blocks_Helper {
 		}
 	}
 	
+	// Convert Nested Std Object To array
+	public function stdToArray($array){
+		if (is_array($array)) {
+			foreach ($array as $key => $value) {
+				if (is_array($value)) {
+						$array[$key] = $this->stdToArray($value);
+				}
+				if ($value instanceof stdClass) {
+						$array[$key] = $this->stdToArray((array)$value);
+				}
+			}
+		}
+		if ($array instanceof stdClass) {
+			return $this->stdToArray((array)$array);
+		}
+		return $array;
+	}
+
 	/*
 	 * Get Post on ajax call Load More & Lazy Load
 	 * @since 1.2.1
@@ -3455,8 +3693,8 @@ class Tpgbp_Pro_Blocks_Helper {
 		$order = isset( $postdata["post_order"] ) ? sanitize_text_field( wp_unslash($postdata["post_order"]) ) : '';
 		$post_load_more = (isset( $postdata["load_more"] ) && intval($postdata["load_more"]) ) ?  wp_unslash($postdata["load_more"]) : '';
 		$paged = (isset( $postdata["page"] ) && intval($postdata["page"]) ) ?  wp_unslash($postdata["page"]) : '';
-		$display_post = ( isset( $postdata["display_post"] ) && intval($postdata["display_post"]) ) ?  wp_unslash($postdata["display_post"]) : '';
 
+		$display_post = (isset( $postdata["display_post"] ) && intval($postdata["display_post"]) ) ?  wp_unslash($postdata["display_post"]) : '';
 		$showPostMeta = isset( $postdata["display_post_meta"] ) ? sanitize_text_field( wp_unslash($postdata["display_post_meta"]) ) : '';
 		$postMetaStyle = isset( $postdata["meta_style"] ) ? sanitize_text_field( wp_unslash($postdata["meta_style"]) ) : '';
 		$ShowDate = isset( $postdata["showdate"] ) ? sanitize_text_field( wp_unslash($postdata["showdate"]) ) : '';
@@ -3478,7 +3716,7 @@ class Tpgbp_Pro_Blocks_Helper {
 		$showExcerpt = isset( $postdata["display_excerpt"] ) ? sanitize_text_field( wp_unslash($postdata["display_excerpt"]) ) : '';
 		$excerptByLimit = isset( $postdata["excerptByLimit"] ) ? wp_unslash($postdata["excerptByLimit"]) : '';
 		$excerptLimit = isset( $postdata["excerptLimit"] ) ? wp_unslash($postdata["excerptLimit"]) : '';
-
+		
 		$ShowButton = isset( $postdata['displaybuttton'] ) ? sanitize_text_field( wp_unslash($postdata['displaybuttton']) ) : '';
 		$postbtntext = isset( $postdata['postbtntext'] ) ? sanitize_text_field( wp_unslash($postdata['postbtntext']) ) : '';
 		$postBtnsty = isset( $postdata['buttonstyle'] ) ? sanitize_text_field( wp_unslash($postdata['buttonstyle']) ) : '';
@@ -3499,8 +3737,11 @@ class Tpgbp_Pro_Blocks_Helper {
 		$searchTxt = isset( $postdata["searchTxt"] ) ? wp_unslash($postdata["searchTxt"]) : '';
 		$customQueryId = !empty( $postdata['customQueryId'] ) ? $postdata['customQueryId'] : '';
 		$showcateTag = !empty( $postdata['showcateTag'] ) ? sanitize_text_field( wp_unslash($postdata['showcateTag']) ) : '';
-		
+		$cuscntType = !empty( $postdata['cuscntType'] ) ? sanitize_text_field( wp_unslash($postdata['cuscntType']) ) : '';
+		$block_instance = isset( $postdata['blockArr'] ) ? wp_unslash($postdata['blockArr']) : '';
+		$block_instance = $this->stdToArray($block_instance);
 		$content = '';
+	
 		$column_class = '';
 		if($layout!='carousel' && $layout!='metro'){
 			$column_class .= " tpgb-col-lg-".esc_attr($desktop_column);
@@ -3523,7 +3764,6 @@ class Tpgbp_Pro_Blocks_Helper {
 			$args['post__not_in'] =  explode(',', $excludePosts);
 		}
 
-		// Search Query
 		if( !empty($searchTxt)){
 			$args['s'] = $searchTxt;
 		}
@@ -3555,7 +3795,7 @@ class Tpgbp_Pro_Blocks_Helper {
 			}
 		}else{
 			if (!empty($posttype) && ($posttype !='post' && $posttype !='product')) {
-				if ( !empty($taxonomySlug) && $taxonomySlug=='category' && !empty($category)) {
+				if ( !empty($taxonomySlug) && $taxonomySlug == 'category' && !empty($category)) {
 					$args['tax_query'] = array(
 						array(
 							'taxonomy' => 'category',
@@ -3563,6 +3803,16 @@ class Tpgbp_Pro_Blocks_Helper {
 							'terms' => $category,
 						),
 					);
+				}else{
+					if(!empty($category)){
+						$args['tax_query'] = array(
+							array(
+								'taxonomy' => $taxonomySlug,
+								'field' => 'term_id',
+								'terms' => $category,
+							),
+						);
+					}
 				}
 			}else{
 				$args[$taxonomySlug] = $category;
@@ -3741,18 +3991,21 @@ class Tpgbp_Pro_Blocks_Helper {
 			$args['orderby'] = 'relevance';
 			$args['posts_per_page'] =  -1;
 		}
-		
 		$count=($post_load_more*$paged)-$post_load_more+(int)$display_post+1;
 
-		/*custom query id*/
+        /*custom query id*/
 		if( !empty($customQueryId) ){
+			
 			if(has_filter( $customQueryId )) {
 				$args = apply_filters( $customQueryId, $args);
 			}
 		}
-		$col=$tabCol=$moCol='';
+		/*custom query id*/
 		
+		$col=$tabCol=$moCol='';
+
 		$loop = new WP_Query($args);
+
 		if ( $loop->have_posts() ) {
 			ob_start();
 			while ($loop->have_posts()) {
@@ -3835,7 +4088,7 @@ class Tpgbp_Pro_Blocks_Helper {
 							(object) [ 'key' => 'dotsStyle', 'relation' => '==', 'value' => ['style-2','style-4','style-5','style-7'] ],
 							(object) [ 'key' => 'showDots', 'relation' => '==', 'value' => true ]
 						],
-						'selector' => '{{PLUS_WRAP}}.dots-style-2 .splide__pagination li button.is-active::after,{{PLUS_WRAP}}.dots-style-4 .splide__pagination li button.is-active,{{PLUS_WRAP}}.dots-style-5 .splide__pagination li:hover button,{{PLUS_WRAP}}.dots-style-5 .splide__pagination li button.is-active,{{PLUS_WRAP}}.dots-style-7 .splide__pagination li button.is-active{background: {{dotsActiveBgColor}};}',
+						'selector' => '{{PLUS_WRAP}}.dots-style-2 .splide__pagination li button.is-active::after,{{PLUS_WRAP}}.dots-style-4 .splide__pagination li button.is-active::before,{{PLUS_WRAP}}.dots-style-5 .splide__pagination li:hover button,{{PLUS_WRAP}}.dots-style-5 .splide__pagination li button.is-active,{{PLUS_WRAP}}.dots-style-7 .splide__pagination li button.is-active{background: {{dotsActiveBgColor}};}',
 					],
 				],
 				'scopy' => true,
@@ -4286,7 +4539,7 @@ class Tpgbp_Pro_Blocks_Helper {
 				}
 			}
 			if(!empty($style)){
-			  include TPGBP_INCLUDES_URL. 'social-reviews/social-review-'.esc_attr($style).'.php';
+				include TPGBP_INCLUDES_URL. 'social-reviews/'.sanitize_file_name('social-review-'.$style.'.php');
 			}
 		}
 		
@@ -4468,7 +4721,7 @@ class Tpgbp_Pro_Blocks_Helper {
 				if( ($F_index < $TotalPost) && ( ($MediaFilter == 'default') || ($MediaFilter == 'ompost' && !empty($PostLink) && !empty($PostImage)) || ($MediaFilter == 'hmcontent' &&  empty($PostLink) && empty($PostImage) )) ){
 					echo '<div class="grid-item splide__slide '.esc_attr('feed-'.$selectFeed.' '.$desktop_class.' '.$RKey.' '.$category_filter).'" data-index="'.esc_attr($selectFeed.$F_index).'">';				
 						if(!empty($style)){
-							include TPGBP_INCLUDES_URL. 'social-feed/social-feed-'.$style.'.php';
+							include TPGBP_INCLUDES_URL. 'social-feed/'.sanitize_file_name('social-feed-'.$style.'.php');
 						}
 					echo '</div>';
 				}

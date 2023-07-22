@@ -14,7 +14,7 @@
 	<div class="tpgb-content-bottom">
 		<?php
 		if($showPostCategory=='yes'){
-			include TPGBP_INCLUDES_URL. 'blog/category-'.esc_attr($postCategoryStyle).'.php';
+			include TPGBP_INCLUDES_URL. 'blog/'.sanitize_file_name('category-'.$postCategoryStyle.'.php');
 		}
 		if(!empty($ShowTitle) && $ShowTitle=='yes'){
 			include TPGBP_INCLUDES_URL. 'blog/post-title.php';
@@ -27,7 +27,7 @@
 			}
 			
 			if(!empty($showPostMeta) && $showPostMeta=='yes'){
-				include TPGBP_INCLUDES_URL. 'blog/post-meta-'.esc_attr($postMetaStyle).'.php';
+				include TPGBP_INCLUDES_URL. 'blog/'.sanitize_file_name('post-meta-'.$postMetaStyle.'.php');
 			} ?>
 		</div>
 	</div>

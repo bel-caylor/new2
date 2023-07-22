@@ -235,10 +235,11 @@ function tpgb_circle_menu_render_callback( $attributes, $content) {
 						
 			$output .= '</ul>';
 		$output .= '</div>';
+		if(!empty($loopStyle)){
+			$output .= '<style>'.$loopStyle.'</style>';
+		}
 	$output .= '</div>';
-	if(!empty($loopStyle)){
-		$output .= '<style>'.$loopStyle.'</style>';
-	}
+
 	$output = Tpgb_Blocks_Global_Options::block_Wrap_Render($attributes, $output);
     return $output;
 }
@@ -838,6 +839,10 @@ function tpgb_circle_menu() {
 				(object) [
 					'selector' => '{{PLUS_WRAP}} .tpgb-circle-menu-inner-wrapper .tpgb-circle-menu-list .main_menu_icon{ color: {{tIcnNmlColor}}; }',
 				],
+				(object) [
+					'condition' => [(object) ['key' => 'tglStyle', 'relation' => '==', 'value' => 'style-3' ]],
+					'selector' => '{{PLUS_WRAP}}.tpgb-circle-menu .tpgb-circle-main-menu-list.style-3 a.main_menu_icon .close-toggle-icon, {{PLUS_WRAP}}.tpgb-circle-menu .tpgb-circle-main-menu-list.style-3 a.main_menu_icon .close-toggle-icon:before{ background-color: {{tIcnNmlColor}}; }',
+				],
 			],
 			'scopy' => true,
 		],
@@ -847,6 +852,10 @@ function tpgb_circle_menu() {
 			'style' => [
 				(object) [
 					'selector' => '{{PLUS_WRAP}} .tpgb-circle-menu-inner-wrapper .tpgb-circle-menu-list:hover .main_menu_icon{ color: {{tIcnHvrColor}}; }',
+				],
+				(object) [
+					'condition' => [(object) ['key' => 'tglStyle', 'relation' => '==', 'value' => 'style-3' ]],
+					'selector' => '{{PLUS_WRAP}}.tpgb-circle-menu .tpgb-circle-main-menu-list.style-3 a.main_menu_icon:hover .close-toggle-icon, {{PLUS_WRAP}}.tpgb-circle-menu .tpgb-circle-main-menu-list.style-3 a.main_menu_icon:hover .close-toggle-icon:before{ background-color: {{tIcnHvrColor}}; }',
 				],
 			],
 			'scopy' => true,
@@ -1128,7 +1137,7 @@ function tpgb_circle_menu() {
 			'style' => [
 				(object) [
 					'condition' => [(object) ['key' => 'layoutType', 'relation' => '==', 'value' => 'straight' ], ['key' => 'menuStyle', 'relation' => '==', 'value' => 'style-2' ] ],
-					'selector' => '{{PLUS_WRAP}}.tpgb-circle-menu .menu-style-2 .menu-tooltip-title{padding: {{textPadding}};}',
+					'selector' => '{{PLUS_WRAP}}.layout-straight .menu-style-2 .menu-tooltip-title{padding: {{textPadding}};}',
 				],
 			],
 			'scopy' => true,
@@ -1139,7 +1148,7 @@ function tpgb_circle_menu() {
 			'style' => [
 				(object) [
 					'condition' => [(object) ['key' => 'layoutType', 'relation' => '==', 'value' => 'straight' ], ['key' => 'menuStyle', 'relation' => '==', 'value' => 'style-2' ] ],
-					'selector' => '{{PLUS_WRAP}}.tpgb-circle-menu .menu-style-2 .menu-tooltip-title{color: {{textNmlColor}};}',
+					'selector' => '{{PLUS_WRAP}}.layout-straight .menu-style-2 .menu-tooltip-title{color: {{textNmlColor}};}',
 				],
 			],
 			'scopy' => true,
@@ -1150,7 +1159,7 @@ function tpgb_circle_menu() {
 			'style' => [
 				(object) [
 					'condition' => [(object) ['key' => 'layoutType', 'relation' => '==', 'value' => 'straight' ], ['key' => 'menuStyle', 'relation' => '==', 'value' => 'style-2' ] ],
-					'selector' => '{{PLUS_WRAP}}.tpgb-circle-menu .menu-style-2 .tpgb-circle-menu-list:hover .menu-tooltip-title{color: {{textHvrColor}};}',
+					'selector' => '{{PLUS_WRAP}}.layout-straight .menu-style-2 .tpgb-circle-menu-list:hover .menu-tooltip-title{color: {{textHvrColor}};}',
 				],
 			],
 			'scopy' => true,

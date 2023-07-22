@@ -17,11 +17,11 @@
 	
 		<?php if(!empty($showPostCategory) && $showPostCategory=='yes'){        
 		?>
-			<?php include TPGBP_INCLUDES_URL. 'blog/category-'.$postCategoryStyle.'.php'; ?>
+			<?php include TPGBP_INCLUDES_URL. 'blog/'.sanitize_file_name('category-'.$postCategoryStyle.'.php'); ?>
 		<?php } ?>
 
 		<?php if(!empty($showPostMeta) && $showPostMeta=='yes'){ ?>
-			<?php include TPGBP_INCLUDES_URL. 'blog/post-meta-'.$postMetaStyle.'.php'; ?>
+			<?php include TPGBP_INCLUDES_URL. 'blog/'.sanitize_file_name('post-meta-'.$postMetaStyle.'.php'); ?>
 		<?php } ?>
 		
 		<?php if(!empty($ShowTitle) && $ShowTitle=='yes'){

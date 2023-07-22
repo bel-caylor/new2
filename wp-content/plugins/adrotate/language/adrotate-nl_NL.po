@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AdRotate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-15 17:49-0700\n"
-"PO-Revision-Date: 2023-04-15 18:00-0700\n"
+"POT-Creation-Date: 2023-05-25 00:26-0600\n"
+"PO-Revision-Date: 2023-05-25 00:27-0600\n"
 "Last-Translator: Arnan de Gans <support@ajdg.solutions>\n"
 "Language-Team: Arnan de Gans\n"
 "Language: nl\n"
@@ -448,20 +448,20 @@ msgid "Buy now"
 msgstr "Koop nu"
 
 #: adrotate-output.php:928
-msgid "Two Site License"
-msgstr "Twee Site Licentie"
+msgid "Duo License"
+msgstr "Duo Licentie"
 
 #: adrotate-output.php:928
 msgid "Use on TWO WordPress installations."
 msgstr "Gebruik op twee WordPress-installaties."
 
 #: adrotate-output.php:939
-msgid "Need help fast? Or do you have a question?"
-msgstr "Snel hulp nodig? Of heb je een vraag?"
+msgid "Do you have a question?"
+msgstr "Heb je een vraag?"
 
 #: adrotate-output.php:940
-msgid "Help AdRotate Banner Manager Grow"
-msgstr "Help AdRotate Banner Manager groeien"
+msgid "Support AdRotate Banner Manager"
+msgstr "Ondersteun AdRotate Banner Manager"
 
 #: adrotate-output.php:947
 msgid ""
@@ -489,14 +489,12 @@ msgstr "Koop supportticket"
 msgid ""
 "Arnan needs your help. Please consider writing a review or sharing AdRotate "
 "in Social media if you find the plugin useful. Writing a review and sharing "
-"AdRotate on social media costs you nothing but doing so is super helpful to "
-"ensure future development."
+"AdRotate on social media costs you nothing but doing so is super helpful."
 msgstr ""
 "Arnan heeft jouw hulp nodig. Overweeg alsjeblieft om een recensie te "
 "schrijven of AdRotate te delen in sociale media als je de plug-in nuttig "
-"vindt. Het schrijven van een recensie en het delen van AdRotate op sociale "
-"media kost je niets, maar dit is super nuttig om toekomstige ontwikkeling te "
-"garanderen."
+"vindt. Het schrijven van een review en het delen van AdRotate op social "
+"media kost je niets, maar dit is super nuttig."
 
 #: adrotate-output.php:955
 msgid "Post Tweet"
@@ -3470,6 +3468,9 @@ msgstr ""
 "codes of lay-outstijlen kunnen worden toegepast bij het bewerken van de "
 "groep."
 
+#~ msgid "Two Site License"
+#~ msgstr "Twee Site Licentie"
+
 #~ msgid ""
 #~ "When posting on the forum, please include a brief description of the "
 #~ "problem, include any errors or symptoms. Often it helps if you try to "
@@ -3516,9 +3517,6 @@ msgstr ""
 #~ "advertentiebeheer. Bekijk het tabblad met de vergelijking van functies op "
 #~ "een van de productpagina's om te zien wat AdRotate Pro voor u te bieden "
 #~ "heeft!"
-
-#~ msgid "Multi License"
-#~ msgstr "Multi Licentie"
 
 #~ msgid "Use on up to FIVE WordPress installations."
 #~ msgstr "Gebruik maximaal vijf WordPress-installaties."

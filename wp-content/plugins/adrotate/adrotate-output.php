@@ -925,7 +925,7 @@ function adrotate_credits() {
 	echo '<td>
 		<p><a href="https://ajdg.solutions/product/adrotate-pro-single/?mtm_campaign=adrotate&mtm_keyword=credits" target="_blank"><strong>'.__('Single License', 'adrotate').' (&euro; 39.00)</strong></a><br /><em>'.__('Use on ONE WordPress installation.', 'adrotate').' <a href="https://ajdg.solutions/?add-to-cart=1124&mtm_campaign=adrotate&mtm_keyword=credits" target="_blank">'.__('Buy now', 'adrotate').' &raquo;</a></em></p>
 
-		<p><a href="https://ajdg.solutions/product/adrotate-pro-duo/?mtm_campaign=adrotate&mtm_keyword=credits" target="_blank"><strong>'.__('Two Site License', 'adrotate').' (&euro; 49.00)</strong></a><br /><em>'.__('Use on TWO WordPress installations.', 'adrotate').' <a href="https://ajdg.solutions/?add-to-cart=1126&mtm_campaign=adrotate&mtm_keyword=credits" target="_blank">'.__('Buy now', 'adrotate').' &raquo;</a></em></p>
+		<p><a href="https://ajdg.solutions/product/adrotate-pro-duo/?mtm_campaign=adrotate&mtm_keyword=credits" target="_blank"><strong>'.__('Duo License', 'adrotate').' (&euro; 49.00)</strong></a><br /><em>'.__('Use on TWO WordPress installations.', 'adrotate').' <a href="https://ajdg.solutions/?add-to-cart=1126&mtm_campaign=adrotate&mtm_keyword=credits" target="_blank">'.__('Buy now', 'adrotate').' &raquo;</a></em></p>
 	</td>';
 
 	echo '</tr>';
@@ -936,8 +936,8 @@ function adrotate_credits() {
 
 	echo '<thead>';
 	echo '<tr valign="top">';
-	echo '	<th width="50%"><strong>'.__('Need help fast? Or do you have a question?', 'adrotate').'</strong></th>';
-	echo '	<th><strong>'.__('Help AdRotate Banner Manager Grow', 'adrotate').'</strong></th>';
+	echo '	<th width="50%"><strong>'.__('Do you have a question?', 'adrotate').'</strong></th>';
+	echo '	<th><strong>'.__('Support AdRotate Banner Manager', 'adrotate').'</strong></th>';
 	echo '</tr>';
 	echo '</thead>';
 
@@ -950,7 +950,7 @@ function adrotate_credits() {
 	</td>';
 
 	echo '<td>
-		<a href="https://wordpress.org/support/view/plugin-reviews/adrotate?rate=5#postform" title="Review AdRotate for WordPress"><img src="'.plugins_url('/images/icon-contact.png', __FILE__).'" alt="AdRotate Logo" width="60" height="60" align="left" style="padding:5px;" /></a><p>'.__('Arnan needs your help. Please consider writing a review or sharing AdRotate in Social media if you find the plugin useful. Writing a review and sharing AdRotate on social media costs you nothing but doing so is super helpful to ensure future development.').'</p>
+		<a href="https://wordpress.org/support/view/plugin-reviews/adrotate?rate=5#postform" title="Review AdRotate for WordPress"><img src="'.plugins_url('/images/icon-contact.png', __FILE__).'" alt="AdRotate Logo" width="60" height="60" align="left" style="padding:5px;" /></a><p>'.__('Arnan needs your help. Please consider writing a review or sharing AdRotate in Social media if you find the plugin useful. Writing a review and sharing AdRotate on social media costs you nothing but doing so is super helpful.').'</p>
 
 		<p><a href="https://twitter.com/intent/tweet?hashtags=wordpress%2Cplugin%2Cadvertising%2Cadrotate&related=arnandegans%2Cwordpress&text=I%20am%20using%20AdRotate%20for%20WordPress%20by%20@arnandegans.%20Check%20it%20out.&url=https%3A%2F%2Fwordpress.org/plugins/adrotate/" target="_blank" class="button-primary goosebox"><i class="icn-t"></i>'.__('Post Tweet').'</a> <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwordpress.org%2Fplugins%2Fadrotate%2F&hashtag=#adrotate" target="_blank" class="button-primary goosebox"><i class="icn-fb"></i>'.__('Share on Facebook').'</a> <a class="button-primary" target="_blank" href="https://ajdg.solutions/forums/forum/adrotate-for-wordpress/reviews/?rate=5#new-post">'.__('Write review on WordPress.org').'</a></p>
 	</td>';

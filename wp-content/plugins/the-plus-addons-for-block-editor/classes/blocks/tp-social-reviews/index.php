@@ -144,7 +144,7 @@ function tpgb_social_reviews_callback($attributes, $content) {
                     
                         if(!in_array($PostId, $nFeedId)){
                             ob_start();
-                                include TPGB_PATH. "includes/social-reviews/social-review-{$style}.php";
+                                include TPGB_PATH. "includes/social-reviews/".sanitize_file_name('social-review-'.$style.'.php');
                                 $reviews .= ob_get_contents();
                             ob_end_clean();
                         }

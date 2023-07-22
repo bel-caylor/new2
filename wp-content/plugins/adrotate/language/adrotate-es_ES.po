@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: AdRotate\n"
-"POT-Creation-Date: 2023-04-15 17:49-0700\n"
-"PO-Revision-Date: 2023-04-15 18:38-0700\n"
+"POT-Creation-Date: 2023-05-25 00:28-0600\n"
+"PO-Revision-Date: 2023-05-25 00:28-0600\n"
 "Last-Translator: Arnan de Gans <support@ajdg.solutions>\n"
 "Language-Team: Arnan de Gans\n"
 "Language: es\n"
@@ -445,20 +445,20 @@ msgid "Buy now"
 msgstr "Comprar ahora"
 
 #: adrotate-output.php:928
-msgid "Two Site License"
-msgstr "Licencia de dos sitios"
+msgid "Duo License"
+msgstr "Licencia Duo"
 
 #: adrotate-output.php:928
 msgid "Use on TWO WordPress installations."
 msgstr "Uso en DOS instalaciones de WordPress."
 
 #: adrotate-output.php:939
-msgid "Need help fast? Or do you have a question?"
-msgstr "¿Necesita ayuda rápidamente? ¿O tienes alguna pregunta?"
+msgid "Do you have a question?"
+msgstr "¿Tienes alguna pregunta?"
 
 #: adrotate-output.php:940
-msgid "Help AdRotate Banner Manager Grow"
-msgstr "Ayuda a AdRotate Banner Manager a crecer"
+msgid "Support AdRotate Banner Manager"
+msgstr "Soporte AdRotate Banner Manager"
 
 #: adrotate-output.php:947
 msgid ""
@@ -487,13 +487,12 @@ msgstr "Comprar ticket de soporte"
 msgid ""
 "Arnan needs your help. Please consider writing a review or sharing AdRotate "
 "in Social media if you find the plugin useful. Writing a review and sharing "
-"AdRotate on social media costs you nothing but doing so is super helpful to "
-"ensure future development."
+"AdRotate on social media costs you nothing but doing so is super helpful."
 msgstr ""
 "Arnan necesita tu ayuda. Considere escribir una reseña o compartir AdRotate "
 "en las redes sociales si encuentra útil el complemento. Escribir una reseña "
 "y compartir AdRotate en las redes sociales no le cuesta nada, pero hacerlo "
-"es muy útil para garantizar el desarrollo futuro."
+"es muy útil."
 
 #: adrotate-output.php:955
 msgid "Post Tweet"
@@ -3471,3 +3470,6 @@ msgstr ""
 "Puede encontrar el ID de grupo en Administrar grupos. Cualquier marcado "
 "especial, código o estilo de diseño se puede aplicar en el contenedor de "
 "grupo al editar el grupo."
+
+#~ msgid "Two Site License"
+#~ msgstr "Licencia de dos sitios"

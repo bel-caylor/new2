@@ -8,14 +8,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="post-content-image">
 		<?php include TPGB_INCLUDES_URL. 'blog/format-image.php'; ?>
 		<?php if($showPostCategory=='yes' && $styleLayout=='style-2'){ ?>
-			<?php include TPGB_INCLUDES_URL. 'blog/category-'.$postCategoryStyle.'.php'; ?>
+			<?php include TPGB_INCLUDES_URL. 'blog/'.sanitize_file_name('category-'.$postCategoryStyle.'.php'); ?>
 		<?php } ?>
 	</div>
 
 	<div class="tpgb-content-bottom <?php echo ($style2Alignment=='center') ? 'text-center' : 'text-left'; ?>">
 		<?php
 		if($showPostCategory=='yes' && $styleLayout=='style-1'){
-			include TPGB_INCLUDES_URL. 'blog/category-'.$postCategoryStyle.'.php';
+			include TPGB_INCLUDES_URL. 'blog/'.sanitize_file_name('category-'.$postCategoryStyle.'.php');
 		}
 		if(!empty($ShowTitle) && $ShowTitle=='yes'){
 			include TPGB_INCLUDES_URL. 'blog/post-title.php';
@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			}
 
 			if(!empty($showPostMeta) && $showPostMeta=='yes'){
-				include TPGB_INCLUDES_URL. 'blog/post-meta-'.$postMetaStyle.'.php';
+				include TPGB_INCLUDES_URL. 'blog/'.sanitize_file_name('post-meta-'.$postMetaStyle.'.php');
 			}
 			?>
 		</div>

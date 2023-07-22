@@ -370,7 +370,7 @@ function tpgb_tp_mailchimp() {
 				'style' => [
 					(object) [
 						'condition' => [(object) ['key' => 'styleType', 'relation' => '==', 'value' => 'style-3' ]],
-						'selector' => '{{PLUS_WRAP}}.tpgb-mailchimp.form-style-3 .subscribe-btn-submit{ float: {{buttonAlign}}; display: block; margin: 0 auto; margin-top: 10px;}',
+						'selector' => '{{PLUS_WRAP}}.tpgb-mailchimp.form-style-3 .subscribe-btn-submit{ float: {{buttonAlign}}; display: block; margin-left: auto !important; margin-right: auto !important; margin-top: 10px;}',
 					],
 				],
 				'scopy' => true,

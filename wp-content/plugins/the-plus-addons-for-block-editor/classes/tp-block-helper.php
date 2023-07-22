@@ -154,6 +154,7 @@ class Tp_Blocks_Helper {
 			'tp-pricing-table' => TPGB_CATEGORY.'/tp-pricing-table',
 			'tp-pro-paragraph' => TPGB_CATEGORY.'/tp-pro-paragraph',
 			'tp-progress-bar' => TPGB_CATEGORY.'/tp-progress-bar',
+			'tp-progress-tracker' => TPGB_CATEGORY.'/tp-progress-tracker',
 			'tp-row' => TPGB_CATEGORY.'/tp-row',
 			'tp-search-bar' => TPGB_CATEGORY.'/tp-search-bar',
 			'tp-site-logo' => TPGB_CATEGORY.'/tp-site-logo',
@@ -336,7 +337,7 @@ class Tp_Blocks_Helper {
 		$post_types = get_post_types( $args, 'objects' );
 		$options = array();
 		foreach ( $post_types  as $post_type ) {
-			$exclude = array( 'attachment', 'elementor_library' );
+			$exclude = array( 'attachment', 'elementor_library' , 'e-landing-page' , 'nxt_builder' );
 			if( TRUE === in_array( $post_type->name, $exclude ) )
 			  continue;
 		  
@@ -407,25 +408,6 @@ class Tp_Blocks_Helper {
 		return $contact_forms;
 	}
 	/*-contact form 7 end-*/
-	
-	/*caldera forms start*/
-	public static function get_caldera_forms_post() {
-		if ( class_exists( 'Caldera_Forms' ) ) {
-			$caldera_forms = \Caldera_Forms_Forms::get_forms( true, true );
-			$form_options[0]  = ['' , esc_html__( 'Select Form', 'tpgb' )];
-			if ( ! empty( $caldera_forms ) && ! is_wp_error( $caldera_forms ) ) {
-				foreach ( $caldera_forms as $form ) {
-					if ( isset($form['ID']) and isset($form['name'])) {
-						$form_options[] = [$form['ID'], $form['name']];
-					}   
-				}
-			}
-		} else {
-			$form_options[0] = ['', esc_html__( 'Form Not Found!', 'tpgb' ) ];
-		} 
-		return $form_options;
-	}
-	/*caldera forms end*/
 	
 	/*-everest form start-*/
 	public static function get_everest_form_post() {
@@ -779,6 +761,12 @@ class Tp_Blocks_Helper {
 							);
                         }else{
                             $crumbs_output .='';
+							$schemaArr['itemListElement'][] = array(
+								"@type" => "ListItem",
+								"position"=> ++$breadposi,
+								"name" =>get_the_title(),
+								"item" => get_the_permalink()
+							);
                         }						
                         
                         if($letterLimitCurrent != '0'){
@@ -975,9 +963,16 @@ class Tp_Blocks_Helper {
 		$cat_list = array();
 		$cat_list[] = ['' , 'Select Taxonomy'];
 		$taxonomies = get_taxonomies( $args, $output, $operator );
-		if ( $taxonomies ) {		
+		if ( $taxonomies ) {
+			
 			foreach ( $taxonomies  as $taxonomy ) {
+				$exclude = array( 'nxt_builder_category' );
+				if( TRUE === in_array( $taxonomy->name, $exclude ) )
+					continue;
+					
 				$cat_list[] = [ $taxonomy->name , $taxonomy->label ];
+				
+				
 			}
 			
 		}
@@ -1025,7 +1020,6 @@ class Tp_Blocks_Helper {
 			'padding' =>  isset( $cenpadding['md'] ) ? (int) $cenpadding['md'] : '',
 			'perMove' => isset( $attr['slideScroll']['md'] ) ? (int)$attr['slideScroll']['md']  : 1,
 			'perPage' => isset( $attr['slideColumns']['md'] ) ? (int)$attr['slideColumns']['md'] : 1,
-			'padding' =>  isset( $cenpadding['md'] ) ? (int) $cenpadding['md'] : '',
 			'wheel'   => isset( $attr['slidewheel'] ) ? $attr['slidewheel'] : false,
 			'releaseWheel' => isset( $attr['slidewheel'] ) ? $attr['slidewheel'] : false,
 			'waitForTransition' => isset( $attr['waitfortras'] ) ? $attr['waitfortras'] : false,
@@ -1139,21 +1133,19 @@ class Tp_Blocks_Helper {
 	public static function tpgb_carousel_arrow_css($showArrows , $block_id ){
 		$arrowCss = '';
 		if( isset($showArrows['md']) &&  $showArrows['md'] === true){
-	
+			$arrowCss .= '.tpgb-block-'.esc_attr($block_id).' .splide__arrows{display: block }';
 			if( isset($showArrows['sm']) && $showArrows['sm'] === false){
 				$arrowCss .= '@media (max-width:1024px){.tpgb-block-'.esc_attr($block_id).' .splide__arrows{display: none } }';
 			}
 			if( isset($showArrows['xs']) && $showArrows['xs'] === false){
 				$arrowCss .= '@media (max-width:767px){.tpgb-block-'.esc_attr($block_id).' .splide__arrows{display: none } }';
 			}
-			$arrowCss .= '.tpgb-block-'.esc_attr($block_id).' .splide__arrows{display: block }';
 		}
 		if( isset($showArrows['sm']) && $showArrows['sm'] === true ){
-	
+			$arrowCss .= '@media (max-width:1024px){.tpgb-block-'.esc_attr($block_id).' .splide__arrows{display: block } }';
 			if( isset($showArrows['xs']) && $showArrows['xs'] === false){
 				$arrowCss .= '@media (max-width:767px){.tpgb-block-'.esc_attr($block_id).' .splide__arrows{display: none } }';
 			}
-			$arrowCss .= '@media (max-width:1024px){.tpgb-block-'.esc_attr($block_id).' .splide__arrows{display: block } }';
 		}
 		if( isset($showArrows['xs']) && $showArrows['xs'] === true){
 			$arrowCss .= '@media (max-width:767px){.tpgb-block-'.esc_attr($block_id).' .splide__arrows{display: block } }';
@@ -1221,24 +1213,42 @@ class Tp_Blocks_Helper {
 		if ( $block_data['name'] && $block_data['clientId'] && $block_data['attributes'] ) {
 		
 			foreach($block_data['attributes'] as $block_key => $block_val) {
+				
 				if( isset( $block_val['url'] ) && isset( $block_val['id'] ) && !empty( $block_val['url'] ) ){
+					$new_media = Tpgb_Import_Images::media_import( $block_val );
+					$block_data['attributes'][$block_key] = $new_media;
+				}else if(isset( $block_val['url'] ) && !empty( $block_val['url'] ) && preg_match('/\.(jpg|png|jpeg|gif|svg|webp)$/', $block_val['url'])) {
 					$new_media = Tpgb_Import_Images::media_import( $block_val );
 					$block_data['attributes'][$block_key] = $new_media;
 				}else if(is_array($block_val) && !empty($block_val)){
 					if( !array_key_exists("md",$block_val) && !array_key_exists("openTypography",$block_val) && !array_key_exists("openBorder",$block_val) && !array_key_exists("openShadow",$block_val) && !array_key_exists("openFilter",$block_val)  ){
-						
 						foreach($block_val as $key => $val) {
 							if(is_array($val) && !empty($val)){
+								
 								if( isset( $val['url'] ) && ( isset( $val['Id'] ) || isset( $val['id'] ) ) && !empty( $val['url'] ) ){
-									if( isset( $sub_val['url'] ) && ( isset( $sub_val['Id'] ) || isset( $sub_val['id'] ) ) && !empty( $sub_val['url'] ) ){
-										$new_media = Tpgb_Import_Images::media_import( $sub_val );
-										$block_data['attributes'][$block_key][$key][$sub_key] = $new_media;
-									}
+									$new_media = Tpgb_Import_Images::media_import( $val );
+									$block_data['attributes'][$block_key][$key] = $new_media;
+								}else if( isset( $val['url'] ) && !empty( $val['url'] ) && preg_match('/\.(jpg|png|jpeg|gif|svg|webp)$/', $val['url']) ) {
+									$new_media = Tpgb_Import_Images::media_import( $val );
+									$block_data['attributes'][$block_key][$key] = $new_media;
 								}else{
 									foreach($val as $sub_key => $sub_val) {
 										if( isset( $sub_val['url'] ) && ( isset( $sub_val['Id'] ) || isset( $sub_val['id'] ) ) && !empty( $sub_val['url'] ) ){
 											$new_media = Tpgb_Import_Images::media_import( $sub_val );
 											$block_data['attributes'][$block_key][$key][$sub_key] = $new_media;
+										}else if( isset( $sub_val['url'] ) && !empty( $sub_val['url'] ) && preg_match('/\.(jpg|png|jpeg|gif|svg|webp)$/', $sub_val['url'])) {
+											$new_media = Tpgb_Import_Images::media_import( $sub_val );
+											$block_data['attributes'][$block_key][$key][$sub_key] = $new_media;
+										}else if(is_array($sub_val) && !empty($sub_val)){
+											foreach($sub_val as $sub_key1 => $sub_val1) {
+												if( isset( $sub_val1['url'] ) && ( isset( $sub_val1['Id'] ) || isset( $sub_val1['id'] ) ) && !empty( $sub_val1['url'] ) ){
+													$new_media = Tpgb_Import_Images::media_import( $sub_val1 );
+													$block_data['attributes'][$block_key][$key][$sub_key][$sub_key1] = $new_media;
+												}else if( isset( $sub_val1['url'] ) && !empty( $sub_val1['url'] ) && preg_match('/\.(jpg|png|jpeg|gif|svg|webp)$/', $sub_val1['url'])) {
+													$new_media = Tpgb_Import_Images::media_import( $sub_val1 );
+													$block_data['attributes'][$block_key][$key][$sub_key][$sub_key1] = $new_media;
+												}
+											}
 										}
 									}
 								}

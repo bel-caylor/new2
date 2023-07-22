@@ -179,32 +179,30 @@ function tpgb_social_sharing( $attributes, $content) {
 				}
 			}
 			$output .= '</div>';
+			$dywidth = (array)$attributes['bgWidth'];
+			if(($sociallayout=='horizontal' && ($column['md']==='' || $column['md']=='auto')) || $sociallayout=='vertical'){
+				$mdWidth = (!empty($dywidth) && !empty($dywidth['md'])) ? $dywidth['md'].$dywidth['unit'] : '100%';
+				$loopStyle .= '.tpgb-block-'.esc_attr($block_id).' .tpgb-social-list .tpgb-social-menu .share-btn{ width: '.esc_attr($mdWidth).'; }';
+			}else if(($sociallayout=='horizontal' &&  $column['md']!='' && $column['md']!='auto') || $sociallayout=='vertical'){
+				$loopStyle .= '.tpgb-block-'.esc_attr($block_id).' .tpgb-social-list .tpgb-social-menu .share-btn{ width: 100%; }';
+			}
+			if(($sociallayout=='horizontal' &&  ($column['sm']==='' || $column['sm']=='auto')) || $sociallayout=='vertical'){
+				$smWidth = (!empty($dywidth) && !empty($dywidth['sm'])) ? $dywidth['sm'].$dywidth['unit'] : '100%';
+				$loopStyle .= '@media (min-width:768px) and (max-width:1024px) { .tpgb-block-'.esc_attr($block_id).' .tpgb-social-list .tpgb-social-menu .share-btn{ width: '.esc_attr($smWidth).'; }}';
+			}else if(($sociallayout=='horizontal' &&  $column['sm']!='' && $column['sm']!='auto') || $sociallayout=='vertical'){
+				$loopStyle .= '@media (min-width:768px) and (max-width:1024px) { .tpgb-block-'.esc_attr($block_id).' .tpgb-social-list .tpgb-social-menu .share-btn{ width: 100%; }}';
+			}
+			if(($sociallayout=='horizontal' &&  ($column['xs']==='' || $column['xs']=='auto')) || $sociallayout=='vertical'){
+				$xsWidth = (!empty($dywidth) && !empty($dywidth['xs'])) ? $dywidth['xs'].$dywidth['unit'] : '100%';
+				$loopStyle .= '@media (max-width:767px){ .tpgb-block-'.esc_attr($block_id).' .tpgb-social-list .tpgb-social-menu .share-btn{ width: '.esc_attr($xsWidth).'; }}';
+			}else if(($sociallayout=='horizontal' &&  $column['xs']!='' && $column['xs']!='auto') || $sociallayout=='vertical'){
+				$loopStyle .= '@media (max-width:767px){ .tpgb-block-'.esc_attr($block_id).' .tpgb-social-list .tpgb-social-menu .share-btn{ width: 100%; }}';
+			}
+			
+			if(!empty($loopStyle)){
+				$output .= '<style>'.$loopStyle.'</style>';
+			}
 		$output .= '</div>';
-	
-	$dywidth = (array)$attributes['bgWidth'];
-	if(($sociallayout=='horizontal' && ($column['md']==='' || $column['md']=='auto')) || $sociallayout=='vertical'){
-		$mdWidth = (!empty($dywidth) && !empty($dywidth['md'])) ? $dywidth['md'].$dywidth['unit'] : '100%';
-		$loopStyle .= '.tpgb-block-'.esc_attr($block_id).' .tpgb-social-list .tpgb-social-menu .share-btn{ width: '.esc_attr($mdWidth).'; }';
-	}
-	else if(($sociallayout=='horizontal' &&  $column['md']!='' && $column['md']!='auto') || $sociallayout=='vertical'){
-		$loopStyle .= '.tpgb-block-'.esc_attr($block_id).' .tpgb-social-list .tpgb-social-menu .share-btn{ width: 100%; }';
-	}
-	if(($sociallayout=='horizontal' &&  ($column['sm']==='' || $column['sm']=='auto')) || $sociallayout=='vertical'){
-		$smWidth = (!empty($dywidth) && !empty($dywidth['sm'])) ? $dywidth['sm'].$dywidth['unit'] : '100%';
-		$loopStyle .= '@media (min-width:768px) and (max-width:1024px) { .tpgb-block-'.esc_attr($block_id).' .tpgb-social-list .tpgb-social-menu .share-btn{ width: '.esc_attr($smWidth).'; }}';
-	}else if(($sociallayout=='horizontal' &&  $column['sm']!='' && $column['sm']!='auto') || $sociallayout=='vertical'){
-		$loopStyle .= '@media (min-width:768px) and (max-width:1024px) { .tpgb-block-'.esc_attr($block_id).' .tpgb-social-list .tpgb-social-menu .share-btn{ width: 100%; }}';
-	}
-	if(($sociallayout=='horizontal' &&  ($column['xs']==='' || $column['xs']=='auto')) || $sociallayout=='vertical'){
-		$xsWidth = (!empty($dywidth) && !empty($dywidth['xs'])) ? $dywidth['xs'].$dywidth['unit'] : '100%';
-		$loopStyle .= '@media (max-width:767px){ .tpgb-block-'.esc_attr($block_id).' .tpgb-social-list .tpgb-social-menu .share-btn{ width: '.esc_attr($xsWidth).'; }}';
-	}else if(($sociallayout=='horizontal' &&  $column['xs']!='' && $column['xs']!='auto') || $sociallayout=='vertical'){
-		$loopStyle .= '@media (max-width:767px){ .tpgb-block-'.esc_attr($block_id).' .tpgb-social-list .tpgb-social-menu .share-btn{ width: 100%; }}';
-	}
-	
-	if(!empty($loopStyle)){
-		$output .= '<style>'.$loopStyle.'</style>';
-	}
 
 	$output = Tpgb_Blocks_Global_Options::block_Wrap_Render($attributes, $output);
 

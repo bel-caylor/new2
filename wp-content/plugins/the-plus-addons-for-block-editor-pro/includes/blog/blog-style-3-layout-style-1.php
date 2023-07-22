@@ -1,5 +1,5 @@
 <?php if(!empty($showPostCategory) && $showPostCategory=='yes'){
-	include TPGBP_INCLUDES_URL. 'blog/category-'.esc_attr($postCategoryStyle).'.php';
+	include TPGBP_INCLUDES_URL. 'blog/'.sanitize_file_name('category-'.$postCategoryStyle.'.php');
 }
 
 if(!empty($ShowTitle) && $ShowTitle=='yes'){
@@ -14,6 +14,6 @@ if(!empty($ShowTitle) && $ShowTitle=='yes'){
 	}
 	
 	if(!empty($showPostMeta) && $showPostMeta=='yes'){
-		include TPGBP_INCLUDES_URL. 'blog/post-meta-'.esc_attr($postMetaStyle).'.php';
+		include TPGBP_INCLUDES_URL. 'blog/'.sanitize_file_name('post-meta-'.$postMetaStyle.'.php');
 	} ?>
 </div>

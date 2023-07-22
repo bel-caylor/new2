@@ -1,9 +1,10 @@
+let tpPopupData = new Map();
 document.addEventListener('DOMContentLoaded', function() {
 	if(!jQuery('body').hasClass('block-editor-page')) {
 		jQuery('.tpgb-offcanvas-wrapper').each(function() {
 			var $this = jQuery(this);
-			new PlusOffcanvas($this);
 			
+			showuserRest($this)
 			var container = $this.find('.scroll-view');
 			var container_scroll_view = $this.find('.offcanvas-toggle-btn.position-fixed');
 			if($this.hasClass('scroll-view') && container_scroll_view) {
@@ -24,6 +25,8 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 	}
 });
+
+
 function PlusOffcanvas(a) {
     "use strict";
     (this.wrap = a),
@@ -48,15 +51,19 @@ function PlusOffcanvas(a) {
     (this.previousUrl = this.settings.previousUrl),
     (this.extraId = this.settings.extraId),
     (this.inactivitySec = this.settings.inactivitySec),
+    (this.showuseRes = this.settings.showuseRes),
+    (this.noXTimes = this.settings.noXTimes),
+    (this.tpgbXdays = this.settings.days),
     (this.duration = 500),
     (this.time = 0),
     (this.flag = true),
     (this.ele = jQuery(".tpgb-block-" + this.id +"-canvas")),
     (this.animSetting = this.ele.data('animationsetting')) ,
     this.destroy(),
-    this.init();
+    this.init(),
+    tpPopupData.set( this.id , this.settings);
 }
-    
+
 (PlusOffcanvas.prototype = {
     id: "",
     wrap: "",
@@ -81,6 +88,11 @@ function PlusOffcanvas(a) {
                 jQuery("body").prepend(this.wrap.find(".tpgb-canvas-content-wrap"))),
             this.bindEvents()
         );
+        
+        var current = this;
+        document.addEventListener( 'wpcf7mailsent', function( event ) {
+            current.destroy();
+        }, false );
     },
     destroy: function () {
         this.close(),
@@ -98,6 +110,8 @@ function PlusOffcanvas(a) {
         jQuery("body").delegate(".tpgb-canvas-content-wrap .tpgb-offcanvas-close", "click", jQuery.proxy(this.close, this)),
         "yes" === this.esc_close && this.closeESC(),
         "yes" === this.body_click_close && this.closeClick();
+        
+
     },
     triggerClick: function () {
         if(this.extraclick == "yes" && this.extraId && this.extraId != '' && this.flag) {
@@ -110,6 +124,7 @@ function PlusOffcanvas(a) {
             e.preventDefault();
         }
         jQuery("html").hasClass("tpgb-open") ? this.close() : ((this.flag) ? this.show() : '');
+      
     },
     exitInlet: function () {
         (this.exitinlet == "yes" && this.flag) ? (this.show(), this.flag = false) : "";
@@ -151,7 +166,7 @@ function PlusOffcanvas(a) {
     },
     AnimOut : function(){
         if( jQuery(".tpgb-block-" + this.id +"-canvas").hasClass("tpgb-visible") && !this.ele.hasClass("tpgb_animated_out") && this.animSetting && this.animSetting.animeOut !== undefined ){
-            this.ele.removeClass('tpgb_animated tpgb_'+this.animSetting.anime).addClass("tpgb-view-animation-out tpgb_animated_out").addClass('tpgb_'+this.animSetting.animeOut)
+            this.ele.removeClass('tpgb_animated tpgb_'+this.animSetting.anime).addClass('tpgb_'+this.animSetting.animeOut).addClass("tpgb-view-animation-out tpgb_animated_out")
         }
     },
     show: function () {
@@ -165,12 +180,12 @@ function PlusOffcanvas(a) {
         this.AnimIn();
     },
     close: function () {
-        jQuery(".tpgb-block-" + this.id +"-canvas").hasClass("tpgb-slide-along") ? ((this.delaytimeout = 0), jQuery(".tpgb-block-" + this.id +"-canvas").removeClass("tpgb-visible")) : (this.delaytimeout = 0),
-        jQuery("html").removeClass("tpgb-open"),
-        jQuery("html").removeClass("tpgb-block-" + this.id +"-canvas" + "-open"),
+        jQuery(".tpgb-block-" + this.id +"-canvas").hasClass("tpgb-slide-along") ? ((this.delaytimeout = 0), jQuery(".tpgb-block-" + this.id +"-canvas").removeClass("tpgb-visible")) : ( this.delaytimeout = ( this.animSetting.custoutDur ? this.animSetting.custoutDur : 500 )),
         setTimeout(
             jQuery.proxy(function () {
-                jQuery("html").removeClass("tpgb-reset"),
+                    jQuery("html").removeClass("tpgb-block-" + this.id +"-canvas" + "-open"),
+                    jQuery("html").removeClass("tpgb-open"),
+                    jQuery("html").removeClass("tpgb-reset"),
                     jQuery("html").removeClass("tpgb-" + this.transition),
                     jQuery("html").removeClass("tpgb-" + this.direction),
                     jQuery(".tpgb-block-" + this.id +"-canvas").hasClass("tpgb-slide-along") || jQuery(".tpgb-block-" + this.id +"-canvas").removeClass("tpgb-visible");
@@ -190,19 +205,76 @@ function PlusOffcanvas(a) {
     closeClick: function () {
         var c = this;
 
-        var exccl = '';
-		if((this.extraclick && this.extraclick == 'yes') && this.extraId && this.extraId != '' && this.flag) {
-			exccl = '.'+this.extraId;
-		}else{
-			exccl ='.offcanvas-toggle-btn';
-		}
-
         jQuery(document).on("click", function (a) {
-        jQuery(a.target).is(".tpgb-canvas-content-wrap") ||
-            0 < jQuery(a.target).parents(".tpgb-canvas-content-wrap").length ||
-            jQuery(a.target).is(".offcanvas-toggle-btn") ||
-            0 < jQuery(a.target).is(exccl) || jQuery(a.target).parents(exccl).length ||
-            c.close();
+  
+            var tpPOclass = [] ;
+            tpPopupData.forEach( function(setting){
+                if((setting.extraclick && setting.extraclick == 'yes') && setting.extraId && setting.extraId != '' && c.flag) {
+                    tpPOclass.push('.'+setting.extraId);
+                }
+            } )
+
+            if(tpPOclass.length){
+                tpPOclass = tpPOclass.join(',')
+            }else{
+                tpPOclass = '.offcanvas-toggle-btn'
+            }
+			
+            jQuery(a.target).is(".tpgb-canvas-content-wrap") || 0 < jQuery(a.target).parents(".tpgb-canvas-content-wrap").length || jQuery(a.target).is(".offcanvas-toggle-btn") || jQuery(a.target).is(tpPOclass) || 0 < jQuery(a.target).parents(tpPOclass).length ||  c.close();
         });
+        
     },
 });
+
+function showuserRest(ele) {
+    var setting = ele.data("settings"),
+        tpgbXTimeView = 'tpgbXTimeView-'+setting.content_id
+        sFlag = true;
+
+        if( setting.showuseRes && setting.showuseRes == 'yes' && setting.noXTimes !='' && setting.days!='' ){
+
+            var tpgbiageView = localStorage.getItem(tpgbXTimeView);
+            tpgbiageView = jQuery.parseJSON(tpgbiageView);
+            if (tpgbiageView!=undefined && tpgbiageView.xtimeView!=undefined){
+                var value = Number(tpgbiageView.xtimeView) + 1;
+                localStorage.setItem(tpgbXTimeView,  JSON.stringify(Object.assign({}, tpgbiageView, {"xtimeView" : value })));
+            }else{
+                localStorage.setItem(tpgbXTimeView, '{ "xtimeView": 1 }');
+            }
+            
+            if(Number(jQuery.parseJSON(localStorage.getItem(tpgbXTimeView)).xtimeView) <= Number(setting.noXTimes)){
+                sFlag = true;
+            }else{
+                var cdate = new Date();
+                var endDate = new Date();
+                var expired_date = endDate.setDate(cdate.getDate()+ Number(setting.days));						
+                var tpgbiageView = localStorage.getItem(tpgbXTimeView);
+                tpgbiageView = jQuery.parseJSON(tpgbiageView);
+                
+                var store_date = Object.assign({}, tpgbiageView, {"Xdate" : expired_date});
+                if(tpgbiageView!=undefined && tpgbiageView.Xdate==undefined){
+                    localStorage.setItem(tpgbXTimeView, JSON.stringify(store_date));
+                }
+                
+                sFlag = false
+                
+                var getData = localStorage.getItem(tpgbXTimeView);
+                getData = jQuery.parseJSON(getData);
+                
+                if(getData!=undefined && getData.Xdate!=undefined && ( new Date(Number(cdate)) > new Date(Number(getData.Xdate)))){
+                    localStorage.removeItem(tpgbXTimeView);
+                    sFlag = true;
+                }
+            }
+        }else{
+            if(localStorage.getItem(tpgbXTimeView)){
+                localStorage.removeItem(tpgbXTimeView);
+            }
+        }
+
+    if( sFlag ){
+        new PlusOffcanvas(ele)
+    }else{
+        return false;
+    }
+}

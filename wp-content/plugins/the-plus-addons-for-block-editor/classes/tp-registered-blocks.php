@@ -244,6 +244,11 @@ function tpgb_registered_blocks(){
 				$tpgb_free .'classes/blocks/tp-button/style/style-23.css',
 			],
 		],
+		'tpx-button-shake-ani' => [
+			'css' => [
+				$tpgb_free .'classes/blocks/tp-button/shake-ani.css',
+			],
+		],
 		TPGB_CATEGORY.'/tp-countdown' => [
 			'css' => [
 				$tpgb_free .'classes/blocks/tp-countdown/style.css',
@@ -324,18 +329,18 @@ function tpgb_registered_blocks(){
 		],
 		'tpx-testimonials-style-1' => [
 			'css' => [
-					$tpgb_free .'classes/blocks/tp-testimonials/tp-testimonials-style-1.css',
+				$tpgb_free .'classes/blocks/tp-testimonials/tp-testimonials-style-1.css',
 			],
 		],
 		'tpx-testimonials-style-2' => [
-				'css' => [
-						$tpgb_free .'classes/blocks/tp-testimonials/tp-testimonials-style-2.css',
-				],
+			'css' => [
+				$tpgb_free .'classes/blocks/tp-testimonials/tp-testimonials-style-2.css',
+			],
 		],
 		'tpx-testimonials-scroll' => [
-				'css' => [
-						$tpgb_free .'classes/blocks/tp-testimonials/tp-testimonials-scroll.css',
-				],
+			'css' => [
+				$tpgb_free .'classes/blocks/tp-testimonials/tp-testimonials-scroll.css',
+			],
 		],
 		TPGB_CATEGORY.'/tp-stylist-list' => [
 			'css' => [
@@ -363,14 +368,6 @@ function tpgb_registered_blocks(){
 			],
 			'js' => [
 				$tpgb_free . 'assets/js/main/external-form-styler/tpgb-cf7.min.js',
-			],
-		],
-		'tpx-caldera-form' => [
-			'css' => [
-				$tpgb_free .'classes/blocks/tp-external-form-styler/forms/caldera.css',
-			],
-			'js' => [
-				$tpgb_free . 'assets/js/main/external-form-styler/tpgb-caldera-form.min.js',
 			],
 		],
 		'tpx-everest-form' => [
@@ -472,6 +469,14 @@ function tpgb_registered_blocks(){
 			'js' => [
 				$tpgb_free .'assets/js/extra/circle-progress.js',
 				$tpgb_free .'assets/js/main/progress-bar/plus-piechart.min.js',
+			],
+		],
+		TPGB_CATEGORY.'/tp-progress-tracker' => [
+			'css' => [		
+				$tpgb_free .'classes/blocks/tp-progress-tracker/style.css',
+			],
+			'js' => [
+				$tpgb_free . 'assets/js/main/progress-tracker/tpgb-progress-tracker.min.js',
 			],
 		],
 		TPGB_CATEGORY.'/tp-pricing-list' => [
@@ -791,19 +796,20 @@ function tpgb_registered_blocks(){
 			],
 			'js' => [
 				$tpgb_free . 'assets/js/extra/isotope.pkgd.min.js',
+				$tpgb_free .'assets/js/main/common-created/tpgb-slidetoggle-block.min.js',
 				$tpgb_free . 'assets/js/main/post-listing/post-masonry.min.js',
 				$tpgb_free . 'assets/js/main/post-listing/post-listing.min.js',
 			],
 		],
 		'tpx-post-listing-style-1' => [
 			'css' => [
-					$tpgb_free .'classes/blocks/tp-post-listing/tp-post-listing-style-1.css',
+				$tpgb_free .'classes/blocks/tp-post-listing/tp-post-listing-style-1.css',
 			],
 		],
 		'tpx-post-listing-style-2' => [
-				'css' => [
-						$tpgb_free .'classes/blocks/tp-post-listing/tp-post-listing-style-2.css',
-				],
+			'css' => [
+				$tpgb_free .'classes/blocks/tp-post-listing/tp-post-listing-style-2.css',
+			],
 		],
 		'tpgb-pagination' => [
 			'css' => [
@@ -863,6 +869,7 @@ function tpgb_registered_blocks(){
 				$tpgb_free .'classes/blocks/tp-search-bar/style.css',
 			],
 			'js' => [
+				$tpgb_free .'assets/js/main/common-created/tpgb-slidetoggle-block.min.js',
 				$tpgb_free . 'assets/js/main/search-bar/tpgb-search-bar.min.js', 
 			],
 		],
@@ -1011,6 +1018,11 @@ function tpgb_registered_blocks(){
 				$tpgb_free . 'assets/js/extra/jquery.fancybox.min.js',
 			],
 		],
+		'tpgb-fancy-custom' => [
+			'js' => [
+				$tpgb_free . 'assets/js/main/fancy-box/tpgb-fancy-box.min.js',
+			],
+		],
 		'tpgb-row-column-link' => [
 			'js' => [
 				$tpgb_free . 'assets/js/main/tp-row/tpgb-link.min.js'
@@ -1062,7 +1074,7 @@ Class Tpgb_Library {
 	private static $tpgb_post_id = '';
 	public $dependency = false;
 	public $localize = '';
-	
+	public $learn_view_item = false;
 	
     /**
      *  Return array of registered elements.
@@ -1162,6 +1174,7 @@ Class Tpgb_Library {
 			TPGB_CATEGORY.'/tp-pricing-table' => TPGB_CATEGORY.'/tp-pricing-table',
 			TPGB_CATEGORY.'/tp-pro-paragraph' => TPGB_CATEGORY.'/tp-pro-paragraph',
 			TPGB_CATEGORY.'/tp-progress-bar' => TPGB_CATEGORY.'/tp-progress-bar',
+			TPGB_CATEGORY.'/tp-progress-tracker' => TPGB_CATEGORY.'/tp-progress-tracker',
 			TPGB_CATEGORY.'/tp-row' => TPGB_CATEGORY.'/tp-row',
 			TPGB_CATEGORY.'/tp-search-bar' => TPGB_CATEGORY.'/tp-search-bar',
 			TPGB_CATEGORY.'/tp-stylist-list' => TPGB_CATEGORY.'/tp-stylist-list',
@@ -1479,7 +1492,7 @@ Class Tpgb_Library {
 			$post_type = (is_singular() ? 'post' : 'term');
 			foreach($template_post_ids as $post_id){
 				$this->header_init_css_js($post_type, $post_id );
-				$this->enqueue_dynamic_css_post_id( $post_id );
+				$this->enqueue_dynamic_css_post_id( $post_id, $in_footer );
 			}
 		}
 	}
@@ -1488,7 +1501,7 @@ Class Tpgb_Library {
 	 * Dynamic Enqueue Css by Post Id
 	 * @since 2.0.0
 	 */
-	public function enqueue_dynamic_css_post_id( $post_id = ''){
+	public function enqueue_dynamic_css_post_id( $post_id = '', $in_footer = false){
 		if( !empty($post_id) ){
 			$upload_dir			= wp_get_upload_dir();
 			$upload_base_dir 	= trailingslashit($upload_dir['basedir']);
@@ -1511,9 +1524,13 @@ Class Tpgb_Library {
 					wp_enqueue_style("plus-preview-{$post_id}", $this->pathurl_security($css_url), false, $plus_version.time());
 				}
 			}else if (file_exists($css_path)) {
+				$deps = ['tpgb-plus-block-front-css'];
+				if($in_footer === true && $this->get_caching_option() == 'separate' ){
+					$deps = [];
+				}
 				$css_file_url = trailingslashit($upload_dir['baseurl']);
 				$css_url     = $css_file_url . "theplus_gutenberg/plus-css-{$post_id}.css";
-				wp_enqueue_style("plus-post-{$post_id}", $this->pathurl_security($css_url), array('tpgb-plus-block-front-css'), $plus_version);
+				wp_enqueue_style("plus-post-{$post_id}", $this->pathurl_security($css_url), $deps, $plus_version);
 			}else if(!file_exists($css_path) && class_exists('Tp_Core_Init_Blocks')){
 				$tp_core = Tp_Core_Init_Blocks::get_instance();
 				$tp_core->make_block_css_by_post_id($post_id);
@@ -1668,8 +1685,13 @@ Class Tpgb_Library {
 			}
 		}else if($this->get_caching_option() == false){
 			if ( $this->check_css_js_cache_files( self::$tpgb_post_type, self::$tpgb_post_id, 'css' ) && ($this->get_caching_option() == false && $in_footer == false )) {
+				$enq = 'tpgb-plus-block-front-css';
+				//LearnPress
+				if($this->learn_view_item===true && $this->dependency === true){
+					$enq = 'tpgb-plus-'.self::$tpgb_post_type;
+				}
 				$css_file = TPGB_ASSET_URL . '/theplus-' . self::$tpgb_post_type . '-' . self::$tpgb_post_id . '.min.css';
-				wp_enqueue_style('tpgb-plus-block-front-css',$this->pathurl_security($css_file), false, $plus_version );
+				wp_enqueue_style( $enq, $this->pathurl_security($css_file), false, $plus_version );
 			}
 
 			$load_localize = 'tpgb-purge-js';
@@ -1868,6 +1890,16 @@ Class Tpgb_Library {
        	
 		if ( $this->get_post_type_post_id() ) {
 			
+			//LearnPress
+			if(class_exists('LP_Global') && $this->learn_view_item==false){
+				$course_item = LP_Global::course_item();
+				if(!empty($course_item)){
+					$this->learn_view_item = true;
+					self::$tpgb_post_id .= '-'.$course_item->get_id();
+					$this->plus_uid .= '-'.$course_item->get_id();
+				}
+			}
+
 			$this->remove_files_unlink(self::$tpgb_post_type, self::$tpgb_post_id);
 
 			// if no cache files, generate new
@@ -1918,6 +1950,18 @@ Class Tpgb_Library {
 		if ( $this->get_post_type_post_id() ) {
 
 			if (!$this->is_preview_mode()) {
+				
+				if(class_exists('LP_Global') && $this->learn_view_item==false){
+					$course_item = LP_Global::course_item();
+					if(!empty($course_item)){
+						$this->learn_view_item = true;
+						self::$tpgb_post_id .= '-'.$course_item->get_id();
+						$this->plus_uid .= '-'.$course_item->get_id();
+						if( $this->requires_update ){
+							$this->requires_update = $this->requires_update();
+						}
+					}
+				}
 				
 				$elements = [];
 				if(!$this->requires_update){
@@ -1981,6 +2025,13 @@ Class Tpgb_Library {
 		if((empty($fontawesome_load) || $fontawesome_load=='enable' || empty($fontawesome_pro) || !defined('TPGBP_VERSION')) && $fontawesome_load!='disable'){
 			wp_enqueue_style('tpgb-fontawesome', TPGB_URL.'assets/css/extra/fontawesome.min.css', array());
 		}
+
+		$check_gfontandcss_load = get_option( 'tpgb_connection_data' );
+
+		/** Disable Global CSS Here */
+		if(!empty($check_gfontandcss_load) && isset($check_gfontandcss_load['gbl_css']) && $check_gfontandcss_load['gbl_css']==='disable'){
+			return;
+		}
 		
 		$upload_dir			= wp_get_upload_dir();
 		$upload_base_dir 	= trailingslashit($upload_dir['basedir']);
@@ -2002,8 +2053,7 @@ Class Tpgb_Library {
 				if (!$wp_filesystem->is_dir($dir)) {
 					$wp_filesystem->mkdir($dir);
 				}
-				$check_gfont_load = get_option( 'tpgb_connection_data' );
-				if( !empty($check_gfont_load) && isset($check_gfont_load['gfont_load']) && $check_gfont_load['gfont_load']=== 'disable' ){
+				if( !empty($check_gfontandcss_load) && isset($check_gfontandcss_load['gfont_load']) && $check_gfontandcss_load['gfont_load']=== 'disable' ){
 					if (preg_match_all('/@import[^;]+;/', $global_css['css'], $matches)) {
 						if(!empty($matches) && isset($matches[0])){
 							$fonts = $matches[0];
@@ -2356,8 +2406,8 @@ Class Tpgb_Library {
 				update_option( $option_name, $versions );
 			}
 
-			//2.0.4
-			if( version_compare( TPGB_VERSION, '2.0.4', '==' ) && !in_array( '2.0.0', $get_version ) && !in_array( '2.0.1', $get_version ) && !in_array( '2.0.2', $get_version ) && !in_array( '2.0.3', $get_version ) && !in_array( '2.0.4', $get_version ) ){
+			//2.0.7
+			if( version_compare( TPGB_VERSION, '2.0.7', '==' ) && !in_array( '2.0.4', $get_version ) && !in_array( '2.0.5', $get_version ) && !in_array( '2.0.6', $get_version ) && !in_array( '2.0.7', $get_version ) ){
 				$this->remove_dir_files(TPGB_ASSET_PATH);
 				$this->remove_dir_dynamic_style_files(TPGB_ASSET_PATH);
 				$versions = array_unique( array_merge( $get_version, $versions ) );

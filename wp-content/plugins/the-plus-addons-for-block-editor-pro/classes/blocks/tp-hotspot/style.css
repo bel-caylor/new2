@@ -169,3 +169,8 @@
     transform: translateY(80px);
     -webkit-transform: translateY(80px)
 }
+
+/* Twenty Twenty Three Theme Image */
+.theme-twentytwentythree .tpgb-hotspot-inner .hotspot-image{
+    height: auto;
+}

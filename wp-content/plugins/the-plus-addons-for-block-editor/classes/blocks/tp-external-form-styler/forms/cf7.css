@@ -301,6 +301,7 @@
     width: 100%;
 }
 .tpgb-contact-form-7 form.wpcf7-form p {
+    margin-block-start: auto;
     margin-bottom: 0;
 }
 .tpgb-contact-form-7 .wpcf7-form-control {

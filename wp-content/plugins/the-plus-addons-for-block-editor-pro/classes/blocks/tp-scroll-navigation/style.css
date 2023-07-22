@@ -38,7 +38,7 @@
 }
 
 .tpgb-column-inner .tpgb-scroll-nav,.tpgb-scroll-nav {
-    width: auto
+    width: auto !important;
 }
 /*scroll navigation direction */
 .tpgb-scroll-nav.nav-left,.tpgb-scroll-nav.nav-right {

@@ -10,6 +10,10 @@ function tpgb_tp_blockquote_callback($attributes, $content) {
     $quoteIcon = (!empty($attributes['quoteIcon'])) ? $attributes['quoteIcon'] : '' ;
     $quotecnt = (!empty($attributes['content'])) ? $attributes['content'] : '' ;
 	
+    if(class_exists('Tpgbp_Pro_Blocks_Helper')){
+        $quotecnt = (!empty($attributes['content'])) ? Tpgbp_Pro_Blocks_Helper::tpgb_dynamic_val($attributes['content'],['blockName' => 'tpgb/tp-blockquote']) : '';
+	}
+
 	$blockClass = Tp_Blocks_Helper::block_wrapper_classes( $attributes );
     $output ='<div class="tp-blockquote tpgb-relative-block tpgb-block-'.esc_attr($block_id).' '.esc_attr($blockClass).'">';
         $output .='<div class="tpgb-blockquote-inner tpgb-quote-'.esc_attr($attributes['style']).'">';

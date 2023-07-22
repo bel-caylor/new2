@@ -1898,6 +1898,7 @@ function tpgb_tp_social_feed_render_callback( $attributes, $content) {
 					$PopupSylNum = "{$block_id}-${F_index}-{$uniqEach}";
 					$RKey = (!empty($AllVmData['RKey'])) ? $AllVmData['RKey'] : '';
 					$PostId = (!empty($AllVmData['PostId'])) ? $AllVmData['PostId'] : '';
+					$UName = (!empty($AllVmData['UName'])) ? $AllVmData['UName'] : '';
 					$selectFeed = (!empty($AllVmData['selectFeed'])) ? $AllVmData['selectFeed'] : '';
 					$Massage = (!empty($AllVmData['Massage'])) ? $AllVmData['Massage'] : '';
 					$Description = (!empty($AllVmData['Description'])) ? $AllVmData['Description'] : '';
@@ -1928,7 +1929,10 @@ function tpgb_tp_social_feed_render_callback( $attributes, $content) {
 					}
 					$ImageURL=$videoURL="";
 					if($Type == 'video' || $Type == 'photo'){
-						$videoURL = $PostLink;
+						$sepPostId = explode("_",$PostId);
+						$newPId = (!empty($sepPostId[1])) ? $sepPostId[1] : '';
+						$fbPostRD = 'https://www.facebook.com/'.esc_attr($UName).'/posts/'.esc_attr($newPId);
+						$videoURL = ($selectFeed == 'Facebook' && $PopupOption == 'GoWebsite') ? $fbPostRD : $PostLink;
 						$ImageURL = $PostImage;
 					}
 					if(!empty($FbAlbum)){
@@ -1937,8 +1941,8 @@ function tpgb_tp_social_feed_render_callback( $attributes, $content) {
 					
 					if( (!in_array($PostId,$FeedId) && $F_index < $TotalPost) && ( ($MediaFilter == 'default') || ($MediaFilter == 'ompost' && !empty($PostLink) && !empty($PostImage)) || ($MediaFilter == 'hmcontent' &&  empty($PostLink) && empty($PostImage) )) ){
 						$SocialFeed .= '<div class="grid-item splide__slide '.esc_attr('feed-'.$selectFeed.' '.$desktop_class .' '.$RKey.' ').'" data-index="'.esc_attr($selectFeed).esc_attr($F_index).'" >';
-							ob_start();
-								include TPGB_INCLUDES_URL. "social-feed/social-feed-{$style}.php"; 
+							ob_start(); 
+								include TPGB_INCLUDES_URL. "social-feed/social-feed-".sanitize_file_name($style).".php";
 								$SocialFeed .= ob_get_contents();
 							ob_end_clean();
 						$SocialFeed .= '</div>';
@@ -2017,6 +2021,7 @@ function tpgb_FacebookFeed($social,$attr){
 				
 				$link = (!empty($FbAllData['link']) ? $FbAllData['link'] : '');
 				$name = (!empty($FbAllData['name']) ? $FbAllData['name'] : '');
+				$u_name = (!empty($FbAllData['username']) ? $FbAllData['username'] : '');
 				$id = (!empty($FbData['id']) ? $FbData['id'] : '');
 				$type = (!empty($FbData['type']) ? $FbData['type'] : '');
 				$FbMessage = (!empty($FbData['message']) ? $FbData['message'] : '');
@@ -2065,6 +2070,7 @@ function tpgb_FacebookFeed($social,$attr){
 						"CreatedTime" 	=> $Created_time,
 						"PostImage" 	=> $FbPicture,
 						"UserName" 		=> $name,
+						"UName"			=> $u_name,
 						"UserImage" 	=> (!empty($FbAllData['picture']['data']['url']) ? $FbAllData['picture']['data']['url'] : ''),
 						"UserLink" 		=> $link,
 						"share" 		=> $Fbshares,

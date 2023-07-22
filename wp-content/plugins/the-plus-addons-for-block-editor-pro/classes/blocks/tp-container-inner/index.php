@@ -447,21 +447,60 @@ function tpgb_tp_grid() {
 				'default' => false,
 				'scopy' => true,
 			],
-			'flexDirection' => [
-				'type' => 'object',
-				'default' => [ 'md' => '', 'sm' =>  '', 'xs' =>  '' ],
-				'style' => [
-					(object) [
-						'condition' => [ (object) ['key' => 'flexreverse', 'relation' => '==', 'value' => false]],
-						'selector' => '{{PLUS_WRAP}}.tpgb-container-col,{{PLUS_WRAP}}.tpgb-container-col .inner-wrapper-sticky,{{PLUS_WRAP}}.tpgb-container-col-editor > .block-editor-inner-blocks > .block-editor-block-list__layout{ flex-direction: {{flexDirection}} }',
-					],
-					(object) [
-						'condition' => [ (object) ['key' => 'flexreverse', 'relation' => '==', 'value' => true]],
-						'selector' => '{{PLUS_WRAP}}.tpgb-container-col,{{PLUS_WRAP}}.tpgb-container-col .inner-wrapper-sticky,{{PLUS_WRAP}}.tpgb-container-col-editor > .block-editor-inner-blocks > .block-editor-block-list__layout{ flex-direction: {{flexDirection}}-reverse }',
-					],
-				],
+			'flexRespreverse' => [
+				'type' => 'boolean',
+				'default' => false,
 				'scopy' => true,
 			],
+			'flexTabreverse' => [
+				'type' => 'boolean',
+				'default' => false,
+				'scopy' => true,
+			],
+			'flexMobreverse' => [
+				'type' => 'boolean',
+				'default' => false,
+				'scopy' => true,
+			],
+			'flexDirection' => [
+                'type' => 'object',
+                'default' => [ 'md' => '', 'sm' =>  '', 'xs' =>  '' ],
+                'style' => [
+                    (object) [
+                        'condition' => [ (object) ['key' => 'flexreverse', 'relation' => '==', 'value' => false]],
+                        'selector' => '{{PLUS_WRAP}}.tpgb-container-col,{{PLUS_WRAP}}.tpgb-container-col .inner-wrapper-sticky,{{PLUS_WRAP}}.tpgb-container-col-editor > .block-editor-inner-blocks > .block-editor-block-list__layout{ flex-direction: {{flexDirection}} }',
+                    ],
+                    (object) [
+                        'condition' => [ (object) ['key' => 'flexreverse', 'relation' => '==', 'value' => true]],
+                        'selector' => '{{PLUS_WRAP}}.tpgb-container-col,{{PLUS_WRAP}}.tpgb-container-col .inner-wrapper-sticky,{{PLUS_WRAP}}.tpgb-container-col-editor > .block-editor-inner-blocks > .block-editor-block-list__layout{ flex-direction: {{flexDirection}}-reverse }',
+                    ],
+                    (object) [
+                        'condition' => [ (object) [ 'key' => 'flexRespreverse', 'relation' => '==', 'value' => true ],
+                            (object) ['key' => 'flexTabreverse', 'relation' => '==', 'value' => false]
+                        ],
+                        'selector' => '@media (max-width: 1024px) and (min-width:768px) { {{PLUS_WRAP}}.tpgb-container-col,{{PLUS_WRAP}}.tpgb-container-col-editor > .block-editor-inner-blocks > .block-editor-block-list__layout,{{PLUS_WRAP}}.tpgb-container-col .inner-wrapper-sticky{ flex-direction: {{flexDirection}} } }' ,
+                    ],
+                    (object) [
+                        'condition' => [ (object) [ 'key' => 'flexRespreverse', 'relation' => '==', 'value' => true ],
+                            (object) ['key' => 'flexTabreverse', 'relation' => '==', 'value' => true]
+                        ],
+                        'selector' => '@media (max-width: 1024px) and (min-width:768px) { {{PLUS_WRAP}}.tpgb-container-col,{{PLUS_WRAP}}.tpgb-container-col-editor > .block-editor-inner-blocks > .block-editor-block-list__layout,{{PLUS_WRAP}}.tpgb-container-col .inner-wrapper-sticky{ flex-direction: {{flexDirection}}-reverse } }',
+                    ],
+                    (object) [
+                        'condition' => [ (object) [ 'key' => 'flexRespreverse', 'relation' => '==', 'value' => true ],
+                            (object) ['key' => 'flexMobreverse', 'relation' => '==', 'value' => false]
+                        ],
+                        'selector' => '@media (max-width: 767px) { {{PLUS_WRAP}}.tpgb-container-col,{{PLUS_WRAP}}.tpgb-container-col-editor > .block-editor-inner-blocks > .block-editor-block-list__layout,{{PLUS_WRAP}}.tpgb-container-col .inner-wrapper-sticky{ flex-direction: {{flexDirection}} } }' ,
+                    ],
+                    (object) [
+                        'condition' => [ (object) [ 'key' => 'flexRespreverse', 'relation' => '==', 'value' => true ],
+                            (object) ['key' => 'flexMobreverse', 'relation' => '==', 'value' => true]
+                        ],
+                        'selector' => '@media (max-width: 767px){ {{PLUS_WRAP}}.tpgb-container-col,{{PLUS_WRAP}}.tpgb-container-col-editor > .block-editor-inner-blocks > .block-editor-block-list__layout,{{PLUS_WRAP}}.tpgb-container-col .inner-wrapper-sticky{ flex-direction: {{flexDirection}}-reverse } }',
+                    ],
+                ],
+                'scopy' => true,
+            ],
 			'flexAlign' => [
 				'type' => 'object',
 				'default' => [ 'md' => 'flex-start', 'sm' =>  '', 'xs' =>  '' ],

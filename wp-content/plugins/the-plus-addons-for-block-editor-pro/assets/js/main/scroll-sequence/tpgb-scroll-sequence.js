@@ -1,5 +1,5 @@
 /* Scroll Sequence Start */
-window.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', (event) => {
     let scrollSequence = document.querySelectorAll('.tpgb-scroll-sequence');
     if(scrollSequence){
         scrollSequence.forEach( (el) => {

@@ -39,9 +39,11 @@
     background: #0077ff33
 }
 .tpgb-adv-btn-inner.ab-download.tpgb-download-style-1 .adv-button-link-wrap svg {
-    margin: 16px 0 0 16px;
     fill: none;
-    transform: translate3d(0,0,0)
+    position: absolute;
+    left: calc(50% + 3px);
+    top: 50%;
+    transform: translate(-50%, -50%);
 }
 .tpgb-adv-btn-inner.ab-download.tpgb-download-style-1 .adv-button-link-wrap svg path,.tpgb-adv-btn-inner.ab-download.tpgb-download-style-1 .adv-button-link-wrap svg polyline {
     stroke: #6a79e3;

@@ -16,6 +16,10 @@ function tpgb_tp_pro_paragraph_render_callback( $attributes ) {
 	
 	$blockClass = Tp_Blocks_Helper::block_wrapper_classes( $attributes );
 	
+	if(class_exists('Tpgbp_Pro_Blocks_Helper')){
+		$content = (!empty($content)) ? Tpgbp_Pro_Blocks_Helper::tpgb_dynamic_val($content,['blockName' => 'tpgb/tp-pro-paragraph']) : '';
+	}
+
     $output .= '<div class="tpgb-pro-paragraph tpgb-block-'.esc_attr($block_id).' '.esc_attr($blockClass).'">';
 		if(!empty($Showtitle) && !empty($title)){
 			$output .= '<'.Tp_Blocks_Helper::validate_html_tag($titleTag).' class="pro-heading-inner">';

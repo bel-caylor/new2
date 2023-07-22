@@ -316,7 +316,8 @@ function tpgb_product_listing_callback($attributes, $content) {
 
 						$output .= '<div class="grid-item '.($layout =='carousel' ? 'splide__slide' : ( $layout !='metro' ? esc_attr($desktop_class) : '')).' '.esc_attr($category_filter).' '.( $layout=='metro' ? ' tpgb-metro-'.esc_attr($col).' '.( !empty($tabCol) ? ' tpgb-tab-metro-'.esc_attr($tabCol).''  : '' ).' '.( !empty($moCol) ? ' tpgb-mobile-metro-'.esc_attr($moCol).''  : '' ).' ' : '' ).' ">';
 							ob_start();
-								include TPGBP_PATH."includes/product-listing/product-{$style}.php"; 
+								include TPGBP_PATH."includes/product-listing/".sanitize_file_name('product-'.$style.'.php'); 
+								
 								$output .= ob_get_contents();
 							ob_end_clean();
 						$output .='</div>';

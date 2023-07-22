@@ -242,3 +242,8 @@
         right: 0
     }
 }
+
+/* COntainer Pop Css */
+.tpgb-canvas-content-wrap .tpgb-content-editor .tpgb-container-row .tpgb-stylist-list{
+	position: initial;
+}

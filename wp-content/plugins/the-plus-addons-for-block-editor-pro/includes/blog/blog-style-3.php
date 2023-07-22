@@ -27,7 +27,7 @@ if(!empty($layout) && $layout=='metro'){
 
 	<div class="tpgb-content-bottom <?php echo esc_attr($column_class_2); ?>">
 		<?php if(!empty($styleLayout)){
-			include TPGBP_INCLUDES_URL. 'blog/blog-style-3-layout-'.esc_attr($styleLayout).'.php';
+			include TPGBP_INCLUDES_URL. 'blog/'.sanitize_file_name('blog-style-3-layout-'.$styleLayout.'.php');
 		}else{
 			include TPGBP_INCLUDES_URL. 'blog/blog-style-3-layout-style-1.php';
 		} ?>

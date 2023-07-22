@@ -57,8 +57,16 @@ Class Tpgb_Get_Blocks {
 		if(!empty($block['attrs']) && !empty($block['attrs']['slug']) ){
 			$slug = $block['attrs']['slug'];
 			$templates_parts = get_block_templates( array( 'slugs__in' => $slug ), 'wp_template_part' );
+			$lang_slug = '';
+			if(function_exists('pll_current_language')){
+				$lang = pll_current_language();
+				if( !empty($lang) ){
+					$lang_slug = $slug.'___'.$lang;
+				}
+			}
+
 			foreach ( $templates_parts as $templates_part ) {
-				if ( $slug === $templates_part->slug ) {
+				if ( $slug === $templates_part->slug || $lang_slug === $templates_part->slug ) {
 					$temp_id = $templates_part->wp_id;
 					return $temp_id;
 				}
@@ -153,22 +161,37 @@ Class Tpgb_Get_Blocks {
 	 */
 	public function enqueue_scripts( $dependency = false) {
 		$plus_version = get_post_meta( $this->post_id, '_block_css', true );
+		if(!empty(get_queried_object_id()) && get_queried_object_id() != $this->post_id ){
+			$plus_version = get_post_meta( get_queried_object_id(), '_block_css', true );
+		}
 		if( empty($plus_version) ){
 			$plus_version = time();
 		}
 		$localize = '';
 		if(tpgb_library()->get_caching_option() == false){
+			$check_global_css = Tp_Blocks_Helper::get_extra_option('gbl_css');
 			if ( tpgb_library()->check_css_js_cache_files( $this->post_type, $this->preload_name, 'css', true ) ) {
 				$css_file = TPGB_ASSET_URL . '/theplus-preload-' . $this->post_type . '-' . $this->preload_name . '.min.css';
 				$enqueue_name = 'tpgb-plus-'.$this->post_type . '-' . $this->preload_name;
 				if( $dependency == false ){
 					$enqueue_name = 'tpgb-plus-block-front-css';
-					$dependency = ['plus-global'];
+					if(!empty($check_global_css) && $check_global_css==='disable'){
+						$dependency = [];
+					}else{
+						$dependency = ['plus-global'];
+					}
 					wp_enqueue_style( 'tpgb-common',tpgb_library()->pathurl_security( TPGB_URL . "/assets/css/main/general/tpgb-common.css" ), $dependency, $plus_version );
 				}else{
 					$dependency = ['tpgb-plus-block-front-css'];
 				}
 				wp_enqueue_style( $enqueue_name,tpgb_library()->pathurl_security($css_file), $dependency, $plus_version );
+			}else if($dependency == false){
+				if(!empty($check_global_css) && $check_global_css==='disable'){
+					$dependency = [];
+				}else{
+					$dependency = ['plus-global'];
+				}
+				wp_enqueue_style( 'tpgb-plus-block-front-css',tpgb_library()->pathurl_security( TPGB_URL . "/assets/css/main/general/tpgb-common.css" ), $dependency, $plus_version );
 			}
 		}else if(tpgb_library()->get_caching_option() == 'separate'){
 			$tpgb_path = TPGB_PATH . DIRECTORY_SEPARATOR;
@@ -366,7 +389,7 @@ Class Tpgb_Get_Blocks {
 		}
 
 		//Svg Icon Load 
-		if( ($blockname=='tpgb/tp-flipbox' && !empty($options) && !empty($options['iconType']) && $options['iconType'] == 'svg') || ($blockname=='tpgb/tp-infobox' && !empty($options) && !empty($options['iconType']) && $options['iconType'] == 'svg') || ($blockname=='tpgb/tp-number-counter' && !empty($options) && !empty($options['iconType']) && $options['iconType'] == 'svg') || ($blockname=='tpgb/tp-pricing-table' && !empty($options) && !empty($options['iconType']) && $options['iconType'] == 'svg') ){
+		if( ($blockname=='tpgb/tp-flipbox' && !empty($options) && !empty($options['layoutType']) && $options['layoutType']=='carousel') || ($blockname=='tpgb/tp-infobox' && !empty($options) && !empty($options['layoutType']) && $options['layoutType']=='carousel') || ($blockname=='tpgb/tp-flipbox' && !empty($options) && !empty($options['iconType']) && $options['iconType'] == 'svg') || ($blockname=='tpgb/tp-infobox' && !empty($options) && !empty($options['iconType']) && $options['iconType'] == 'svg') || ($blockname=='tpgb/tp-number-counter' && !empty($options) && !empty($options['iconType']) && $options['iconType'] == 'svg') || ($blockname=='tpgb/tp-pricing-table' && !empty($options) && !empty($options['iconType']) && $options['iconType'] == 'svg') ){
 			$this->transient_blocks[] = 'tpgb-draw-svg';
 		}
 		
@@ -405,6 +428,16 @@ Class Tpgb_Get_Blocks {
 				$this->transient_blocks[] = 'tpx-button-'.$options['styleType'];
 			}else{
 				$this->transient_blocks[] = 'tpx-button-style-1';
+			}
+
+			if(!empty($options) && isset($options['fancyBox']) && !empty($options['fancyBox']) ){
+				$this->transient_blocks[] = 'tpgb-fancy-box';
+				$this->transient_blocks[] = 'tpgb-fancy-custom';
+			}
+
+			/** Shake Animation */
+			if(!empty($options) && !empty($options['shakeAnimate'])){
+				$this->transient_blocks[] = 'tpx-button-shake-ani';
 			}
 		}
 

@@ -613,6 +613,24 @@ function tpgb_tp_testimonials() {
 				],
 				'scopy' => true,
 			],
+			'cntntMargin' => [
+				'type' => 'object',
+				'default' => (object) [ 
+					'md' => [
+						"top" => '',
+						"right" => '',
+						"bottom" => '',
+						"left" => '',
+					],
+					"unit" => 'px',
+				],
+				'style' => [
+					(object) [
+						'selector' => '{{PLUS_WRAP}}.testimonial-style-2 .testimonial-content-text {margin: {{cntntMargin}};}',
+					],
+				],
+				'scopy' => true,
+			],
 			'contentNormalColor' => [
 				'type' => 'string',
 				'default' => '',

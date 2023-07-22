@@ -65,7 +65,7 @@ function tpgb_pricing_table_render_callback( $attributes, $content) {
 	if($iconType=='icon'){
 		$icon_style = $iconStyle ;
 	}
-	$getPriceIcon .= '<div class="'.($iconType=='svg' ? 'tpgb-draw-svg' : 'pricing-icon '.esc_attr($trlinr) ).' icon-'.esc_attr($icon_style).'" '.($iconType=='svg' ? 'data-id="service-svg-'.esc_attr($block_id).'" data-type="'.esc_attr($svgDraw).'" data-duration="'.esc_attr($svgDura).'" data-stroke="'.esc_attr($svgstroColor).'" data-fillColor="'.esc_attr($svgfillColor).'" data-fillEnable="yes"': '' ).' >';
+	$getPriceIcon .= '<div class="price-table-icon '.($iconType=='svg' ? 'tpgb-draw-svg' : 'pricing-icon '.esc_attr($trlinr) ).' icon-'.esc_attr($icon_style).'" '.($iconType=='svg' ? 'data-id="service-svg-'.esc_attr($block_id).'" data-type="'.esc_attr($svgDraw).'" data-duration="'.esc_attr($svgDura).'" data-stroke="'.esc_attr($svgstroColor).'" data-fillColor="'.esc_attr($svgfillColor).'" data-fillEnable="yes"': '' ).' >';
 		if($iconType=='icon'){
 			$getPriceIcon .= '<i class="'.esc_attr($iconStore).'"></i>';
 		}
@@ -193,6 +193,14 @@ function tpgb_pricing_table_render_callback( $attributes, $content) {
 							$getItemIcon .= '<span class="tpgb-icon-list-icon '.esc_attr($trlinr).'">'; 
 								$getItemIcon .='<i class="'.esc_attr($item['iconStore']).'" aria-hidden="true"></i>';
 							$getItemIcon .= '</span>';
+
+							//Get Item Extra Icon
+							$getItemExIcon = '';
+							if(!empty($item['eIcnToggle']) && !empty($item['eIconStore'])){
+								$getItemExIcon .= '<span class="tpgb-extra-list-icon '.esc_attr($trlinr).'">'; 
+									$getItemExIcon .='<i class="'.esc_attr($item['eIconStore']).'" aria-hidden="true"></i>';
+								$getItemExIcon .= '</span>';
+							}
 							
 							//Get Item Description
 							$getItemDesc = '';
@@ -201,6 +209,7 @@ function tpgb_pricing_table_render_callback( $attributes, $content) {
 							}
 							$getStylishContent .= $getItemIcon;
 							$getStylishContent .= $getItemDesc;
+							$getStylishContent .= $getItemExIcon;
 						$getStylishContent .= "</div>";
 						
 					endforeach;
@@ -223,9 +232,40 @@ function tpgb_pricing_table_render_callback( $attributes, $content) {
 			if($wyStyle=='style-2'){
 				$getWysiwygContent .= '<hr class="border-line"/>';
 			}
-			$getWysiwygContent .= '<div class="pricing-content">'.wp_kses_post($wyContent).'</div>';
+			$getWysiwygContent .= '<div class="pricing-content '.esc_attr($trlinr).'">'.wp_kses_post($wyContent).'</div>';
 			$getWysiwygContent .= $contentOverlay;
 		$getWysiwygContent .= '</div>';
+	}
+
+	$dyStyle = '';
+	$titleAlign = (!empty($attributes['titleAlign'])) ? $attributes['titleAlign'] : ['md'=>'', 'sm'=>'', 'xs'=> ''];
+	if($iconType!='none' && !empty($titleAlign)){
+			$leftStyle = ' .tpgb-block-'.esc_attr($block_id).' .pricing-table-inner .price-table-icon { margin-left: 0}';
+			$rightStyle = ' .tpgb-block-'.esc_attr($block_id).' .pricing-table-inner .price-table-icon { margin-right: 0}';
+		if(!empty($titleAlign['md'])){
+			if($titleAlign['md']=='left'){
+				$dyStyle .= $leftStyle;
+			}
+			if($titleAlign['md']=='right'){
+				$dyStyle .= $rightStyle;
+			}
+		}
+		if(!empty($titleAlign['sm'])){
+			if($titleAlign['sm']=='left'){
+				$dyStyle .= ' @media (max-width:1024px) and (min-width:768px){ '.$leftStyle.' }';
+			}
+			if($titleAlign['sm']=='right'){
+				$dyStyle .= ' @media (max-width:1024px) and (min-width:768px){ '.$rightStyle.' }';
+			}
+		}
+		if(!empty($titleAlign['xs'])){
+			if($titleAlign['xs']=='left'){
+				$dyStyle .= ' @media (max-width:767px){ '.$leftStyle.' }';
+			}
+			if($titleAlign['xs']=='right'){
+				$dyStyle .= ' @media (max-width:767px){ '.$rightStyle.' }';
+			}
+		}
 	}
 		
 	$output = '';
@@ -257,6 +297,10 @@ function tpgb_pricing_table_render_callback( $attributes, $content) {
 	$output .= '</div>';
 
 	$output = Tpgb_Blocks_Global_Options::block_Wrap_Render($attributes, $output);
+
+	if(!empty($dyStyle)){
+		$output .= '<style>'.$dyStyle.'</style>';
+	}
 	
     return $output;
 }
@@ -318,6 +362,21 @@ function tpgb_pricing_table() {
 				],
 			],
 		],
+		'titleAlign' => [
+			'type' => 'object',
+			'default' => '',
+			'style' => [
+				(object) [
+					'condition' => [(object) ['key' => 'title', 'relation' => '!=', 'value' => '' ]],
+					'selector' => '{{PLUS_WRAP}} .pricing-title { text-align: {{titleAlign}}; }',
+				],
+				(object) [
+					'condition' => [(object) ['key' => 'subTitle', 'relation' => '!=', 'value' => '' ]],
+					'selector' => '{{PLUS_WRAP}} .pricing-subtitle { text-align: {{titleAlign}}; }',
+				],
+			],
+			'scopy' => true,
+		],
 		'priceStyle' => [
 			'type' => 'string',
 			'default' => 'style-1',	
@@ -333,6 +392,16 @@ function tpgb_pricing_table() {
 		'postText' => [
 			'type' => 'string',
 			'default' => 'Per Year',	
+		],
+		'priceAlign' => [
+			'type' => 'object',
+			'default' => '',
+			'style' => [
+				(object) [
+					'selector' => '{{PLUS_WRAP}} .pricing-price-wrap { text-align: {{priceAlign}}; }',
+				],
+			],
+			'scopy' => true,
 		],
 		'disPrePrice' => [
 			'type' => 'boolean',
@@ -370,6 +439,24 @@ function tpgb_pricing_table() {
 						'type'=> 'string',
 						'default' => 'fas fa-plus'
 					],
+					'iconNmlColor' => [
+						'type' => 'string',
+						'default' => '',
+						'style' => [
+							(object) [
+								'selector' => '{{PLUS_WRAP}} {{TP_REPEAT_ID}} .tpgb-icon-list-icon { color: {{iconNmlColor}}; }',
+							],
+						],
+					],
+					'iconHvrColor' => [
+						'type' => 'string',
+						'default' => '',
+						'style' => [
+							(object) [
+								'selector' => '{{PLUS_WRAP}} .pricing-table-inner:hover {{TP_REPEAT_ID}} .tpgb-icon-list-icon { color: {{iconHvrColor}}; }',
+							],
+						],
+					],
 					'tooltipText' => [
 						'type' => 'string',
 						'default' => 'Special Feature'
@@ -392,6 +479,32 @@ function tpgb_pricing_table() {
 							],
 						],
 					],
+					'eIcnToggle' => [
+						'type' => 'boolean',
+						'default' => false,
+					],
+					'eIconStore' => [
+						'type'=> 'string',
+						'default' => 'fas fa-question-circle'
+					],
+					'eIconNColor' => [
+						'type' => 'string',
+						'default' => '',
+						'style' => [
+							(object) [
+								'selector' => '{{PLUS_WRAP}} {{TP_REPEAT_ID}} .tpgb-extra-list-icon { color: {{eIconNColor}}; }',
+							],
+						],
+					],
+					'eIconHColor' => [
+						'type' => 'string',
+						'default' => '',
+						'style' => [
+							(object) [
+								'selector' => '{{PLUS_WRAP}} .pricing-table-inner:hover {{TP_REPEAT_ID}} .tpgb-extra-list-icon { color: {{eIconHColor}}; }',
+							],
+						],
+					],
 				],
 			],
 			'default' => [
@@ -399,22 +512,40 @@ function tpgb_pricing_table() {
 					'_key' => '0',
 					'listDesc' => 'Feature 1',
 					'iconStore'=> 'fas fa-check-circle',
+					'iconNmlColor'=> '',
+					'iconHvrColor'=> '',
 					'tooltipText'=> 'Special Feature',
 					"tooltipTypo" => ['openTypography' => 0 ],
+					'eIcnToggle'=> false,
+					'eIconStore'=> 'fas fa-question-circle',
+					'eIconNColor'=> '',
+					'eIconHColor'=> '',
  				],
 				[
 					'_key' => '1',
 					'listDesc' => 'Feature 2',
 					'iconStore'=> 'fas fa-check-circle',
+					'iconNmlColor'=> '',
+					'iconHvrColor'=> '',
 					'tooltipText'=> 'Special Feature',
 					"tooltipTypo" => ['openTypography' => 0 ],
+					'eIcnToggle'=> false,
+					'eIconStore'=> 'fas fa-question-circle',
+					'eIconNColor'=> '',
+					'eIconHColor'=> '',
 				],
 				[
 					'_key' => '2',
 					'listDesc' => 'Feature 3',
 					'iconStore'=> 'fas fa-check-circle',
+					'iconNmlColor'=> '',
+					'iconHvrColor'=> '',
 					'tooltipText'=> 'Special Feature',
 					"tooltipTypo" => ['openTypography' => 0 ],
+					'eIcnToggle'=> false,
+					'eIconStore'=> 'fas fa-question-circle',
+					'eIconNColor'=> '',
+					'eIconHColor'=> '',
 				] 
 			]
 		],
@@ -448,6 +579,17 @@ function tpgb_pricing_table() {
 		'ctaText' => [
 			'type' => 'string',
 			'default' => '*30 Days Refund Policy </br></br>',	
+		],
+		'ctaAlign' => [
+			'type' => 'object',
+			'default' => '',
+			'style' => [
+				(object) [
+					'condition' => [(object) ['key' => 'ctaText', 'relation' => '!=', 'value' => '' ]],
+					'selector' => '{{PLUS_WRAP}} .pricing-table-inner .pricing-cta-text { text-align: {{ctaAlign}}; }',
+				],
+			],
+			'scopy' => true,
 		],
 		'disRibbon' => [
 			'type' => 'boolean',
@@ -930,6 +1072,20 @@ function tpgb_pricing_table() {
 			],
 			'scopy' => true,
 		],
+		'extraIconSize' => [
+			'type' => 'object',
+			'default' => [ 
+				'md' => '',
+				"unit" => 'px',
+			],
+			'style' => [
+				(object) [
+					'condition' => [(object) ['key' => 'contentStyle', 'relation' => '==', 'value' => 'stylish' ]],
+					'selector' => '{{PLUS_WRAP}} .tpgb-icon-list-items .tpgb-extra-list-icon{ font-size: {{extraIconSize}}; }',
+				],
+			],
+			'scopy' => true,
+		],
 		'listAlign' => [
 			'type' => 'string',
 			'default' => 'flex-start',
@@ -989,6 +1145,28 @@ function tpgb_pricing_table() {
 				(object) [ 
 					'condition' => [(object) ['key' => 'contentStyle', 'relation' => '==', 'value' => 'stylish' ]],
 					'selector' => '{{PLUS_WRAP}} .pricing-table-inner:hover .tpgb-icon-list-icon{ color: {{listIcnHvrColor}}; }',
+				],
+			],
+			'scopy' => true,
+		],
+		'extraIcnNColor' => [
+			'type' => 'string',
+			'default' => '',
+			'style' => [
+				(object) [
+					'condition' => [(object) ['key' => 'contentStyle', 'relation' => '==', 'value' => 'stylish' ]],
+					'selector' => '{{PLUS_WRAP}} .tpgb-icon-list-items .tpgb-extra-list-icon{ color: {{extraIcnNColor}}; }',
+				],
+			],
+			'scopy' => true,
+		],
+		'extraIcnHColor' => [
+			'type' => 'string',
+			'default' => '',
+			'style' => [
+				(object) [ 
+					'condition' => [(object) ['key' => 'contentStyle', 'relation' => '==', 'value' => 'stylish' ]],
+					'selector' => '{{PLUS_WRAP}} .pricing-table-inner:hover .tpgb-extra-list-icon{ color: {{extraIcnHColor}}; }',
 				],
 			],
 			'scopy' => true,
@@ -1091,6 +1269,17 @@ function tpgb_pricing_table() {
 				(object) [
 					'condition' => [(object) ['key' => 'contentStyle', 'relation' => '==', 'value' => 'wysiwyg' ]],
 					'selector' => '{{PLUS_WRAP}} .pricing-content-wrap.content-desc .pricing-content , {{PLUS_WRAP}} .pricing-content-wrap.content-desc .pricing-content p{ color: {{wysiwygTextColor}}; }',
+				],
+			],
+			'scopy' => true,
+		],
+		'wysiwygHTextColor' => [
+			'type' => 'string',
+			'default' => '',
+			'style' => [
+				(object) [
+					'condition' => [(object) ['key' => 'contentStyle', 'relation' => '==', 'value' => 'wysiwyg' ]],
+					'selector' => '{{PLUS_WRAP}} .pricing-table-inner:hover .pricing-content , {{PLUS_WRAP}} .pricing-table-inner:hover .pricing-content p{ color: {{wysiwygHTextColor}}; }',
 				],
 			],
 			'scopy' => true,

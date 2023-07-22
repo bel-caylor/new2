@@ -98,7 +98,7 @@ function tpgb_tp_site_logo_render_callback( $attributes, $content) {
 				$output .= '<a href="'.esc_url($url_link).'" target="'.esc_attr($target).'" rel="'.esc_attr($nofollow).'" class="site-normal-logo svg-logo" '.$link_attr.' aria-label="'.$ariaLabel.'">';
 					$svgUrl = (isset($svgStore['dynamic']) && class_exists('Tpgbp_Pro_Blocks_Helper')) ? Tpgbp_Pro_Blocks_Helper::tpgb_dynamic_repeat_url($svgStore) : $svgStore['url'];
 					$output .= '<img src="'.esc_url($svgUrl).'" class="image-logo-wrap normal-image '.esc_attr($sticky_class).'"/>';
-					if(!empty($stickyLogo)){
+					if(!empty($stickyLogo) && !empty($stickySvg['url'])){
 						$stsvgUrl = (isset($stickySvg['dynamic']) && class_exists('Tpgbp_Pro_Blocks_Helper')) ? Tpgbp_Pro_Blocks_Helper::tpgb_dynamic_repeat_url($stickySvg) : $stickySvg['url'];
 						$output .= '<img src="'.esc_url($stsvgUrl).'" class="image-logo-wrap tpgb-trans-ease sticky-image"/>';
 					}

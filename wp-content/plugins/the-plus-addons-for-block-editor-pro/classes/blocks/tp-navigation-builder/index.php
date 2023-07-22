@@ -106,7 +106,7 @@ function tpgb_tp_navbuilder_render_callback( $attributes, $content) {
 	//Get Navigation Title Bar For VerticalSide Menu
 	$getnavTitle = '';
 	$link_attr = Tpgbp_Pro_Blocks_Helper::add_link_attributes($titleLink);
-	$getnavTitle .= '<a class="vertical-side-toggle" href='.(!empty($titleLink['url'])  ? esc_url($titleLink['url']) : '#').' '.$link_attr.'>';
+	$getnavTitle .= '<a class="vertical-side-toggle tpgb-trans-easeinout" href='.(!empty($titleLink['url'])  ? esc_url($titleLink['url']) : '#').' '.$link_attr.'>';
 		$getnavTitle .= '<span>';
 			$getnavTitle .= '<i aria-hidden="true" class="pre-icon '.esc_attr($prefixIcon).'"></i> ';
 			$getnavTitle .= wp_kses_post($navTitle);
@@ -1501,6 +1501,10 @@ function tpgb_tp_navbuilder() {
 					(object) [
 						'selector' => '{{PLUS_WRAP}} .tpgb-mobile-menu .navbar-nav>li>a { color: {{resmenuColor}}; }',
 					],
+					(object) [
+                        'condition' => [(object) ['key' => 'resmenuType', 'relation' => '==', 'value' => 'off-canvas']],
+                        'selector' => '{{PLUS_WRAP}} .tpgb-mobile-menu.tpgb-menu-off-canvas .close-menu{ color: {{resmenuColor}}; }',
+                    ],
 				],
 				'scopy' => true,
 			],
@@ -1534,6 +1538,10 @@ function tpgb_tp_navbuilder() {
 					(object) [
 						'selector' => '{{PLUS_WRAP}} .tpgb-mobile-menu .navbar-nav>li>a',
 					],
+					(object) [
+                        'condition' => [(object) ['key' => 'resmenuType', 'relation' => '==', 'value' => 'off-canvas']],
+                        'selector' => '{{PLUS_WRAP}} .tpgb-mobile-menu.tpgb-menu-off-canvas, {{PLUS_WRAP}} .tpgb-nav-wrap .tpgb-mobile-menu.tpgb-menu-off-canvas .navbar-nav',
+                    ],
 				],
 				'scopy' => true,
 			],

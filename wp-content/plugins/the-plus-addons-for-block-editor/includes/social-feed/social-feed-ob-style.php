@@ -2,7 +2,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 	$Iconlogo = '<div class="tpgb-sf-logo">
-					<a href="'.esc_url($PostLink).'" class="tpgb-sf-logo-link" target="_blank" rel="noopener noreferrer" aria-label="'.esc_attr__('Post URL','tpgb').'">
+					<a href="'.esc_url($videoURL).'" class="tpgb-sf-logo-link" target="_blank" rel="noopener noreferrer" aria-label="'.esc_attr__('Post URL','tpgb').'">
 						<i class="'.esc_attr($socialIcon).'"></i>
 					</a>
 				</div>';
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
     			} 
     			if(!empty($CreatedTime)){
     				echo '<div class="tpgb-sf-time">
-							<a href="'.esc_url($PostLink).'" target="_blank" rel="noopener noreferrer" alt="'.esc_attr__('Post URL','tpgb').'">'.wp_kses_post($CreatedTime).'</a></div>';
+							<a href="'.esc_url($videoURL).'" target="_blank" rel="noopener noreferrer" alt="'.esc_attr__('Post URL','tpgb').'">'.wp_kses_post($CreatedTime).'</a></div>';
     			}   
     		echo '</div>';
     		if( (!empty($socialIcon) && $style != "style-3") || (empty($ImageURL) && $style == "style-3") ){

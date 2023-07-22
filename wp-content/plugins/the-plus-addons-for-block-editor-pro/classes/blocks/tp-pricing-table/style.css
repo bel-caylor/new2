@@ -35,6 +35,10 @@
     margin-right: 8px;
     line-height: inherit;
 }
+.tpgb-pricing-table .tpgb-icon-list-items .tpgb-icon-list-item .tpgb-extra-list-icon {
+    margin-left: 8px;
+    line-height: inherit;
+}
 .tpgb-pricing-table .pricing-overlay-color {
     content: '';
     position: absolute;

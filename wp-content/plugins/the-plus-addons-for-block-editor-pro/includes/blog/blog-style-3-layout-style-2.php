@@ -1,6 +1,6 @@
 <?php
 if(!empty($showPostMeta) && $showPostMeta=='yes'){
-	include TPGBP_INCLUDES_URL. 'blog/post-meta-'.esc_attr($postMetaStyle).'.php';
+	include TPGBP_INCLUDES_URL. 'blog/'.sanitize_file_name('post-meta-'.$postMetaStyle.'.php');
 }
 
 if(!empty($ShowTitle) && $ShowTitle=='yes'){

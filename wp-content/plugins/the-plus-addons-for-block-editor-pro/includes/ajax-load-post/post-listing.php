@@ -27,10 +27,15 @@
 	
 	$postListing = $postdata['type'];
 	
+	if($cuscntType == 'editor'){
+		$style = 'custom-skin';
+	}
+
+
 	//grid item loop
 	echo '<div class="grid-item  '.( $layout !='metro' ?  'tpgb-col' : '').' '.esc_attr($column_class).' '.esc_attr($category_filter).' '.( $layout=='metro' ? ' tpgb-metro-'.esc_attr($col).' '.( !empty($tabCol) ? ' tpgb-tab-metro-'.esc_attr($tabCol).''  : '' ).' '.( !empty($moCol) ? ' tpgb-mobile-metro-'.esc_attr($moCol).''  : '' ).' ' : '' ).' ">';				
 	if(!empty($style)){
-		include TPGBP_PATH. 'includes/blog/blog-'.esc_attr($style).'.php'; 
+		include TPGBP_PATH. 'includes/blog/'.sanitize_file_name('blog-'.$style.'.php');
 	}
 	
     echo '</div>';

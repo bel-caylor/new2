@@ -85,6 +85,42 @@ class TPgb_Pro_Gutenberg_Settings_Options {
 				'id'   => 'tpgb_secret_key_recaptcha',
 				'type' => 'text',
 			),
+			array(
+				'name' => esc_html__('Event Tracking','tpgbp'),
+				'desc' => esc_html__('Note : If you enable, You will be considered as a beta user and You will get beta update notice directly in your plugins update area. This works only for Pro Version of plugin, It will available in Free version soon.','tpgbp'),
+				'id'   => 'tpgb_event_tracking',
+				'type' => 'select',
+				'show_option_none' => false,
+				'default' => 'disable',
+				'options' => array(
+					'disable' => esc_html__('Disable', 'tpgbp'),
+					'enable' => esc_html__('Enable', 'tpgbp'),
+				),
+			),
+			array(
+				'name' => esc_html__('GA4 (Measurement) ID', 'tpgbp'),
+				'desc' => sprintf(__('<a href="https://support.google.com/analytics/answer/1008080?hl=en" target="_blank" rel="noopener noreferrer">Generate Measurement Id</a>. Note : Keep this field empty, If you have already added Tracking Script on Website.', 'tpgbp')),
+				'default' => '',
+				'id' => 'event_track_google',
+				'type' => 'text',
+				'attributes' => array(
+					'placeholder' => esc_html__('Ex. G-1A2345CDEF', 'tpgbp'),
+					'data-conditional-id'    => 'tpgb_event_tracking',
+					'data-conditional-value' => 'enable',
+				),
+			),
+			array(
+				'name' => esc_html__('Facebook Pixel ID', 'tpgbp'),
+				'desc' => sprintf(__('<a href="https://www.facebook.com/business/help/952192354843755" target="_blank" rel="noopener noreferrer">Generate Facebook Pixel Id</a>. Note : Keep this field empty, If you have already added Tracking Script on Website.', 'tpgbp')),
+				'default' => '',
+				'id' => 'event_track_facebook',
+				'type' => 'text',
+				'attributes' => array(
+					'placeholder' => esc_html__('Ex. 123456799421545', 'tpgbp'),
+					'data-conditional-id'    => 'tpgb_event_tracking',
+					'data-conditional-value' => 'enable',
+				),
+			),
 		);
 		return array_merge($data, $pro_extra_option);
 	}

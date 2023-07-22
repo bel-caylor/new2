@@ -4,7 +4,7 @@
  */
 defined( 'ABSPATH' ) || exit;
 
-function tpgb_tp_post_listing_render_callback( $attributes ) {
+function tpgb_tp_post_listing_render_callback( $attributes , $content , $blocks ) {
 	$output = '';
 	$query_args = tpgb_post_query($attributes);
 	$query = new \WP_Query( $query_args );
@@ -85,7 +85,7 @@ function tpgb_tp_post_listing_render_callback( $attributes ) {
 
 	$display_thumbnail = !empty($attributes['DisImgSize']) ? $attributes['DisImgSize'] : true;
     $thumbnail = isset($attributes['ImageSize']) ? $attributes['ImageSize'] : 'full';
-	
+	$cuscntType = (!empty($attributes['cuscntType'])) ? $attributes['cuscntType'] : '';
 	$blockClass = Tp_Blocks_Helper::block_wrapper_classes( $attributes );
 
 	$equalHeightAtt = Tpgbp_Pro_Blocks_Helper::global_equal_height( $attributes );
@@ -96,6 +96,9 @@ function tpgb_tp_post_listing_render_callback( $attributes ) {
 
 	$metrocolumns = isset($attributes['metrocolumns']) ? $attributes['metrocolumns'] : [ 'md' => '3' ] ;
 	$metroStyle = isset($attributes['metroStyle']) ? $attributes['metroStyle'] : '';
+
+	//Custom Loop Skin
+	$block_instance = ( is_array($blocks) ) ? $blocks : $blocks->parsed_block;
 
 	//Columns
 	$column_class = '';
@@ -300,7 +303,9 @@ function tpgb_tp_post_listing_render_callback( $attributes ) {
 		'tpgb_nonce' => wp_create_nonce("theplus-addons-block"),
 		'searchTxt' =>  get_search_query(),
 		'customQueryId' => $customQueryId,
-    	'showcateTag' => $showcateTag
+    	'showcateTag' => $showcateTag,
+		'cuscntType'  => $cuscntType,
+		'blockArr' => $block_instance,
 	];
 	$postattr = Tpgbp_Pro_Blocks_Helper::tpgb_simple_decrypt( json_encode($postattr), 'ey');
 	
@@ -382,12 +387,17 @@ function tpgb_tp_post_listing_render_callback( $attributes ) {
 					$output .= '<div class="grid-item '.( $layout=='carousel' ? 'splide__slide' : ( $layout !='metro' ? esc_attr($column_class) : '')).' '.esc_attr($category).' '.( $layout=='metro' ? ' tpgb-metro-'.esc_attr($col).' '.( !empty($tabCol) ? ' tpgb-tab-metro-'.esc_attr($tabCol).''  : '' ).' '.( !empty($moCol) ? ' tpgb-mobile-metro-'.esc_attr($moCol).''  : '' ).' ' : '' ).' ">';
 						if(!empty($style) && $style!=='custom' ){
 							ob_start();
-							include TPGBP_PATH. 'includes/blog/blog-'.esc_attr($style).'.php'; 
+							include TPGBP_PATH. 'includes/blog/'.sanitize_file_name('blog-'.$style.'.php'); 
 							$output .= ob_get_contents();
 							ob_end_clean();
-						}else if($style=='custom' && $attributes['blockTemplate']!=''){
+						}else if($style=='custom' && $cuscntType == 'reusable-block' && $attributes['blockTemplate']!=''){
 							ob_start();
-								echo Tpgb_Library()->plus_do_block($attributes['blockTemplate']);
+							echo Tpgb_Library()->plus_do_block($attributes['blockTemplate']);
+							$output .= ob_get_contents();
+							ob_end_clean();
+						}else if($style=='custom' && $cuscntType == 'editor'){
+							ob_start();
+							include TPGBP_PATH. 'includes/blog/blog-custom-skin.php'; 
 							$output .= ob_get_contents();
 							ob_end_clean();
 						}
@@ -475,6 +485,10 @@ function tpgb_tp_post_listing() {
 			'blockTemplate' => [
 				'type' => 'string',
 				'default' => '',
+			],
+			'cuscntType' => [
+				'type' => 'string',
+				'default' => 'reusable-block',
 			],
 			'backendVisi' => [
 				'type' => 'boolean',
@@ -2382,6 +2396,38 @@ function tpgb_tp_post_listing() {
 					],
 				],
 				'scopy' => true,
+			],
+			'ftxtTypo' => [
+				'type'=> 'object',
+				'default'=> (object) [
+					'openTypography' => 0,
+				],
+				'style' => [
+					(object) [
+						'condition' => [(object) ['key' => 'filterStyle', 'relation' => '==', 'value' => 'style-4']],
+						'selector' => '{{PLUS_WRAP}} .tpgb-filter-data.style-4 .tpgb-filters-link',
+					],
+		 		],
+			],
+			'ftxtcolor' => [
+				'type' => 'string',
+				'default' => '',
+				'style' => [
+					(object) [
+						'condition' => [(object) ['key' => 'filterStyle', 'relation' => '==', 'value' => 'style-4']],
+						'selector' => '{{PLUS_WRAP}} .tpgb-filter-data.style-4 .tpgb-filters-link{color:{{ftxtcolor}};}',
+					],
+		 		],
+			],
+			'ftxthvrcolor' => [
+				'type' => 'string',
+				'default' => '',
+				'style' => [
+					(object) [
+						'condition' => [(object) ['key' => 'filterStyle', 'relation' => '==', 'value' => 'style-4']],
+						'selector' => '{{PLUS_WRAP}} .tpgb-filter-data.style-4 .tpgb-filters-link:hover{color:{{ftxthvrcolor}};}',
+					],
+		 		],
 			],
 		];
 	

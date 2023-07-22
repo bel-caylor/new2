@@ -87,7 +87,7 @@ function tpgb_tp_team_member_listing_render_callback( $attributes, $content) {
 		}
 	}
 	
-	$TeamMember .= (!empty($cssMasking) ? '<style>'.esc_attr($cssMasking).'</style>' :'');
+	
 	$TeamMember .= '<div id="'.esc_attr($block_id).'" class="tpgb-block-'.esc_attr($block_id).' tpgb-relative-block  tpgb-team-member-list team-'.esc_attr($style).' '.esc_attr($list_layout).' '.esc_attr($Categoryclass).' '.esc_attr($Sliderclass).' '.esc_attr($blockClass).' " data-style="'.esc_attr($style).'" data-layout="'.esc_attr($layout).'" data-id="'.esc_attr($block_id).'" data-splide=\''.json_encode($carousel_settings).'\'>';
 		if(!empty($CategoryWF) && $layout != 'carousel'){
 			$TeamMember .= TMCategoryFilter($attributes);
@@ -121,7 +121,7 @@ function tpgb_tp_team_member_listing_render_callback( $attributes, $content) {
 						$loop_category = explode(',', $TeamCategory);
 						foreach( $loop_category as $category ) {
 							$category = TM_Media_createSlug($category);
-							$category_filter .= $category;
+							$category_filter .= ' '.$category;
 						}
 					}
 
@@ -331,6 +331,8 @@ function tpgb_tp_team_member_listing_render_callback( $attributes, $content) {
 				$TeamMember .= '</div>';
 			}
 		$TeamMember .= "</div>";
+		
+		$TeamMember .= (!empty($cssMasking) ? '<style>'.esc_attr($cssMasking).'</style>' :'');
 	$TeamMember .= "</div>";
 	
 	$TeamMember = Tpgb_Blocks_Global_Options::block_Wrap_Render($attributes, $TeamMember);

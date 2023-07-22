@@ -21,16 +21,27 @@ function tpgb_tp_search_bar_render_callback( $attr, $content) {
 	$acfFilter =  (!empty($attr['acfFilter'])) ? $attr['acfFilter'] : [];
 	$genericFilter =  (!empty($attr['genericFilter'])) ? $attr['genericFilter'] : [];
 	$searchLabel = (!empty($attr['searchLabel'])) ? $attr['searchLabel'] : '';
+	$inputDis = (!empty($attr['inputDis'])) ? $attr['inputDis'] : false;
 	$postNFmessage = (!empty($attr['postNFmessage'])) ? $attr['postNFmessage'] : '';
 	$preSuggest = (!empty($attr['preSuggest'])) ? $attr['preSuggest'] : false;
 	$suggestText = (!empty($attr['suggestText'])) ? $attr['suggestText'] : '';
 	$overlayTgl = (!empty($attr['overlayTgl'])) ? $attr['overlayTgl'] : false;
+
+	$ttlResText = (!empty($resultVisSet['enTcount']) && !empty($resultVisSet['tResText'])) ? $resultVisSet['tResText'] : '';
+
+	$postCount = (!empty($attr['postCount'])) ? (int)$attr['postCount'] : 3;
+	$blockTemplate = (!empty($attr['blockTemplate'])) ? $attr['blockTemplate'] : '';
 
 	$includeTerms = (!empty($attr['includeTerms'])) ? json_decode($attr['includeTerms']) : '';
 	$excludeTerms = (!empty($attr['excludeTerms'])) ? json_decode($attr['excludeTerms']) : '';
 	$taxonomySlug = (!empty($attr['taxonomySlug'])) ? $attr['taxonomySlug'] : '';
 	
 	$blockClass = Tp_Blocks_Helper::block_wrapper_classes( $attr );
+
+	$disInputClass = (!empty($inputDis)) ? 'tpgb-ser-input-dis' : '';
+
+	$allResultLoad = false;
+	$onLoadAttr = $lsearchData = [];
 
 	// Set Field In Filter Area
 	$filterField = '';
@@ -41,6 +52,7 @@ function tpgb_tp_search_bar_render_callback( $attr, $content) {
 			$PostData = !empty($item['postType']) ? $item['postType'] : array('post');
 			$taxonomyData = !empty($item['taxonomy']) ? $item['taxonomy'] : '';
 			$showsubcat = !empty($item['showSubCat']) ? $item['showSubCat'] : '';
+			$phAllResult = !empty($item['phAllResult']) ? $item['phAllResult'] : false;
 			$DataArray=[];
 			
 			if(($sourceType == 'post') && !empty($item['postType']) && (!empty($PostData) && is_array($PostData) || is_object($PostData))){
@@ -53,13 +65,22 @@ function tpgb_tp_search_bar_render_callback( $attr, $content) {
 				if(!empty($DataArray)){
 					//$tDataA = count($DataArray);
 					//if($tDataA > 1){
-						$FieldValue .= tpgb_search_drop_down($DataArray, 'post', $block_id, $taxonomy='', $item);
+						$FieldValue .= tpgb_search_drop_down($DataArray, 'post', $block_id, $taxonomy='', $item, $inputDis);
 					//}
 				}
 				
 			}else if($sourceType == 'taxonomy' && !empty($taxonomyData)) {
 				$cat_args = ['taxonomy'=>$taxonomyData, 'parent' => 0, 'hide_empty'=>false];
 				$tax_terms = get_categories($cat_args);
+
+				if(!empty($phAllResult)){
+					$allResultLoad = true;
+					$lsearchData = [
+						's' => '',
+						'taxonomy' => $taxonomyData,
+						'cat' => 'all'
+					];
+				}
 				
 				foreach ($tax_terms as $index => $value) {
 					$Name = !empty($value->name) ? $value->name : '';
@@ -89,7 +110,7 @@ function tpgb_tp_search_bar_render_callback( $attr, $content) {
 				}
 				if(!empty($DataArray)){
 					
-					$FieldValue .= tpgb_search_drop_down($DataArray, 'category', $block_id, $taxonomy=$taxonomyData, $item);
+					$FieldValue .= tpgb_search_drop_down($DataArray, 'category', $block_id, $taxonomy=$taxonomyData, $item, $inputDis);
 				}
 			}
 			if(!empty($FieldValue)){
@@ -99,35 +120,45 @@ function tpgb_tp_search_bar_render_callback( $attr, $content) {
 	}
 	
 	// Result Attributes
-	$ResultOnOff = json_encode( array(
-		'ONTitle' => !empty($resultVisSet['enTitle']) ? 1 : 0,
-		'ONContent' => !empty($resultVisSet['enContent']) ? 1 : 0,
-		'ONThumb' => !empty($resultVisSet['enThumb']) ? 1 : 0,
-		'ONPrice' => !empty($resultVisSet['enPrice']) ? 1 : 0,
-		'ONShortDesc' => !empty($resultVisSet['enSdesc']) ? 1 : 0,
-		'TotalResult' => !empty($resultVisSet['enTcount']) ? 1 : 0,
-		'TotalResultTxt' => (!empty($resultVisSet['enTcount']) && !empty($resultVisSet['tResText'])) ? $resultVisSet['tResText'] : '',
-
-		'ResultlinkOn' => !empty($resAreaLink['resLinkEn']) ? 1 : 0,
-		'Resultlinktarget' => !empty($resAreaLink['resLinkTarget']) ? $resAreaLink['resLinkTarget'] : '',
-
-		'textlimit' => !empty($textLimit['textLimit']) ? 1 : 0,
-		'TxtTitle' => !empty($textLimit['titleLimit']) ? 1 : 0,
-		'texttype' => !empty($textLimit['limitOnTitle']) ? $textLimit['limitOnTitle'] : '',
-		'textcount' => !empty($textLimit['titleLmtCnt']) ? $textLimit['titleLmtCnt'] : 100,
-		'textdots'=> !empty($textLimit['titleDisplayDot']) ? $textLimit['titleDisplayDot'] : '',
-		'Txtcont' => !empty($textLimit['contentLimit']) ? 1 : 0,
-		'ContType' => !empty($textLimit['limitOnContent']) ? $textLimit['limitOnContent'] : '',
-		'ContCount' => !empty($textLimit['contentLmtCnt']) ? $textLimit['contentLmtCnt'] : 100,
-		'ContDots'=> !empty($textLimit['contentDisplayDot']) ? $textLimit['contentDisplayDot'] : '',
-
-		'errormsg' => !empty($postNFmessage) ? $postNFmessage : 'Sorry, But Nothing Matched Your Search Terms.',
-	),true);
+	$ResultOnOff = [];
+	if($resultStyle=='custom'){
+		$ResultOnOff = [
+			'errormsg' => !empty($postNFmessage) ? $postNFmessage : 'Sorry, But Nothing Matched Your Search Terms.'
+		];
+	}else{
+		$ResultOnOff = [
+			'ONTitle' => !empty($resultVisSet['enTitle']) ? 1 : 0,
+			'ONContent' => !empty($resultVisSet['enContent']) ? 1 : 0,
+			'ONThumb' => !empty($resultVisSet['enThumb']) ? 1 : 0,
+			'ONPrice' => !empty($resultVisSet['enPrice']) ? 1 : 0,
+			'ONShortDesc' => !empty($resultVisSet['enSdesc']) ? 1 : 0,
+			'TotalResult' => !empty($resultVisSet['enTcount']) ? 1 : 0,
+			'TotalResultTxt' => $ttlResText,
 	
-	$AcfData = json_encode(array(
+			'ResultlinkOn' => !empty($resAreaLink['resLinkEn']) ? 1 : 0,
+			'Resultlinktarget' => !empty($resAreaLink['resLinkTarget']) ? $resAreaLink['resLinkTarget'] : '',
+	
+			'TxtTitle' => !empty($textLimit['titleLimit']) ? 1 : 0,
+			'texttype' => !empty($textLimit['limitOnTitle']) ? $textLimit['limitOnTitle'] : 'char',
+			'textcount' => !empty($textLimit['titleLmtCnt']) ? $textLimit['titleLmtCnt'] : 100,
+			'textdots'=> !empty($textLimit['titleDisplayDot']) ? $textLimit['titleDisplayDot'] : '',
+			'Txtcont' => !empty($textLimit['contentLimit']) ? 1 : 0,
+			'ContType' => !empty($textLimit['limitOnContent']) ? $textLimit['limitOnContent'] : 'char',
+			'ContCount' => !empty($textLimit['contentLmtCnt']) ? $textLimit['contentLmtCnt'] : 100,
+			'ContDots'=> !empty($textLimit['contentDisplayDot']) ? $textLimit['contentDisplayDot'] : '',
+	
+			'errormsg' => !empty($postNFmessage) ? $postNFmessage : 'Sorry, But Nothing Matched Your Search Terms.'
+		];
+	}
+	$lresultSetting = $ResultOnOff;
+	$ResultOnOff = htmlspecialchars(json_encode($ResultOnOff), ENT_QUOTES, 'UTF-8');
+	
+	$AcfData = [
 		'ACFEnable' => !empty($acfFilter) ? 1 : 0,
 		'ACFkey' => !empty($acfFilter['acfKey']) ? $acfFilter['acfKey'] : '',
-	),true);
+	];
+	$lacfData = $AcfData;
+	$AcfData = json_encode($AcfData, true);
 
 	$PageStyle = isset($attr['loadOptions']) ? $attr['loadOptions'] : 'none';
 	$LoadPage = !empty($attr['loadMoreCounter']) ? 1 : 0;
@@ -157,6 +188,7 @@ function tpgb_tp_search_bar_render_callback( $attr, $content) {
 			'loadPagetxt' => !empty($attr['counterText']) ? $attr['counterText'] : '',
 		);
 	}
+	$lpagesetting = $PageData;
 	$PageJson = json_encode($PageData, true);
 
 	$GFilter=[];
@@ -173,7 +205,8 @@ function tpgb_tp_search_bar_render_callback( $attr, $content) {
 		);
 	}else{
 		$GFilter = array('GFEnable'=> 0,'GFSType' => $searchType);
-	}		
+	}
+	$lGFilter = $GFilter;
 	$GFarray = json_encode($GFilter, true);
 	
 	$SpecialCTP = !empty($attr['specificCTP']) ? 1 : 0;
@@ -202,6 +235,7 @@ function tpgb_tp_search_bar_render_callback( $attr, $content) {
 		'includeTerms' => $includeTerms,
 		'taxonomySlug' => $taxonomySlug,
 	);
+	$lDefaultData = $DefaultSettingg;
 	$DefaultSetting = json_encode( $DefaultSettingg, true);
 	
 	$suggest=$suggestlist="";
@@ -217,7 +251,7 @@ function tpgb_tp_search_bar_render_callback( $attr, $content) {
 	
 	$scrollclass = !empty($attr['scrollBar']) ? 'tpgb-search-scrollbar' : '';
 	$Rcolumn='';
-	if($resultStyle=='style-2'){
+	if($resultStyle=='style-2' || $resultStyle=='custom'){
 		$Rcolumn = 'tpgb-col-12 ';
 		$Rcolumn .= isset($attr['columns']['md']) ? " tpgb-col-lg-".$attr['columns']['md'] : ' tpgb-col-lg-3';
 		$Rcolumn .= isset($attr['columns']['sm']) ? " tpgb-col-md-".$attr['columns']['sm'] : ' tpgb-col-md-4';
@@ -233,12 +267,17 @@ function tpgb_tp_search_bar_render_callback( $attr, $content) {
 	$dataattr['ajaxsearchCharLimit'] = !empty($attr['searchClimit']) ? $attr['searchClimit'] : 2;
 	$dataattr['nonce'] = wp_create_nonce("tpgb-searchbar");
 	$dataattr['style'] = $resultStyle;
+	$dataattr['tempid'] = $blockTemplate;
 	$dataattr['styleColumn'] = $Rcolumn;
-	$dataattr['post_page'] = (!empty($attr['postCount'])) ? (int)$attr['postCount'] : 3;
+	$dataattr['post_page'] = $postCount;
 	$dataattr['Postype_Def'] = $Defa_Postype;
 	$dataattr = htmlspecialchars(json_encode($dataattr), ENT_QUOTES, 'UTF-8');
 
-	$output .= '<div class="tpgb-search-bar tpgb-relative-block tpgb-block-'.esc_attr($block_id).' '.esc_attr($blockClass).' " data-id="'.esc_attr($block_id).'" data-ajax_search= \'' .$dataattr. '\' data-result-setting= \''.$ResultOnOff.'\' data-genericfilter='.$GFarray.' data-pagination-data= \''.$PageJson.'\' data-acfdata='.esc_attr($AcfData).' data-default-data= \''.$DefaultSetting.'\'>';
+	if(!empty($resultStyle) && $resultStyle=='custom' && isset($attr['blockTemplate']) && !empty($attr['blockTemplate'])){
+		Tpgb_Library()->plus_do_block($attr['blockTemplate']);
+	}
+
+	$output .= '<div class="tpgb-search-bar tpgb-relative-block tpgb-block-'.esc_attr($block_id).' '.esc_attr($blockClass).' '.esc_attr($disInputClass).'" data-id="'.esc_attr($block_id).'" data-ajax_search= \'' .$dataattr. '\' data-result-setting= \''.$ResultOnOff.'\' data-genericfilter='.$GFarray.' data-pagination-data= \''.$PageJson.'\' data-acfdata='.esc_attr($AcfData).' data-default-data= \''.$DefaultSetting.'\'>';
 		
 		if(!empty($overlayTgl)){
 			$output .= '<div class="tpgb-rental-overlay"></div>';
@@ -246,24 +285,24 @@ function tpgb_tp_search_bar_render_callback( $attr, $content) {
 	
 		$output .= '<form class="tpgb-search-form" method="get" action="'.esc_url(site_url()).'">';
 			$output .= '<div class="tpgb-form-field tpgb-row">';
-				$output .= '<div class="tpgb-input-field">';
-				
-					$output .= '<div class="tpgb-input-label-field">';
-						if(!empty($searchLabel)){
-							$output .= '<label class="tpgb-search-label tpgb-trans-linear">'.esc_html( $searchLabel ).'</label>';
-						}
+				if(empty($inputDis)){
+					$output .= '<div class="tpgb-input-field">';
+						$output .= '<div class="tpgb-input-label-field">';
+							if(!empty($searchLabel)){
+								$output .= '<label class="tpgb-search-label tpgb-trans-linear">'.esc_html( $searchLabel ).'</label>';
+							}
+						$output .= '</div>';
+						$output .= '<div class="tpgb-input-inner-field">';
+							$output .= '<input name="s" '.$suggestlist.' id="seatxt-'.esc_attr($block_id).'" class="tpgb-search-input" type="text" name="search" placeholder="'.esc_attr($placeholder).'" autocomplete="off" />';
+							$output .= $suggest;
+							if($iconType=='fontAwesome' && !empty($searchIcon)) {
+								$output .= '<span class="tpgb-search-input-icon"><i class="'.esc_attr($searchIcon).'"></i></span>';
+							}
+							$output .= '<div class="tpgb-ajx-loading"><div class="tpgb-spinner-loader"></div></div>';
+							$output .= '<span class="tpgb-close-btn"><i class="fas fa-times-circle"></i></span>';
+						$output .= '</div>';
 					$output .= '</div>';
-					
-					$output .= '<div class="tpgb-input-inner-field">';
-						$output .= '<input name="s" '.$suggestlist.' id="seatxt-'.esc_attr($block_id).'" class="tpgb-search-input" type="text" name="search" placeholder="'.esc_attr($placeholder).'" autocomplete="off" />';
-						$output .= $suggest;
-						if($iconType=='fontAwesome' && !empty($searchIcon)) {
-							$output .= '<span class="tpgb-search-input-icon"><i class="'.esc_attr($searchIcon).'"></i></span>';
-						}
-						$output .= '<div class="tpgb-ajx-loading"><div class="tpgb-spinner-loader"></div></div>';
-						$output .= '<span class="tpgb-close-btn"><i class="fas fa-times-circle"></i></span>';
-					$output .= '</div>';
-				$output .= '</div>';
+				}
 				
 				$output .= $filterField;
 				
@@ -291,24 +330,70 @@ function tpgb_tp_search_bar_render_callback( $attr, $content) {
 				}
 			$output .= '</div>';
 		$output .= '</form>';
+
+		$onLoadData = $lSearchRes = $lPagnation = $pageColumn = $lloadmore = $lloadmorepage = $llazyload = $ttlPostCount = '';
+		$lStyle = '';
+		if(!empty($allResultLoad)){
+			$onLoadAttr = [
+				'searchData' => $lsearchData,
+				'text' => '',
+				'postper' => $postCount,
+				'GFilter' => $lGFilter,
+				'ACFilter' => $lacfData,
+				'styleColumn' => $Rcolumn,
+				'style' => $resultStyle,
+				'tempId' => $blockTemplate,
+				'ResultData' => $lpagesetting,
+				'DefaultData' => $lDefaultData,
+				'resultSetting' => $lresultSetting
+			];
+			$onLoadData = tpgb_search($onLoadAttr);
+			if(!empty($onLoadData) && !empty($onLoadData['posts'])){
+				$lStyle = 'style="display: block"';
+				$itemPost = '';
+				foreach ( $onLoadData['posts'] as $index => $post ) :
+					$itemPost .= $post;
+				endforeach;
+				$lSearchRes .='<div class="tpgb-search-slider tpgb-row">'.$itemPost.'</div>';
+
+				if(isset($onLoadData['pagination']) && !empty($onLoadData['pagination'])){
+					$lPagnation = $onLoadData['pagination'];
+					$pageColumn = 'data-pageColumn="'.esc_attr($onLoadData['columns']).'"';
+
+				}
+				if(isset($onLoadData['lazymore']) && !empty($onLoadData['lazymore'])){
+					$llazyload = $onLoadData['lazymore'];
+				}
+				if(isset($onLoadData['loadmore']) && !empty($onLoadData['loadmore'])){
+					$lloadmore = $onLoadData['loadmore'];
+				}
+				if(isset($onLoadData['loadmore_page']) && !empty($onLoadData['loadmore_page'])){
+					$lloadmorepage = $onLoadData['loadmore_page'];
+				}
+
+				if(isset($onLoadData['post_count']) && !empty($onLoadData['post_count'])){
+					$ttlPostCount = $onLoadData['post_count'].' '.$ttlResText;
+				}
+			}
+		}
 		
-		$output .= '<div class="tpgb-search-area '.esc_attr($resultStyle).'">';
+		$output .= '<div class="tpgb-search-area '.esc_attr($resultStyle).'" '.$lStyle.'>';
 			$output .= '<div class="tpgb-search-error"></div>';
 			$output .= '<div class="tpgb-search-header tpgb-trans-linear">';
 				if(!empty($resultVisSet['enTcount'])){
-					$output .= '<div class="tpgb-search-resultcount"></div>';
+					$output .= '<div class="tpgb-search-resultcount">'.wp_kses_post($ttlPostCount).'</div>';
 				}
 				if( ($PageStyle == 'pagination') || ($PageStyle == 'load_more' && !empty($LoadPage)) ){
-					$output .= '<div class="tpgb-search-pagina"></div>';
+					$output .= '<div class="tpgb-search-pagina" '.$pageColumn.'>'.wp_kses_post($lloadmorepage).wp_kses_post($lPagnation).'</div>';
 				}
 			$output .= '</div>';
 			$output .= '<div class="tpgb-search-list">';
-				$output .= '<div class="tpgb-search-list-inner '.esc_attr($scrollclass).'"></div>';
+				$output .= '<div class="tpgb-search-list-inner '.esc_attr($scrollclass).'">'.wp_kses_post($lSearchRes).'</div>';
 			$output .= '</div>';
 			if($PageStyle == 'load_more'){
-				$output .= '<div class="tpgb-load-more"></div>';
+				$output .= '<div class="tpgb-load-more">'.wp_kses_post($lloadmore).'</div>';
 			}else if($PageStyle == 'lazy_load'){
-				$output .= '<div class="tpgb-lazy-load"></div>';
+				$output .= '<div class="tpgb-lazy-load">'.wp_kses_post($llazyload).'</div>';
 			}
 		$output .= '</div>';
 		
@@ -352,6 +437,10 @@ function tpgb_search_bar() {
 							'type' => 'string',
         					'default' => 'All Post',
 						],
+						'phAllResult' => [
+							'type' => 'boolean',
+							'default' => false,
+						],
 						'taxonomy' => [
 							'type' => 'string',
 							'default' => '',
@@ -367,7 +456,7 @@ function tpgb_search_bar() {
 					],
 				],
 				'default' => [ 
-					[ 'sourceType' => '', 'fieldTitle' => '' , 'postType' => '', 'fieldPlaceH' => 'All Post' , 'taxonomy' => '' , 'layout' => 'drop_down' , 'showCount' => true ]
+					[ 'sourceType' => '', 'fieldTitle' => '' , 'postType' => '', 'fieldPlaceH' => 'All Post', 'phAllResult' => false, 'taxonomy' => '' , 'layout' => 'drop_down' , 'showCount' => true ]
 				],
 			],
 			'columns' => [
@@ -385,6 +474,10 @@ function tpgb_search_bar() {
 					],
 					"unit" => 'px',
 				],
+			],
+			'inputDis' => [
+				'type' => 'boolean',
+        		'default' => false,
 			],
 			'searchLabel' => [
 				'type' => 'string',
@@ -421,9 +514,13 @@ function tpgb_search_bar() {
 				'type' => 'string',
         		'default' => 'style-1',
 			],
+			'blockTemplate' => [
+				'type' => 'string',
+				'default' => '',
+			],
 			'postCount' => [
-				'type' => 'number',
-        		'default' => 3,
+				'type' => 'string',
+        		'default' => '3',
 			],
 			'columns' => [
 				'type' => 'object',
@@ -444,6 +541,7 @@ function tpgb_search_bar() {
 			'textLimit' => [
 				'type' => 'object',
 				'default' => [
+					'open' => 0,
 					'titleLimit' => false,
 					'contentLimit' => false,
 				],	
@@ -1222,6 +1320,65 @@ function tpgb_search_bar() {
 					],
 				],
 				'scopy' => true,
+			],
+			'selSpinIcon' => [
+				'type' => 'object',
+				'groupField' => [
+					(object) [
+						'cIconSize' => [
+							'type' => 'object',
+							'default' => [
+								'md' => '',
+								"unit" => 'px',
+							],
+							'style' => [
+								(object) [
+									'selector' => '{{PLUS_WRAP}}.tpgb-ser-input-dis .tpgb-search-form .tpgb-close-btn{ font-size: {{cIconSize}}; }',
+								],
+							],
+							'scopy' => true,
+						],
+						'cIconColor' => [
+							'type' => 'string',
+							'default' => '',
+							'style' => [
+								(object) [
+									'selector' => '{{PLUS_WRAP}}.tpgb-ser-input-dis .tpgb-search-form .tpgb-close-btn{ color: {{cIconColor}}; } ',
+								],
+							],
+							'scopy' => true,
+						],
+						'spinnerSize' => [
+							'type' => 'object',
+							'default' => [ 
+								'md' => '',
+								"unit" => 'px',
+							],
+							'style' => [
+								(object) [
+									'selector' => '{{PLUS_WRAP}}.tpgb-ser-input-dis .tpgb-ajx-loading .tpgb-spinner-loader{ width: {{spinnerSize}}; height: {{spinnerSize}}; }',
+								],
+							],
+							'scopy' => true,
+						],
+						'spinnerColor' => [
+							'type' => 'string',
+							'default' => '',
+							'style' => [
+								(object) [
+									'selector' => '{{PLUS_WRAP}}.tpgb-ser-input-dis .tpgb-ajx-loading .tpgb-spinner-loader{ border-top-color: {{spinnerColor}}; } ',
+								],
+							],
+							'scopy' => true,
+						],
+					],
+				],
+				'default' => [
+					'cIconSize' => ['md' => '', 'unit'=> 'px'],
+					'cIconColor' => '',
+					'spinnerSize' => ['md' => '', 'unit'=> 'px'],
+					'spinnerColor' => ''
+				],	
 			],
 			'selectPadding' => [
 				'type' => 'object',
@@ -2621,7 +2778,7 @@ function tpgb_search_bar() {
 				'style' => [
 					(object) [
 						'condition' => [(object) ['key' => 'ajaxsearch', 'relation' => '==', 'value' => true]],
-						'selector' => '{{PLUS_WRAP}} .tpgb-search-area:hover .tpgb-serpost-title{ color: {{titleHColor}}; }',
+						'selector' => '{{PLUS_WRAP}} .tpgb-ser-item:hover .tpgb-serpost-title{ color: {{titleHColor}}; }',
 					],
 				],
 				'scopy' => true,
@@ -2643,7 +2800,7 @@ function tpgb_search_bar() {
 				'style' => [
 					(object) [
 						'condition' => [(object) ['key' => 'ajaxsearch', 'relation' => '==', 'value' => true]],
-						'selector' => '{{PLUS_WRAP}} .tpgb-search-area:hover .tpgb-serpost-excerpt{ color: {{contentHColor}}; }',
+						'selector' => '{{PLUS_WRAP}} .tpgb-ser-item:hover .tpgb-serpost-excerpt{ color: {{contentHColor}}; }',
 					],
 				],
 				'scopy' => true,
@@ -2665,7 +2822,7 @@ function tpgb_search_bar() {
 				'style' => [
 					(object) [
 						'condition' => [(object) ['key' => 'ajaxsearch', 'relation' => '==', 'value' => true]],
-						'selector' => '{{PLUS_WRAP}} .tpgb-search-area:hover .tpgb-serpost-price{ color: {{wPriceHColor}}; }',
+						'selector' => '{{PLUS_WRAP}} .tpgb-ser-item:hover .tpgb-serpost-price{ color: {{wPriceHColor}}; }',
 					],
 				],
 				'scopy' => true,
@@ -2687,7 +2844,7 @@ function tpgb_search_bar() {
 				'style' => [
 					(object) [
 						'condition' => [(object) ['key' => 'ajaxsearch', 'relation' => '==', 'value' => true]],
-						'selector' => '{{PLUS_WRAP}} .tpgb-search-area:hover .tpgb-serpost-shortDesc{ color: {{wShortDescHColor}}; }',
+						'selector' => '{{PLUS_WRAP}} .tpgb-ser-item:hover .tpgb-serpost-shortDesc{ color: {{wShortDescHColor}}; }',
 					],
 				],
 				'scopy' => true,
@@ -4011,15 +4168,25 @@ function tpgb_search_bar() {
 add_action( 'init', 'tpgb_search_bar' );
 
 //Get Html For Select Drop Down
-function tpgb_search(){
+function tpgb_search($onLoadAttr = []){
+	$new_Post = (!empty($onLoadAttr)) ? $onLoadAttr : $_POST;
+
 	$searchData=[];	
-	parse_str($_POST['searchData'], $searchData);
+	if(!empty($onLoadAttr)){
+		$searchData = $new_Post['searchData'];	
+	}else{
+		parse_str($new_Post['searchData'], $searchData);
 	
-	if(!isset($_POST['nonce']) || empty($_POST['nonce']) || ! wp_verify_nonce( $_POST['nonce'], 'tpgb-searchbar' )){	
-		die ('Security checked!');
+		if(!isset($new_Post['nonce']) || empty($new_Post['nonce']) || ! wp_verify_nonce( $new_Post['nonce'], 'tpgb-searchbar' )){	
+			die ('Security checked!');
+		}
 	}
 	
-	$DefaultData = !empty($_POST['DefaultData']) ? $_POST['DefaultData'] : '';
+	$style = !empty($new_Post['style']) ? $new_Post['style'] : 'style-1';
+	$tempId = !empty($new_Post['tempId']) ? $new_Post['tempId'] : '';
+	$styleColumn = !empty($new_Post['styleColumn']) ? $new_Post['styleColumn'] : 'tpgb-col-12 tpgb-col-lg-12 tpgb-col-md-12 tpgb-col-sm-12 tpgb-col-12';
+	$DefaultData = !empty($new_Post['DefaultData']) ? $new_Post['DefaultData'] : '';
+
 	$SpecialCTP = (!empty($DefaultData) && !empty($DefaultData['specificCTP'])) ? 1 : 0;
 	if( !empty($DefaultData) && !empty($DefaultData['Def_Post']) ){
 		$Def_post = $DefaultData['Def_Post'];
@@ -4038,14 +4205,14 @@ function tpgb_search(){
 		$PostType = $Def_post;
 	}
 	
-	$PostType = (!empty($searchData) && !empty($searchData['post_type'])) ? sanitize_text_field($searchData['post_type']) : $Def_post;
-	$postper = !empty($_POST['postper']) ? intval($_POST['postper']) : 3;
+	// $PostType = (!empty($searchData) && !empty($searchData['post_type'])) ? sanitize_text_field($searchData['post_type']) : $Def_post;
+	$postper = !empty($new_Post['postper']) ? intval($new_Post['postper']) : 3;
 	
-	$GFilter = !empty($_POST['GFilter']) ? $_POST['GFilter'] : [];
+	$GFilter = !empty($new_Post['GFilter']) ? $new_Post['GFilter'] : [];
 	$GFSType = !empty($GFilter['GFSType']) ? sanitize_text_field($GFilter['GFSType']) : 'otheroption';
 
-	$ACFEnable = !empty($_POST['ACFilter']['ACFEnable']) ? $_POST['ACFilter']['ACFEnable'] : 0;
-	$ACF_Key = !empty($_POST['ACFilter']['ACFkey']) ? $_POST['ACFilter']['ACFkey'] : '';
+	$ACFEnable = !empty($new_Post['ACFilter']['ACFEnable']) ? $new_Post['ACFilter']['ACFEnable'] : 0;
+	$ACF_Key = !empty($new_Post['ACFilter']['ACFkey']) ? $new_Post['ACFilter']['ACFkey'] : '';
 	
 	if($PostType == 'product' && !class_exists('woocommerce')){
 		$response['error'] = 1;
@@ -4053,8 +4220,8 @@ function tpgb_search(){
 		wp_send_json_success($response);
 		die();
 	}
-	
-	$ResultData = !empty($_POST['ResultData']) ? $_POST['ResultData'] : [];
+	$resultSetting = !empty($new_Post['resultSetting']) ? $new_Post['resultSetting'] : [];
+	$ResultData = !empty($new_Post['ResultData']) ? $new_Post['ResultData'] : [];
 	$Pagestyle = !empty($ResultData['Pagestyle']) ? $ResultData['Pagestyle'] : 'none';
 	
 	$response = array(
@@ -4063,6 +4230,17 @@ function tpgb_search(){
 		'message' => '',
 		'posts' => null,
 	);
+
+	if(isset($searchData['taxonomy']) && !empty($searchData['taxonomy'])){
+		$taxonomy_name = $searchData['taxonomy'];
+		$taxonomy = get_taxonomy( $taxonomy_name );
+		if ( $taxonomy && ! empty( $taxonomy->object_type ) ) {
+			$post_types = $taxonomy->object_type;
+			$PostType = $post_types[0];
+		} else {
+			$PostType = 'any';
+		}
+	}
 	
 	$query_args = array(
 		'post_type' => $PostType,
@@ -4074,9 +4252,9 @@ function tpgb_search(){
 	);
 	
 	$seaposts=[];
-	if(!empty($_POST['text'])){
+	if(!empty($new_Post['text'])){
 		global $wpdb;
-		$sqlContent = $_POST['text'];
+		$sqlContent = $new_Post['text'];
 		if( !empty($ACFEnable) || (!empty($GFilter['GFEnable']) )){
 			$AllData=$GTitle=$GExcerpt=$Gcontent=$GName=$PCat=$PTag=$ACFData=[];
 			
@@ -4200,7 +4378,6 @@ function tpgb_search(){
 			}else{
 				$query_args['post__in'] = [0];
 			}
-			
 		}else{
 			$query_args['s'] = $sqlContent;
 			
@@ -4217,7 +4394,7 @@ function tpgb_search(){
 			],
 		];
 	}
-	if(!empty($searchData['taxonomy']) && !empty($searchData['cat']) ){
+	if(!empty($searchData['taxonomy']) && !empty($searchData['cat']) && $searchData['cat']!='all' ){
 		$tax_query = [
 			[
 				'taxonomy' => $searchData['taxonomy'],
@@ -4262,15 +4439,14 @@ function tpgb_search(){
 				'operator' => 'NOT IN'
 			);
 		}
-		
 	}
 
 	if(!empty($tax_query) ){
 		$query_args['tax_query'] = [ 'relation' => 'AND', $tax_query ];
 	}
 	if($Pagestyle !== 'none'){
-		$offset = !empty($_POST['offset']) ? $_POST['offset'] : '';
-		$loadmore_Post = !empty($_POST['loadNumpost']) ? $_POST['loadNumpost'] : $postper;
+		$offset = !empty($new_Post['offset']) ? $new_Post['offset'] : '';
+		$loadmore_Post = !empty($new_Post['loadNumpost']) ? $new_Post['loadNumpost'] : $postper;
 		
 		$query_args['offset'] = $offset;
 		if($Pagestyle == 'pagination'){
@@ -4287,12 +4463,14 @@ function tpgb_search(){
 	
 	$seaposts = new WP_Query($query_args);
 	
+	$totalFind = $seaposts->found_posts;
+	
 	$response['posts']  = array();
 	$response['limit_query'] = $postper;
 	
-	$response['columns']  = ceil($seaposts->found_posts / $postper);
-	$response['post_count']  = $seaposts->found_posts;
-	$response['total_count']  = $seaposts->found_posts;
+	$response['columns']  = ceil($totalFind / $postper);
+	$response['post_count']  = $totalFind;
+	$response['total_count']  = $totalFind;
 	
 	if($Pagestyle == 'pagination' && $response['limit_query'] < $response['post_count']){
 		$response['pagination'] = '';
@@ -4353,14 +4531,18 @@ function tpgb_search(){
 		}
 	}else if($Pagestyle == 'load_more'){
 		$BtnTxt = !empty($ResultData['loadbtntxt']) ? $ResultData['loadbtntxt'] : 0;
-		$response['loadmore'] = '<a class="post-load-more" data-page="1" >'.esc_html($BtnTxt).'</a>';
+		$response['loadmore'] = ($totalFind > $postper) ? '<a class="post-load-more" data-page="1" >'.esc_html($BtnTxt).'</a>' : '';
 		$LoadPage = !empty($ResultData['loadpage']) ? $ResultData['loadpage'] : 0;
 		if(!empty($LoadPage)){
 			$PageHtml = '';
 			$Pagetxt = !empty($ResultData['loadPagetxt']) ? $ResultData['loadPagetxt'] : '';
 			$loadnumber = !empty($ResultData['loadnumber']) ? $ResultData['loadnumber'] : $postper;
-			//$Numbcount = ceil($seaposts->found_posts / $loadnumber);
-			$Numbcount = ceil( ($seaposts->found_posts - $postper) / $loadnumber ) + 1;
+			//$Numbcount = ceil($totalFind / $loadnumber);
+			if($totalFind == 1){
+				$Numbcount = 1;
+			}else{
+				$Numbcount = ceil( ($totalFind - $postper) / $loadnumber ) + 1;
+			}
 
 			$PageHtml .= '<span class="tpgb-page-link" >'.esc_html($Pagetxt).'</span>';
 			$PageHtml .= '<button class="tpgb-pagelink tpgb-load-page" data-page="1" ><span class="tpgb-load-number" > 1 </span> / '.esc_html(abs($Numbcount)).' </button>';
@@ -4371,37 +4553,140 @@ function tpgb_search(){
 		$response['lazymore'] = '<a class="post-lazy-load" data-page="1"><div class="tpgb-spin-ring"><div></div><div></div><div></div><div></div></div></a>';
 	}
 	
-	foreach ($seaposts->posts as $key => $post){
-		$product='';
-		if($PostType == 'product'){
-			$product = wc_get_product($post->ID);
+	$ci = 0;
+	if($style == 'custom'){
+		if(!empty($tempId)){
+			if ( $seaposts->have_posts() ) {
+				while ($seaposts->have_posts()) {
+					ob_start();
+					$seaposts->the_post();
+					echo '<div class="tpgb-ser-item tpgb-trans-linear '.esc_attr($styleColumn).'">';
+						echo Tpgb_Library()->plus_do_block($tempId);
+					echo '</div>';
+	
+					$searchPostOp = ob_get_contents();
+					ob_end_clean();
+					$response['posts'][$ci] = $searchPostOp;
+					$ci++;
+				}
+			}
+		}else{
+			$searchReusError = '<div class="tpgb-ser-item tpgb-trans-linear '.esc_attr($styleColumn).'">';
+				$searchReusError .= 'You have '.esc_html($totalFind).' result(s) but select reusable block for layout';
+			$searchReusError .= '</div>';
+
+			$response['posts'][$ci] = $searchReusError;
 		}
+	}else{
+		foreach ($seaposts->posts as $key => $post){
+			$product='';
+			if($PostType == 'product'){
+				$product = wc_get_product($post->ID);
+			}
 
-		$url = wp_get_attachment_url(get_post_thumbnail_id($post->ID), 'thumbnail');
-		$response['posts'][$key] = array(
-			'title'       => !empty($post) ? $post->post_title : '',
-			'content'     => !empty($post) ? $post->post_title : '',
-			'link'        => !empty($post) ? get_permalink($post) : '',
-			'content'     => !empty($post) ? $post->post_excerpt : '',
-			'thumb'		  => $url,
-			'PostType'	  => $PostType,
-			'Wo_Price'	  => !empty($product) ? $product->get_price_html() : '',
-			'Wo_shortDesc'=> !empty($product) ? $product->get_short_description() : '',
-		);
+			$url = wp_get_attachment_url(get_post_thumbnail_id($post->ID), 'thumbnail');
+
+			$postTitle       	= !empty($post) ? $post->post_title : '';
+			$postLink        	= !empty($post) ? get_permalink($post) : '';
+			$postContent     	= !empty($post) ? $post->post_excerpt : '';
+			$postThumb		 	= $url;
+			$postType		 	= $PostType;
+			$postWo_Price	 	= !empty($product) ? $product->get_price_html() : '';
+			$postWo_shortDesc	= !empty($product) ? $product->get_short_description() : '';
+
+			$LinkEnale = ($resultSetting && $resultSetting['ResultlinkOn']) ? $resultSetting['ResultlinkOn'] : '';
+			$Resultlinktarget = ($LinkEnale && $resultSetting && $resultSetting['Resultlinktarget']) ? 'target="'.esc_attr($resultSetting['Resultlinktarget']).'"' : '';
+			$Resultlink = ($LinkEnale && $postLink) ? 'href="'.esc_url($postLink).'"' : '';
+
+			if(!empty($resultSetting['TxtTitle'])){
+				$txtCount = (!empty($resultSetting['textcount'])) ? $resultSetting['textcount'] : 100;
+				$txtdot = (!empty($resultSetting['textdots'])) ? $resultSetting['textdots'] : '';
+					
+				if($resultSetting['texttype'] == "char"){
+					$ttlDots = '';
+					if(strlen($postTitle) > $txtCount){
+						$ttlDots = '...';
+					}
+					$postTitle = substr($postTitle,0,$txtCount).$ttlDots;
+				}else if($resultSetting['texttype'] == "word"){
+					$ttlDots = '';
+					if(str_word_count($postTitle) > $txtCount){
+						$ttlDots = '...';
+					}
+					$words = explode(" ",$postTitle);
+					$postTitle = implode(" ",array_splice($words,0,$txtCount)).$ttlDots;
+				}
+			}
+
+			if(!empty($resultSetting['Txtcont'])){
+				$contcount = (!empty($resultSetting['ContCount'])) ? $resultSetting['ContCount'] : 100;
+				$txtdotc = (!empty($resultSetting['ContDots'])) ? $resultSetting['ContDots'] : '';
+				if($resultSetting['ContType'] == "char"){
+					$cntDots = '';
+					if(str_word_count($postContent) > $contcount){
+						$cntDots = '...';
+					}
+					$postContent = substr($postContent,0,$contcount).$cntDots;
+				}else if($resultSetting['ContType'] == "word"){
+					$cntDots = '';
+					if(str_word_count($postContent) > $contcount){
+						$cntDots = '...';
+					}
+					$words = explode(" ",$postContent);
+					$postContent = implode(" ",array_splice($words,0,$contcount)).$cntDots;
+				}
+			}
+
+			$searchPostOp = '<div class="tpgb-ser-item tpgb-trans-linear '.esc_attr($styleColumn).'">';
+				$searchPostOp .= '<a class="tpgb-serpost-link tpgb-trans-easeinout" '.$Resultlink.' '.$Resultlinktarget.' >';
+					if(!empty($resultSetting['ONThumb']) && !empty($postThumb)){
+						$searchPostOp .= '<div class="tpgb-serpost-thumb">';
+							$searchPostOp .= '<img class="tpgb-item-image" src='.esc_url($postThumb).'>';
+						$searchPostOp .= '</div>';
+					}
+					$searchPostOp .= '<div class="tpgb-serpost-wrap">';
+						if( (!empty($resultSetting['ONTitle']) && !empty($postTitle)) || (!empty($resultSetting['ONPrice']) && !empty($postWo_Price)) ){
+							$searchPostOp .= '<div class="tpgb-serpost-inner-wrap">';
+								if(!empty($resultSetting['ONTitle']) && !empty($postTitle)){
+									$searchPostOp .= '<div class="tpgb-serpost-title">'.wp_kses_post($postTitle).'</div>';
+								}
+								if(!empty($resultSetting['ONPrice']) && !empty($postWo_Price)){
+									$searchPostOp .= '<div class="tpgb-serpost-price">'.wp_kses_post($postWo_Price).'</div>';
+								}
+							$searchPostOp .= '</div>';
+						}
+						if(!empty($resultSetting['ONContent']) && !empty($postContent)){
+							$searchPostOp .= '<div class="tpgb-serpost-excerpt">'.wp_kses_post($postContent).'</div>';
+						}
+						if(!empty($resultSetting['ONShortDesc']) && !empty($postWo_shortDesc)){
+							$searchPostOp .= '<div class="tpgb-serpost-shortDesc">'.wp_kses_post($postWo_shortDesc).'</div>';
+						}
+					$searchPostOp .= '</div>';
+				$searchPostOp .= '</a>';
+			$searchPostOp .= '</div>';
+
+			$response['posts'][$key] = $searchPostOp;
+		}
 	}
-	wp_reset_postdata();
-	wp_send_json_success($response);
 
+	if(!empty($onLoadAttr)){
+		return $response;
+	}else{
+		wp_reset_postdata();
+		wp_send_json_success($response);
+	}
 }
 add_action('wp_ajax_tpgb_search', 'tpgb_search');
 add_action('wp_ajax_nopriv_tpgb_search', 'tpgb_search');
 
 // Dynamic Select Down
-function tpgb_search_drop_down($data, $name, $id, $taxo, $repeater){
+function tpgb_search_drop_down($data, $name, $id, $taxo, $repeater, $inputDis){
 	$select = '';
 	$showCnt = !empty($repeater['showCount']) ? 'yes' : 'no';
 	$label = !empty($repeater['fieldLabel']) ? $repeater['fieldLabel'] : '';
 	$placeH = !empty($repeater['fieldPlaceH']) ? $repeater['fieldPlaceH'] : '';
+	$phAllResult = !empty($repeater['phAllResult']) ? $repeater['phAllResult'] : false;
+	$sourceType = !empty($repeater['sourceType']) ? $repeater['sourceType'] : '';
 	
 	if($taxo != ''){
 		$select .= '<input name="taxonomy" type="hidden" value="'.esc_attr($taxo).'">';
@@ -4416,14 +4701,21 @@ function tpgb_search_drop_down($data, $name, $id, $taxo, $repeater){
 	}else if($name == 'category'){
 		$DatName = 'cat';
 	}
+
+	$selectLoader = '';
+	if(!empty($inputDis)){
+		$selectLoader = '<div class="tpgb-ajx-loading"><div class="tpgb-spinner-loader"></div></div><span class="tpgb-close-btn"><i class="fas fa-times-circle" aria-hidden="true"></i></span>';
+	}
+	$allResId = (!empty($phAllResult) && $sourceType == 'taxonomy') ? 'all' : '';
 	
 	$select .= '<div class="tpgb-sbar-dropdown">';
 		$select .= '<div class="tpgb-select">';
 			$select .= '<span class="search-selected-text">'.esc_html($placeH).'</span><span class="tpgb-dd-icon tpgb-trans-easeinout"><i class="fas fa-chevron-down"></i></span>';
+			$select .= $selectLoader;
 		$select .= '</div>';
 		$select .= '<input type="hidden" name="'.esc_attr($DatName).'" id="'.esc_attr($DatName).'" >';
 		$select .= '<ul class="tpgb-sbar-dropdown-menu">';
-			$select .= '<li id="" class="tpgb-searchbar-li">'.esc_html($placeH).'</li>';
+			$select .= '<li id="'.esc_attr($allResId).'" class="tpgb-searchbar-li">'.esc_html($placeH).'</li>';
 			foreach($data as $key => $label){
 				$LName = !empty($label['name']) ? $label['name'] : '';
 				$Lcount = !empty($label['count']) ? $label['count'] : 0;

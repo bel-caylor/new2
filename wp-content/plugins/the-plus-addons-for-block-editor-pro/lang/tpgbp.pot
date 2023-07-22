@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-01 17:08+0530\n"
+"POT-Creation-Date: 2023-05-10 17:56+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -250,11 +250,11 @@ msgstr ""
 msgid "Select Color"
 msgstr ""
 
-#: classes/tp-block-helper.php:3990
+#: classes/tp-block-helper.php:4023
 msgid "Custom URL"
 msgstr ""
 
-#: classes/tp-block-helper.php:3993
+#: classes/tp-block-helper.php:4026
 msgid "Gallery Listing Widget Used Custom Url Media"
 msgstr ""
 
@@ -376,203 +376,203 @@ msgstr ""
 msgid "Page Not Found"
 msgstr ""
 
-#: classes/tp-custom-ajax.php:103 classes/tp-custom-ajax.php:111
-#: classes/tp-custom-ajax.php:371 classes/tp-custom-ajax.php:376
-#: classes/tp-custom-ajax.php:423 classes/tp-custom-ajax.php:428
-#: classes/tp-custom-ajax.php:753 classes/tp-custom-ajax.php:758
-#: classes/tp-custom-ajax.php:940 classes/tp-custom-ajax.php:990
-#: classes/tp-custom-ajax.php:995
+#: classes/tp-custom-ajax.php:95 classes/tp-custom-ajax.php:103
+#: classes/tp-custom-ajax.php:363 classes/tp-custom-ajax.php:368
+#: classes/tp-custom-ajax.php:415 classes/tp-custom-ajax.php:420
+#: classes/tp-custom-ajax.php:745 classes/tp-custom-ajax.php:750
+#: classes/tp-custom-ajax.php:932 classes/tp-custom-ajax.php:982
+#: classes/tp-custom-ajax.php:987
 msgid "Ooops, something went wrong, please try again later."
 msgstr ""
 
-#: classes/tp-custom-ajax.php:119
+#: classes/tp-custom-ajax.php:111
 msgid "Enable Membership  Option From Site General Setting"
 msgstr ""
 
-#: classes/tp-custom-ajax.php:144
+#: classes/tp-custom-ajax.php:136
 msgid "Field Is Missing"
 msgstr ""
 
-#: classes/tp-custom-ajax.php:182 classes/tp-custom-ajax.php:434
-#: classes/tp-custom-ajax.php:669
+#: classes/tp-custom-ajax.php:174 classes/tp-custom-ajax.php:426
+#: classes/tp-custom-ajax.php:661
 msgid "Please check the the captcha form."
 msgstr ""
 
-#: classes/tp-custom-ajax.php:211 classes/tp-custom-ajax.php:463
-#: classes/tp-custom-ajax.php:698
+#: classes/tp-custom-ajax.php:203 classes/tp-custom-ajax.php:455
+#: classes/tp-custom-ajax.php:690
 msgid "Please check the the reCaptcha form."
 msgstr ""
 
-#: classes/tp-custom-ajax.php:220
+#: classes/tp-custom-ajax.php:212
 msgid "Username Already Exists."
 msgstr ""
 
-#: classes/tp-custom-ajax.php:250
+#: classes/tp-custom-ajax.php:242
 #, php-format
 msgid ""
 "You have successfully registered to %s. We have emailed your password to the "
 "email address you entered."
 msgstr ""
 
-#: classes/tp-custom-ajax.php:252
+#: classes/tp-custom-ajax.php:244
 msgid "The e-mail could not be sent"
 msgstr ""
 
-#: classes/tp-custom-ajax.php:264 classes/tp-custom-ajax.php:393
-#: classes/tp-custom-ajax.php:861 classes/tp-custom-ajax.php:898
+#: classes/tp-custom-ajax.php:256 classes/tp-custom-ajax.php:385
+#: classes/tp-custom-ajax.php:853 classes/tp-custom-ajax.php:890
 msgid "Login successful, Redirecting..."
 msgstr ""
 
-#: classes/tp-custom-ajax.php:266
+#: classes/tp-custom-ajax.php:258
 msgid "Registered Successfully, Ops! Login Failed...!"
 msgstr ""
 
-#: classes/tp-custom-ajax.php:270
+#: classes/tp-custom-ajax.php:262
 msgid "Redirecting..."
 msgstr ""
 
-#: classes/tp-custom-ajax.php:292
+#: classes/tp-custom-ajax.php:284
 msgid "Registered Successfully"
 msgstr ""
 
-#: classes/tp-custom-ajax.php:307
+#: classes/tp-custom-ajax.php:299
 msgid "The email address you entered is not valid."
 msgstr ""
 
-#: classes/tp-custom-ajax.php:312
+#: classes/tp-custom-ajax.php:304
 msgid "An account exists with this email address."
 msgstr ""
 
-#: classes/tp-custom-ajax.php:320
+#: classes/tp-custom-ajax.php:312
 msgid "Password & Confirm Password Not Match!"
 msgstr ""
 
-#: classes/tp-custom-ajax.php:398
+#: classes/tp-custom-ajax.php:390
 msgid "Ops! Invalid Email..!"
 msgstr ""
 
-#: classes/tp-custom-ajax.php:401
+#: classes/tp-custom-ajax.php:393
 msgid "Ops! Invalid Username..!"
 msgstr ""
 
-#: classes/tp-custom-ajax.php:404
+#: classes/tp-custom-ajax.php:396
 msgid "Ops! Incorrent Password..!"
 msgstr ""
 
-#: classes/tp-custom-ajax.php:474 classes/tp-custom-ajax.php:1001
+#: classes/tp-custom-ajax.php:466 classes/tp-custom-ajax.php:993
 msgid "<strong>ERROR</strong>: Enter a username or email address."
 msgstr ""
 
-#: classes/tp-custom-ajax.php:479 classes/tp-custom-ajax.php:486
-#: classes/tp-custom-ajax.php:1006 classes/tp-custom-ajax.php:1013
+#: classes/tp-custom-ajax.php:471 classes/tp-custom-ajax.php:478
+#: classes/tp-custom-ajax.php:998 classes/tp-custom-ajax.php:1005
 msgid ""
 "<strong>ERROR</strong>: There is no account with that username or email "
 "address."
 msgstr ""
 
-#: classes/tp-custom-ajax.php:538
+#: classes/tp-custom-ajax.php:530
 msgid "Someone has requested a password reset for the following account:"
 msgstr ""
 
-#: classes/tp-custom-ajax.php:540
+#: classes/tp-custom-ajax.php:532
 #, php-format
 msgid "Site Name: %s"
 msgstr ""
 
-#: classes/tp-custom-ajax.php:542
+#: classes/tp-custom-ajax.php:534
 #, php-format
 msgid "Username: %s"
 msgstr ""
 
-#: classes/tp-custom-ajax.php:543
+#: classes/tp-custom-ajax.php:535
 msgid "If this was a mistake, just ignore this email and nothing will happen."
 msgstr ""
 
-#: classes/tp-custom-ajax.php:544
+#: classes/tp-custom-ajax.php:536
 msgid "To reset your password, visit the following address:"
 msgstr ""
 
-#: classes/tp-custom-ajax.php:548 classes/tp-custom-ajax.php:559
+#: classes/tp-custom-ajax.php:540 classes/tp-custom-ajax.php:551
 msgid "Click Here"
 msgstr ""
 
-#: classes/tp-custom-ajax.php:563
+#: classes/tp-custom-ajax.php:555
 #, php-format
 msgid "[%s] Password Reset"
 msgstr ""
 
-#: classes/tp-custom-ajax.php:570 classes/tp-custom-ajax.php:573
+#: classes/tp-custom-ajax.php:562 classes/tp-custom-ajax.php:565
 msgid "Check your e-mail for the reset password link."
 msgstr ""
 
-#: classes/tp-custom-ajax.php:575
+#: classes/tp-custom-ajax.php:567
 msgid "The e-mail could not be sent."
 msgstr ""
 
-#: classes/tp-custom-ajax.php:575
+#: classes/tp-custom-ajax.php:567
 msgid "Possible reason: your host may have disabled the mail() function."
 msgstr ""
 
-#: classes/tp-custom-ajax.php:663
+#: classes/tp-custom-ajax.php:655
 msgid "SomeThing Wants to Wrong"
 msgstr ""
 
-#: classes/tp-custom-ajax.php:711
+#: classes/tp-custom-ajax.php:703
 msgid "The entered key has expired. Please start reset process again."
 msgstr ""
 
-#: classes/tp-custom-ajax.php:713
+#: classes/tp-custom-ajax.php:705
 msgid "The entered key is invalid. Please start reset process again."
 msgstr ""
 
-#: classes/tp-custom-ajax.php:720
+#: classes/tp-custom-ajax.php:712
 msgid "Password does not match. Please try again."
 msgstr ""
 
-#: classes/tp-custom-ajax.php:725
+#: classes/tp-custom-ajax.php:717
 msgid ""
 "Password Field is Empty. Enter Password.\n"
 "                    "
 msgstr ""
 
-#: classes/tp-custom-ajax.php:732
+#: classes/tp-custom-ajax.php:724
 msgid "Your password has been changed. Use your new password to sign in."
 msgstr ""
 
-#: classes/tp-custom-ajax.php:748
+#: classes/tp-custom-ajax.php:740
 msgid "Registration option not enbled in your general settings."
 msgstr ""
 
-#: classes/tp-custom-ajax.php:774
+#: classes/tp-custom-ajax.php:766
 msgid "Invalid Authorization"
 msgstr ""
 
-#: classes/tp-custom-ajax.php:781
+#: classes/tp-custom-ajax.php:773
 msgid "Facebook email validation failed"
 msgstr ""
 
-#: classes/tp-custom-ajax.php:919 classes/tp-custom-ajax.php:935
+#: classes/tp-custom-ajax.php:911 classes/tp-custom-ajax.php:927
 msgid "Unauthorized access"
 msgstr ""
 
-#: classes/tp-custom-ajax.php:946
+#: classes/tp-custom-ajax.php:938
 msgid "clientId Not Set"
 msgstr ""
 
-#: classes/tp-custom-ajax.php:953
+#: classes/tp-custom-ajax.php:945
 msgid "User not verified by Google"
 msgstr ""
 
-#: classes/tp-custom-ajax.php:1058
+#: classes/tp-custom-ajax.php:1050
 msgid "<strong> Magic Link Send... </strong>"
 msgstr ""
 
-#: classes/tp-custom-ajax.php:1060
+#: classes/tp-custom-ajax.php:1052
 msgid ""
 "<strong>ERROR</strong>: Ooops, something went wrong, please try again later. "
 msgstr ""
 
-#: classes/blocks/tp-advanced-buttons/index.php:66
+#: classes/blocks/tp-advanced-buttons/index.php:68
 #: classes/blocks/tp-animated-service-boxes/index.php:173
 #: classes/blocks/tp-circle-menu/index.php:204
 #: classes/blocks/tp-expand/index.php:108
@@ -609,17 +609,17 @@ msgstr ""
 msgid "Toggle Button"
 msgstr ""
 
-#: classes/blocks/tp-container/index.php:354
+#: classes/blocks/tp-container/index.php:356
 #: classes/blocks/tp-row/index.php:280
 msgid "Parallax_img"
 msgstr ""
 
-#: classes/blocks/tp-container/index.php:454
+#: classes/blocks/tp-container/index.php:456
 #: classes/blocks/tp-row/index.php:309
 msgid "My Video"
 msgstr ""
 
-#: classes/blocks/tp-creative-image/index.php:91
+#: classes/blocks/tp-creative-image/index.php:90
 msgid "Creative Image"
 msgstr ""
 
@@ -756,7 +756,7 @@ msgid "img"
 msgstr ""
 
 #: classes/blocks/tp-media-listing/index.php:531
-#: classes/blocks/tp-post-listing/index.php:2594
+#: classes/blocks/tp-post-listing/index.php:2608
 #: classes/blocks/tp-product-listing/index.php:583
 #: classes/blocks/tp-social-feed/index.php:5282
 #: classes/blocks/tp-social-reviews/index.php:791
@@ -765,7 +765,7 @@ msgid "All"
 msgstr ""
 
 #: classes/blocks/tp-media-listing/index.php:556
-#: classes/blocks/tp-post-listing/index.php:2595
+#: classes/blocks/tp-post-listing/index.php:2609
 #: classes/blocks/tp-product-listing/index.php:584
 #: classes/blocks/tp-social-feed/index.php:5304
 #: classes/blocks/tp-social-reviews/index.php:812

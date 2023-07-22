@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AdRotate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-15 17:49-0700\n"
-"PO-Revision-Date: 2023-04-15 17:55-0700\n"
+"POT-Creation-Date: 2023-05-25 00:26-0600\n"
+"PO-Revision-Date: 2023-05-25 00:26-0600\n"
 "Last-Translator: Arnan de Gans <support@ajdg.solutions>\n"
 "Language-Team: Michal Rudolf <michal@rudolf.waw.pl>\n"
 "Language: pl_PL\n"
@@ -290,10 +290,34 @@ msgstr "Jeśli problem będzie się powtarzał, poszukaj pomocy na"
 msgid "An unknown error occured."
 msgstr "Wystąpił nieznany błąd."
 
+#: adrotate-output.php:715
+#, php-format
+msgid "One advert is expired."
+msgid_plural "%1$s adverts expired!"
+msgstr[0] "%1$s reklama wygasła."
+msgstr[1] "%1$s reklamy wygasły!"
+msgstr[2] "%1$s reklam wygasło!"
+
 #: adrotate-output.php:715 adrotate-output.php:718 adrotate-output.php:722
 #: dashboard/settings/maintenance.php:16
 msgid "Check adverts"
 msgstr "Sprawdź reklamy"
+
+#: adrotate-output.php:718
+#, php-format
+msgid "One advert expires soon."
+msgid_plural "%1$s adverts are almost expiring!"
+msgstr[0] "%1$s reklama wkrótce wygaśnie."
+msgstr[1] "%1$s reklamy wkrótce wygasną!"
+msgstr[2] "%1$s reklam wkrótce wygaśnie!"
+
+#: adrotate-output.php:722
+#, php-format
+msgid "One advert with configuration errors."
+msgid_plural "%1$s adverts have configuration errors!"
+msgstr[0] "%1s reklama z błędami konfiguracji."
+msgstr[1] "%1s reklam z błędami konfiguracji!"
+msgstr[2] "%1s reklam z błędami konfiguracji!"
 
 #: adrotate-output.php:727
 msgid ""
@@ -372,6 +396,13 @@ msgid "Installation instructions"
 msgstr "Instrukcje montażowe"
 
 #: adrotate-output.php:828
+msgid "one issue that requires"
+msgid_plural "several issues that require"
+msgstr[0] "jeden problem wymagający"
+msgstr[1] "kilka problemów wymagających"
+msgstr[2] "wiele problemów wymagających"
+
+#: adrotate-output.php:828
 msgid "your attention:"
 msgstr "twoją uwagę:"
 
@@ -442,20 +473,20 @@ msgid "Buy now"
 msgstr "Kup teraz"
 
 #: adrotate-output.php:928
-msgid "Two Site License"
-msgstr "Licencja dwustanowiskowa"
+msgid "Duo License"
+msgstr "Licencja Duo"
 
 #: adrotate-output.php:928
 msgid "Use on TWO WordPress installations."
 msgstr "Użyj na DWÓCH WordPress instalacjach."
 
 #: adrotate-output.php:939
-msgid "Need help fast? Or do you have a question?"
-msgstr "Potrzebujesz szybkiej pomocy? A może masz pytanie?"
+msgid "Do you have a question?"
+msgstr "Masz pytanie?"
 
 #: adrotate-output.php:940
-msgid "Help AdRotate Banner Manager Grow"
-msgstr "Pomóż AdRotate Banner Manager rosnąć"
+msgid "Support AdRotate Banner Manager"
+msgstr "Obsługa Menedżera banerów AdRotate"
 
 #: adrotate-output.php:947
 msgid ""
@@ -484,14 +515,12 @@ msgstr "Kup bilet pomocy technicznej"
 msgid ""
 "Arnan needs your help. Please consider writing a review or sharing AdRotate "
 "in Social media if you find the plugin useful. Writing a review and sharing "
-"AdRotate on social media costs you nothing but doing so is super helpful to "
-"ensure future development."
+"AdRotate on social media costs you nothing but doing so is super helpful."
 msgstr ""
 "Arnan potrzebuje twojej pomocy. Rozważ napisanie recenzji lub udostępnienie "
 "AdRotate w mediach społecznościowych, jeśli uważasz, że wtyczka jest "
 "przydatna. Napisanie recenzji i udostępnienie AdRotate w mediach "
-"społecznościowych nic nie kosztuje, ale jest to bardzo pomocne w zapewnieniu "
-"przyszłego rozwoju."
+"społecznościowych nic nie kosztuje, ale jest to bardzo pomocne."
 
 #: adrotate-output.php:955
 msgid "Post Tweet"
@@ -3418,32 +3447,8 @@ msgstr ""
 "specjalne style znaczników, kodu lub układu można zastosować w opakowaniu "
 "grupy podczas edycji grupy."
 
-#, php-format
-#~ msgid "One advert is expired."
-#~ msgid_plural "%1$s adverts expired!"
-#~ msgstr[0] "%1$s reklama wygasła."
-#~ msgstr[1] "%1$s reklamy wygasły!"
-#~ msgstr[2] "%1$s reklam wygasło!"
-
-#, php-format
-#~ msgid "One advert expires soon."
-#~ msgid_plural "%1$s adverts are almost expiring!"
-#~ msgstr[0] "%1$s reklama wkrótce wygaśnie."
-#~ msgstr[1] "%1$s reklamy wkrótce wygasną!"
-#~ msgstr[2] "%1$s reklam wkrótce wygaśnie!"
-
-#, php-format
-#~ msgid "One advert with configuration errors."
-#~ msgid_plural "%1$s adverts have configuration errors!"
-#~ msgstr[0] "%1s reklama z błędami konfiguracji."
-#~ msgstr[1] "%1s reklam z błędami konfiguracji!"
-#~ msgstr[2] "%1s reklam z błędami konfiguracji!"
-
-#~ msgid "one issue that requires"
-#~ msgid_plural "several issues that require"
-#~ msgstr[0] "jeden problem wymagający"
-#~ msgstr[1] "kilka problemów wymagających"
-#~ msgstr[2] "wiele problemów wymagających"
+#~ msgid "Two Site License"
+#~ msgstr "Licencja dwustanowiskowa"
 
 #~ msgid "Write review on wordpress.org"
 #~ msgstr "Napisz recenzję firmy WordPress.org"
@@ -3474,9 +3479,6 @@ msgstr ""
 #~ "zarządzania reklamami. Sprawdź zakładkę porównania funkcji na dowolnej "
 #~ "stronie produktu, aby zobaczyć, co AdRotate Pro ma do zaoferowania dla "
 #~ "Ciebie!"
-
-#~ msgid "Multi License"
-#~ msgstr "Multi licencja"
 
 #~ msgid "Use on up to FIVE WordPress installations."
 #~ msgstr "Użyj do PIĘCIU instalacji WordPress."

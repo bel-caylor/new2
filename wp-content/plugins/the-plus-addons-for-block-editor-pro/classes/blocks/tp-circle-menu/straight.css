@@ -15,7 +15,7 @@
 .tpgb-circle-menu.layout-straight .menu-style-2.circleMenu-closed .tpgb-circle-menu-list:not(.tpgb-circle-main-menu-list), .tpgb-circle-menu.layout-straight .tpgb-circle-menu-wrap.menu-style-2:not(.circleMenu-open) .tpgb-circle-menu-list:not(.tpgb-circle-main-menu-list){
 	z-index:-1;
 }
-.tpgb-circle-menu.layout-straight ul.tpgb-circle-menu-wrap.menu-style-2 li.tpgb-circle-menu-list:not(.tpgb-circle-main-menu-list) a span.menu-tooltip-title {
+.tpgb-circle-menu.layout-straight .menu-style-2 .menu-tooltip-title {
     position: relative;
     opacity: 1;
     display: block;

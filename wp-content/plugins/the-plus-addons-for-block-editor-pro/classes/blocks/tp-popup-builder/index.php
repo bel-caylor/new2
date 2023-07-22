@@ -13,7 +13,8 @@ function tpgb_tp_popup_builder_callback( $settings, $content) {
     $popupDir = (!empty($settings['popupDir'])) ? $settings['popupDir'] :'';
     $inAnimation = (!empty($settings['inAnimation'])) ? $settings['inAnimation'] :'';
     $outAnimation = (!empty($settings['outAnimation'])) ? $settings['outAnimation'] :'';
-	
+	$outcustDur = (!empty($settings['outcustDur'])) ? (int) $settings['outcustDur']*1000 : '';
+
     $off_canvas = '';
     $offsetTime = wp_timezone_string();
     $now        = new DateTime('NOW', new DateTimeZone($offsetTime));
@@ -38,25 +39,8 @@ function tpgb_tp_popup_builder_callback( $settings, $content) {
     }
 
     $time = $days = '';
-    if(!empty($settings['showRestricted']) && $settings['showRestricted'] != '') {
-        
-        $days = (!empty($settings['showXDays']) && $settings['showXDays'] != '') ? $settings['showXDays'] : 1;
-        $_SESSION['popViews']   = (isset($_SESSION['popViews'])) ? $_SESSION['popViews'] + 1 : 1;
-        if(!isset($_SESSION['dateNow'])) { $_SESSION['dateNow'] = ''; }
-        if($_SESSION['popViews'] > $settings['showXTimes']) {
-            
-            $flag = false;
-            if($days > 0) {
-                $date = new DateTime('NOW', new DateTimeZone($offsetTime));
-                $date = $date->modify("+".$days." day");
-                $_SESSION['dateNow'] = ($_SESSION['dateNow'] == '') ? $date : $_SESSION['dateNow'];
-                if($now >= $_SESSION['dateNow']) {
-                    $_SESSION['popViews'] = 0;
-                    $_SESSION['dateNow'] = '';
-                }
-            }
-        } 
-    }
+    $days = (!empty($settings['showXDays']) && $settings['showXDays'] != '') ? $settings['showXDays'] : 1;
+
 
 	$blockClass = Tp_Blocks_Helper::block_wrapper_classes( $settings );
 
@@ -77,7 +61,10 @@ function tpgb_tp_popup_builder_callback( $settings, $content) {
         $onpageviews = !empty($settings["onpageviews"]) ? 'yes' : 'no';
         $prevurl = !empty($settings["prevurl"]) ? 'yes' : 'no';
 		$extraclick = !empty($settings["extraclick"]) ? 'yes' : 'no';
-		
+        $showRes = !empty($settings["showRestricted"]) ? 'yes' : 'no';
+        $noXTimes = (!empty($settings['showXTimes']) && $settings['showXTimes'] != '') ? (int)$settings['showXTimes'] : 1;
+
+
         $previousUrl = (!empty($settings["prevurl"]) ) ? $settings["previousUrl"]["url"] : '';
         $extraId = (!empty($settings["extraclick"]) ) ? $settings["extraId"] : '';
         $inactivitySec = ( !empty($settings["inactivity"])) ? $settings["inactivitySec"] : '';
@@ -103,6 +90,10 @@ function tpgb_tp_popup_builder_callback( $settings, $content) {
                 $animData['animeOut'] = $outAnimation;
             }
 
+            if(!empty($outcustDur)){
+                $animData['custoutDur'] = $outcustDur;
+            }
+
             if( !empty($settings['inanimDur']) && $settings['inanimDur'] == 'custom' ){
                 $animClass .= ' tpgb-anim-dur-custom';
             }else{
@@ -121,7 +112,7 @@ function tpgb_tp_popup_builder_callback( $settings, $content) {
 		
         $uid               = uniqid ( "canvas-" );
         $scrollHeight      = (!empty($settings["onScroll"])) ? $settings['scrollHeight'] : '';
-        $data_attr         = 'data-settings = {"content_id":"' . esc_attr($block_id) . '","transition":"' . esc_attr ( $openStyle ) . '","direction":"' . esc_attr ( $openDir ) . '","esc_close":"' . esc_attr ( $closeContent ) . '","body_click_close":"' . esc_attr ( $bodyClickClose ) . '","trigger":"' . esc_attr ( $onbtnClick ) . '","onpageLoad":"' . esc_attr ( $onpageLoad ) . '","onpageloadDelay":"' . esc_attr ( $loadpodelay ) . '","onScroll":"' . esc_attr ( $onScroll ) . '","exitInlet":"' . esc_attr ( $exitInlet ) . '","inactivity":"' . esc_attr ( $inactivity ) . '","onpageviews":"' . esc_attr ( $onpageviews ) . '","prevurl":"' . esc_attr ( $prevurl ) . '","extraclick":"' . esc_attr ( $extraclick ) . '","scrollHeight":"'. esc_attr($scrollHeight). '","previousUrl":"'. esc_attr($previousUrl). '","extraId":"'. esc_attr($extraId). '","time":"'. esc_attr($time). '","days":"'. esc_attr($days). '","inactivitySec":"'. esc_attr($inactivitySec). '"}';
+        $data_attr         = 'data-settings = {"content_id":"' . esc_attr($block_id) . '","transition":"' . esc_attr ( $openStyle ) . '","direction":"' . esc_attr ( $openDir ) . '","esc_close":"' . esc_attr ( $closeContent ) . '","body_click_close":"' . esc_attr ( $bodyClickClose ) . '","trigger":"' . esc_attr ( $onbtnClick ) . '","onpageLoad":"' . esc_attr ( $onpageLoad ) . '","onpageloadDelay":"' . esc_attr ( $loadpodelay ) . '","onScroll":"' . esc_attr ( $onScroll ) . '","exitInlet":"' . esc_attr ( $exitInlet ) . '","inactivity":"' . esc_attr ( $inactivity ) . '","onpageviews":"' . esc_attr ( $onpageviews ) . '","prevurl":"' . esc_attr ( $prevurl ) . '","extraclick":"' . esc_attr ( $extraclick ) . '","scrollHeight":"'. esc_attr($scrollHeight). '","previousUrl":"'. esc_attr($previousUrl). '","extraId":"'. esc_attr($extraId). '","time":"'. esc_attr($time). '","days":"'. esc_attr($days). '","inactivitySec":"'. esc_attr($inactivitySec). '","showuseRes":"' .esc_attr($showRes). '","noXTimes":"'.esc_attr($noXTimes).'"}';
         $toggle_content    = '';
         
         $full_width_button = ($settings[ "toggleCanvas" ] == 'button' && ! empty ( $settings[ 'btnFullWidth' ] ) && $settings[ 'btnFullWidth' ] == true) ? 'btn_full_width' : '';
@@ -544,8 +535,7 @@ function tpgb_tp_popup_builder_render() {
             'style' => [
                 (object) [
                     'condition' => [(object) ['key' => 'openStyle', 'relation' => '!=', 'value' => 'popup']],
-                    'selector' => 
-                        '{{PLUS_WRAP}}-canvas.tpgb-canvas-content-wrap.tpgb-top,{{PLUS_WRAP}}-canvas.tpgb-canvas-content-wrap.tpgb-bottom{width: 100%;height: {{openWidth}};}{{PLUS_WRAP}}-canvas.tpgb-canvas-content-wrap{width: {{openWidth}};}{{PLUS_WRAP}}-canvas-open.tpgb-push.tpgb-open.tpgb-left .tpgb-offcanvas-container,{{PLUS_WRAP}}-canvas-open.tpgb-slide-along.tpgb-open.tpgb-left .tpgb-offcanvas-container{-webkit-transform: translate3d({{openWidth}}, 0, 0);transform: translate3d({{openWidth}}, 0, 0);}{{PLUS_WRAP}}-canvas-open.tpgb-push.tpgb-open.tpgb-right .tpgb-offcanvas-container,{{PLUS_WRAP}}-canvas-open.tpgb-slide-along.tpgb-open.tpgb-right .tpgb-offcanvas-container{-webkit-transform: translate3d(-{{openWidth}}, 0, 0);transform: translate3d(-{{openWidth}}, 0, 0);}{{PLUS_WRAP}}-canvas-open.tpgb-push.tpgb-open.tpgb-top .tpgb-offcanvas-container,{{PLUS_WRAP}}-canvas-open.tpgb-slide-along.tpgb-open.tpgb-top .tpgb-offcanvas-container{-webkit-transform: translate3d(0,{{openWidth}}, 0);transform: translate3d( 0,{{openWidth}}, 0);}{{PLUS_WRAP}}-canvas-open.tpgb-push.tpgb-open.tpgb-bottom .tpgb-offcanvas-container,{{PLUS_WRAP}}-canvas-open.tpgb-slide-along.tpgb-open.tpgb-bottom .tpgb-offcanvas-container{-webkit-transform: translate3d(0,-{{openWidth}}, 0);transform: translate3d( 0,-{{openWidth}}, 0);}{{PLUS_WRAP}}-canvas.tpgb-canvas-content-wrap.tpgb-corner-box{width: {{openWidth}};height: {{openWidth}};}{{PLUS_WRAP}}-canvas.tpgb-canvas-content-wrap.tpgb-top-left.tpgb-corner-box{-webkit-transform: translate3d(-{{openWidth}},-{{openWidth}},0);transform: translate3d(-{{openWidth}},-{{openWidth}},0);}{{PLUS_WRAP}}-canvas.tpgb-canvas-content-wrap.tpgb-top-right.tpgb-corner-box{-webkit-transform: translate3d({{openWidth}},-{{openWidth}},0);transform: translate3d({{openWidth}},-{{openWidth}},0);}',
+                    'selector' => '{{PLUS_WRAP}}-canvas.tpgb-canvas-content-wrap.tpgb-top,{{PLUS_WRAP}}-canvas.tpgb-canvas-content-wrap.tpgb-bottom{width: 100%;height: {{openWidth}};}{{PLUS_WRAP}}-canvas.tpgb-canvas-content-wrap{width: {{openWidth}};}{{PLUS_WRAP}}-canvas-open.tpgb-push.tpgb-open.tpgb-left .tpgb-offcanvas-container,{{PLUS_WRAP}}-canvas-open.tpgb-slide-along.tpgb-open.tpgb-left .tpgb-offcanvas-container{-webkit-transform: translate3d({{openWidth}}, 0, 0);transform: translate3d({{openWidth}}, 0, 0);}{{PLUS_WRAP}}-canvas-open.tpgb-push.tpgb-open.tpgb-right .tpgb-offcanvas-container,{{PLUS_WRAP}}-canvas-open.tpgb-slide-along.tpgb-open.tpgb-right .tpgb-offcanvas-container{-webkit-transform: translate3d(-{{openWidth}}, 0, 0);transform: translate3d(-{{openWidth}}, 0, 0);}{{PLUS_WRAP}}-canvas-open.tpgb-push.tpgb-open.tpgb-top .tpgb-offcanvas-container,{{PLUS_WRAP}}-canvas-open.tpgb-slide-along.tpgb-open.tpgb-top .tpgb-offcanvas-container{-webkit-transform: translate3d(0,{{openWidth}}, 0);transform: translate3d( 0,{{openWidth}}, 0);}{{PLUS_WRAP}}-canvas-open.tpgb-push.tpgb-open.tpgb-bottom .tpgb-offcanvas-container,{{PLUS_WRAP}}-canvas-open.tpgb-slide-along.tpgb-open.tpgb-bottom .tpgb-offcanvas-container{-webkit-transform: translate3d(0,-{{openWidth}}, 0);transform: translate3d( 0,-{{openWidth}}, 0);}{{PLUS_WRAP}}-canvas.tpgb-canvas-content-wrap.tpgb-corner-box{width: {{openWidth}};height: {{openWidth}};}{{PLUS_WRAP}}-canvas.tpgb-canvas-content-wrap.tpgb-top-left.tpgb-corner-box{-webkit-transform: translate3d(-{{openWidth}},-{{openWidth}},0);transform: translate3d(-{{openWidth}},-{{openWidth}},0);}{{PLUS_WRAP}}-canvas.tpgb-canvas-content-wrap.tpgb-top-right.tpgb-corner-box{-webkit-transform: translate3d({{openWidth}},-{{openWidth}},0);transform: translate3d({{openWidth}},-{{openWidth}},0);}',
                 ],
             ],
 			'scopy' => true,

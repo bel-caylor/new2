@@ -61,7 +61,7 @@
 						}
 					});
 				}else{
-					$(document).on("click", 'a:not(.coupon-btn-link,.ajax_add_to_cart,.button-toggle-link,.noajax,.post-load-more,.slick-slide, .woocommerce a, .btn, .button,[data-slick-index],[data-month], .popup-gallery, .popup-video, [href$=".png"], [href$=".jpg"], [href$=".jpeg"], [href$=".svg"], [href$=".mp4"], [href$=".webm"], [href$=".ogg"], [href$=".mp3"], [href^="#"],[href*="#"], [href^="mailto:"],[data-lity=""], [href=""], [href*="wp-login"], [href*="wp-admin"], .dot-nav-noajax, .pix-dropdown-arrow,[data-toggle="dropdown"],[role="tab"]),button:not(.subscribe-btn-submit,.lity-close,[type="button"],.single_add_to_cart_button,.pswp__button.pswp__button--close,.pswp__button--fs,.pswp__button--zoom,.pswp__button--arrow--left,.pswp__button--arrow--right)', function(e) {
+					$(document).on("click", 'a:not(.coupon-btn-link,.ajax_add_to_cart,.button-toggle-link,.noajax,.post-load-more,.slick-slide, .woocommerce a, .btn, .button,[data-slick-index],[data-month], .popup-gallery, .popup-video, [href$=".png"], [href$=".jpg"], [href$=".jpeg"], [href$=".svg"], [href$=".mp4"], [href$=".webm"], [href$=".ogg"], [href$=".mp3"], [href^="#"],[href*="#"], [href^="mailto:"],[data-lity=""], [href=""], [href*="wp-login"], [href*="wp-admin"], .dot-nav-noajax, .pix-dropdown-arrow,[data-toggle="dropdown"],[role="tab"]),button:not(.subscribe-btn-submit,.lity-close,[type="button"],.single_add_to_cart_button,.pswp__button.pswp__button--close,.pswp__button--fs,.pswp__button--zoom,.pswp__button--arrow--left,.pswp__button--arrow--right,.tpgb-unfold-toggle,.share-btn)', function(e) {
 						if ((e.shiftKey || e.ctrlKey || e.metaKey || '_blank' == $.trim($(this).attr('target')))) {
 							return;
 						}

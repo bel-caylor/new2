@@ -97,14 +97,17 @@ function tpgb_tp_creative_image_callback( $settings, $content) {
 				<figure>' . $html . '</figure>
 				</div>';
 		$output .= '</div>';
+
+		$cssRule='';
+		if(!empty($cssData)){
+			$cssRule='<style>';
+			$cssRule .= $cssData;
+			$cssRule .= '</style>';
+		}
+
 	$output .= '</div>';
 	
-	$cssRule='';
-	if(!empty($cssData)){
-		$cssRule='<style>';
-		$cssRule .= $cssData;
-		$cssRule .= '</style>';
-	}
+
 	
 	$output = Tpgb_Blocks_Global_Options::block_Wrap_Render($settings, $output);
 	

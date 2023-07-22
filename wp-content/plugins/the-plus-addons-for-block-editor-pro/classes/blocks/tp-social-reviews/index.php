@@ -264,7 +264,7 @@ function tpgbp_social_reviews_callback($attributes, $content) {
                     
                         if(!in_array($PostId, $nFeedId)){
                             ob_start();
-                                include TPGBP_PATH. "includes/social-reviews/social-review-{$style}.php";
+                                include TPGBP_PATH. "includes/social-reviews/".sanitize_file_name('social-review-'.$style.'.php');
                                 $reviews .= ob_get_contents();
                             ob_end_clean();
                         }
@@ -318,7 +318,8 @@ function tpgbp_social_reviews_callback($attributes, $content) {
             $BMassage = (!empty($Beach['Massage']) ? $Beach['Massage'] : "");
 
             ob_start();
-                include TPGBP_PATH. "includes/social-reviews/social-review-b-{$Bstyle}.php";
+                include TPGBP_PATH. "includes/social-reviews/".sanitize_file_name('social-review-b-'.$Bstyle.'.php');
+               
                 $reviews .= ob_get_contents();
             ob_end_clean();
 

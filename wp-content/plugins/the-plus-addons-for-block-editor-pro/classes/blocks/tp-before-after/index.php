@@ -103,53 +103,54 @@ function tpgb_before_after_render_callback( $attr, $content) {
 				
 			$output .= '</div>';
 			$output .= $bottom_sep;
+
+			$bestyle = '';
+			// Alignment css 
+			if(( isset($alignment['md']) && !empty($alignment['md']) && $alignment[ 'md'] == 'right' )) {
+				$bestyle .= '@media (min-width: 1024px) { .tpgb-block-'.esc_attr($block_id).'.tpgb-before-after { margin-left:
+				auto !important; margin-right: 0px !important  } } ';
+			}
+			if( isset($alignment['sm']) && !empty($alignment['sm']) && $alignment['sm'] == 'right'){
+				$bestyle .= '@media (max-width: 1024px) and (min-width:768px){ .tpgb-block-'.esc_attr($block_id).'.tpgb-before-after{margin-left: auto !important; margin-right: 0px !important } } ';
+			}
+			if( isset($alignment['xs']) && !empty($alignment['xs']) && $alignment['xs'] == 'right'){
+				$bestyle .= '@media (max-width: 767px) { .tpgb-block-'.esc_attr($block_id).'.tpgb-before-after{margin-left:
+				auto !important; margin-right: 0px !important } } ';
+			}
+		
+			// Left
+			if(( isset($alignment['md']) && !empty($alignment['md']) && $alignment[ 'md'] == 'left' )) {
+				$bestyle .= '@media (min-width: 1024px) { .tpgb-block-'.esc_attr($block_id).'.tpgb-before-after {margin-right:
+				auto !important; margin-left: 0px !important; } } ';
+			}
+			if( isset($alignment['sm']) && !empty($alignment['sm']) && $alignment['sm'] == 'left'){
+				$bestyle .= '@media (max-width: 1024px) and (min-width:768px){ .tpgb-block-'.esc_attr($block_id).'.tpgb-before-after{margin-right: auto !important; margin-left: 0px !important;} } ';
+			}
+			if( isset($alignment['xs']) && !empty($alignment['xs']) && $alignment['xs'] == 'left'){
+				$bestyle .= '@media (max-width: 767px) { .tpgb-block-'.esc_attr($block_id).'.tpgb-before-after{margin-right:
+				auto !important; margin-left: 0px !important;} } ';
+			}
+		
+			//center
+			if(( isset($alignment['md']) && !empty($alignment['md']) && $alignment['md'] == 'center' )){
+				$bestyle .= '@media (min-width: 1024px) { .tpgb-block-'.esc_attr($block_id).'.tpgb-before-after {margin-left:
+				auto!important;  margin-right: auto !important;} }';
+			}
+			if( isset($alignment['sm']) && !empty($alignment['sm']) && $alignment['sm'] == 'center' ) {
+				$bestyle .= '@media (max-width: 1024px) and (min-width:768px) { .tpgb-block-'.esc_attr($block_id).'.tpgb-before-after
+			{margin-left: auto !important; margin-right: auto !important;} } ';
+			}
+			if( isset($alignment['xs']) && !empty($alignment['xs']) && $alignment['xs'] == 'center' ) {
+				$bestyle .= '@media (max-width: 767px){ .tpgb-block-'.esc_attr($block_id).'.tpgb-before-after{margin-left:
+				auto !important; margin-right: auto !important;} } ';
+			}
+			
+			$output .= '<style>'.$bestyle.'</style>';
+
 		$output .= '</div>';
 	}else{
 		$output .= '<h3 class="tpgb-posts-not-found">'.esc_html__('Please select a Before images & After Image','tpgbp').'</h3>';
-	}	
-	
-	$bestyle = '';
-	// Alignment css 
-	if(( isset($alignment['md']) && !empty($alignment['md']) && $alignment[ 'md'] == 'right' )) {
-		$bestyle .= '@media (min-width: 1024px) { .tpgb-block-'.esc_attr($block_id).'.tpgb-before-after { margin-left:
-		auto !important; margin-right: 0px !important  } } ';
 	}
-	if( isset($alignment['sm']) && !empty($alignment['sm']) && $alignment['sm'] == 'right'){
-		$bestyle .= '@media (max-width: 1024px) and (min-width:768px){ .tpgb-block-'.esc_attr($block_id).'.tpgb-before-after{margin-left: auto !important; margin-right: 0px !important } } ';
-	}
-	if( isset($alignment['xs']) && !empty($alignment['xs']) && $alignment['xs'] == 'right'){
-		$bestyle .= '@media (max-width: 767px) { .tpgb-block-'.esc_attr($block_id).'.tpgb-before-after{margin-left:
-		auto !important; margin-right: 0px !important } } ';
-	}
-
-	// Left
-	if(( isset($alignment['md']) && !empty($alignment['md']) && $alignment[ 'md'] == 'left' )) {
-		$bestyle .= '@media (min-width: 1024px) { .tpgb-block-'.esc_attr($block_id).'.tpgb-before-after {margin-right:
-		auto !important; margin-left: 0px !important; } } ';
-	}
-	if( isset($alignment['sm']) && !empty($alignment['sm']) && $alignment['sm'] == 'left'){
-		$bestyle .= '@media (max-width: 1024px) and (min-width:768px){ .tpgb-block-'.esc_attr($block_id).'.tpgb-before-after{margin-right: auto !important; margin-left: 0px !important;} } ';
-	}
-	if( isset($alignment['xs']) && !empty($alignment['xs']) && $alignment['xs'] == 'left'){
-		$bestyle .= '@media (max-width: 767px) { .tpgb-block-'.esc_attr($block_id).'.tpgb-before-after{margin-right:
-		auto !important; margin-left: 0px !important;} } ';
-	}
-
-	//center
-	if(( isset($alignment['md']) && !empty($alignment['md']) && $alignment['md'] == 'center' )){
-		$bestyle .= '@media (min-width: 1024px) { .tpgb-block-'.esc_attr($block_id).'.tpgb-before-after {margin-left:
-		auto!important;  margin-right: auto !important;} }';
-	}
-	if( isset($alignment['sm']) && !empty($alignment['sm']) && $alignment['sm'] == 'center' ) {
-		$bestyle .= '@media (max-width: 1024px) and (min-width:768px) { .tpgb-block-'.esc_attr($block_id).'.tpgb-before-after
-	{margin-left: auto !important; margin-right: auto !important;} } ';
-	}
-	if( isset($alignment['xs']) && !empty($alignment['xs']) && $alignment['xs'] == 'center' ) {
-		$bestyle .= '@media (max-width: 767px){ .tpgb-block-'.esc_attr($block_id).'.tpgb-before-after{margin-left:
-		auto !important; margin-right: auto !important;} } ';
-	}
-	
-	$output .= '<style>'.$bestyle.'</style>';
 
 	$output = Tpgb_Blocks_Global_Options::block_Wrap_Render($attr, $output);
 	

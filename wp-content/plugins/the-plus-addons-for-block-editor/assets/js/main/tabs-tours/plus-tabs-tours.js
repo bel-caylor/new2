@@ -1,5 +1,6 @@
 ( function( $ ) {
 	"use strict";
+	$(document).ready(function() {
 		$('.tpgb-tabs-wrapper').each(function(){
 			var $currentTab = $(this),
 			$TabHover = $currentTab.data('tab-hover'),
@@ -81,5 +82,5 @@
 			}
 			
 		});
-		
+	});
 })(jQuery);

@@ -1,5 +1,6 @@
 ( function( $ ) {
 	"use strict";
+	$(document).ready(function() {
 		$('.tpgb-tabs-wrapper').each(function(){
 			var $currentTab = $(this),
 			$TabHover = $currentTab.data('tab-hover'),
@@ -41,6 +42,18 @@
 
 							let curr = $(" .tpgb-tab-content[data-tab='"+currentTabIndex+"'] .tpgb-isotope .post-loop-inner", $currentTab);
 
+							curr.isotope({
+								itemSelector: ".grid-item",
+								resizable: true,
+								sortBy: "original-order",
+								resizesContainer: true,
+								initLayout : false
+							});		
+							curr.isotope('layout');
+							setTimeout( function() {
+								curr.isotope('layout');
+							}, 50 );
+
 							if(curr.data('anim') == 'no'){
 								curr.isotope({ transitionDuration : 0 })
 							}
@@ -52,9 +65,6 @@
 									curr.css( 'opacity' , 1 )
 								});
 							}
-							setTimeout(function(){
-								curr.isotope('layout');
-							}, 10);
 							
 						}
 						
@@ -82,6 +92,14 @@
 								}
 							}, 30);
 						}
+
+                        // Expand 
+                        if($(".tpgb-tab-content[data-tab='"+currentTabIndex+"'] .tp-expand", $currentTab).length){
+                            var unDiv = $(".tpgb-tab-content[data-tab='"+currentTabIndex+"'] .tp-expand", $currentTab);
+                            if(typeof tpgb_unfold == 'function'){
+                                tpgb_unfold(unDiv[0])
+                            }
+                        }
 			
 						$(tabsContent).each( function(index) {
 							$(this).removeClass('default-active');
@@ -128,6 +146,19 @@
 
 							let curr = $(" .tpgb-tab-content[data-tab='"+currentTabIndex+"'] .tpgb-isotope .post-loop-inner", $currentTab);	
 
+							curr.isotope({
+								itemSelector: ".grid-item",
+								resizable: true,
+								sortBy: "original-order",
+								resizesContainer: true,
+								initLayout : false
+							});		
+							curr.isotope('layout');
+							setTimeout( function() {
+								curr.isotope('layout');
+							}, 50 );
+							
+
 							if(curr.data('anim') == 'no'){
 								curr.isotope({ transitionDuration : 0 })
 							}
@@ -140,11 +171,6 @@
 									curr.css( 'opacity' , 1 )
 								});
 							}
-
-							setTimeout(function(){
-								curr.isotope('layout');
-							}, 10);
-							
 						}
 						
 						if($(" .tpgb-tab-content[data-tab='"+currentTabIndex+"'] .tpgb-metro .post-loop-inner", $currentTab).length){
@@ -171,15 +197,20 @@
 								}
 							}, 30);
 						}
-			
+                        
+                        if($(".tpgb-tab-content[data-tab='"+currentTabIndex+"'] .tp-expand", $currentTab).length){
+                            var unDiv = $(".tpgb-tab-content[data-tab='"+currentTabIndex+"'] .tp-expand", $currentTab);
+                            if(typeof tpgb_unfold == 'function'){
+                                tpgb_unfold(unDiv[0])
+                            }
+                        }
+
 						$(tabsContent).each( function(index) {
 							$(this).removeClass('default-active');
 						});
 						if($(">.tpgb-tabs-content-wrapper>.tpgb-tab-content[data-tab='"+currentTabIndex+"'] .pt_tpgb_before_after",tabsContainer).length){
 							size_Elements()
 						}
-						
-						
 					});
 				}
 				
@@ -219,6 +250,18 @@
                         
 						let curr = $(" .tpgb-tab-content[data-tab='"+currentTabIndex+"'] .tpgb-isotope .post-loop-inner", $currentTab);
 
+						curr.isotope({
+							itemSelector: ".grid-item",
+							resizable: true,
+							sortBy: "original-order",
+							resizesContainer: true,
+							initLayout : false
+						});		
+						curr.isotope('layout');
+						setTimeout( function() {
+							curr.isotope('layout');
+						}, 50 );
+
 						if(curr.data('anim') == 'no'){
 							curr.isotope({ transitionDuration : 0 })
 						}
@@ -231,11 +274,6 @@
 								curr.css( 'opacity' , 1 )
 							});
 						}
-						
-						setTimeout(function(){
-							curr.isotope('layout');
-						}, 10);
-						
 					}
 					
                     if($(" .tpgb-tab-content[data-tab='"+currentTabIndex+"'] .tpgb-metro .post-loop-inner", $currentTab).length){
@@ -269,6 +307,14 @@
 							}
 						}, 30);
 					}
+
+                    // Expand 
+                    if($(".tpgb-tab-content[data-tab='"+currentTabIndex+"'] .tp-expand", $currentTab).length){
+                        var unDiv = $(".tpgb-tab-content[data-tab='"+currentTabIndex+"'] .tp-expand", $currentTab);
+                        if(typeof tpgb_unfold == 'function'){
+                            tpgb_unfold(unDiv[0])
+                        }
+                    }
 					
 				});
 			}
@@ -318,5 +364,5 @@
 				});
 			});
 		}
-
+	});
 })(jQuery);

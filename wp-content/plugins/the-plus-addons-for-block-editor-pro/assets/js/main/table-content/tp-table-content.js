@@ -1,47 +1,70 @@
-( function( $ ) {
-	"use strict";
-		if($('.tpgb-table-content').length){
-			$('.tpgb-table-content').each(function(){
-				var settings = $(this).data('settings');
-				if(settings.contentSelector != undefined && settings.contentSelector !='' && document.querySelector(settings.contentSelector)){
-					tocbot.init({
-						...settings
-					});
-				}else{
-					$(this).append('<div class="tpgb-table-notice">Table of Content Class/Selector ID not found! Please Update "Content Selector" Option.</div>');
-				}
-			});
-			if( $('.table-toggle-wrap').length ){
-				$('.table-toggle-wrap').each(function(){
-					var defaultToggle = $(this).data('default-toggle');
-					var Width = window.innerWidth;
-					if((Width>1200 && defaultToggle.md) || (Width<1201 && Width>=768 && defaultToggle.sm) || (Width<768 && defaultToggle.xs)){
-						$( this ).addClass( "active" );
-						$('.tpgb-toc',this ).slideDown(500);
-						$('.table-toggle-icon',this).removeClass($(this).data("close"));
-						$('.table-toggle-icon',this).addClass($(this).data("open"));
-					}else{
-						$( this ).removeClass( "active" );
-						$('.tpgb-toc', this ).slideUp(500);
-						$('.table-toggle-icon',this).removeClass($(this).data("open"));
-						$('.table-toggle-icon',this).addClass($(this).data("close"));
-					}
-					
-					$('.tpgb-toc-heading',this).on('click',function(){
-						var togglewrap = $(this).closest('.table-toggle-wrap');
-						if(togglewrap.hasClass('active')){
-							togglewrap.removeClass( "active" );
-							togglewrap.find('.tpgb-toc').slideUp(500);
-							$('.table-toggle-icon',this).removeClass(togglewrap.data("open"));
-							$('.table-toggle-icon',this).addClass(togglewrap.data("close"));
-						}else{
-							togglewrap.addClass( "active" );
-							togglewrap.find('.tpgb-toc').slideDown(500);
-							$('.table-toggle-icon',this).removeClass(togglewrap.data("close"));
-							$('.table-toggle-icon',this).addClass(togglewrap.data("open"));
-						}
-					});
-				});
-			}
-		}
-})(jQuery);
+/**Table of Content*/
+document.addEventListener('DOMContentLoaded', (event) => {
+    let tableContents = document.querySelectorAll('.tpgb-table-content');
+    if (tableContents) {
+        tableContents.forEach(function(tableContent) {
+        var settings = tableContent.dataset.settings;
+        settings = JSON.parse(settings);
+        if (settings.contentSelector !== undefined && settings.contentSelector !== '' && document.querySelector(settings.contentSelector)) {
+            tocbot.init({
+            ...settings
+            });
+        } else {
+            tableContent.insertAdjacentHTML('beforeend', '<div class="tpgb-table-notice">Table of Content Class/Selector ID not found! Please Update "Content Selector" Option.</div>');
+        }
+        });
+
+        var tableToggleWraps = document.querySelectorAll('.table-toggle-wrap');
+
+        if (tableToggleWraps) {
+            tableToggleWraps.forEach(function(tabTglwrap) {
+                var defaultToggle = JSON.parse(tabTglwrap.dataset.defaultToggle);
+                var width = window.innerWidth;
+                let closeIcon = tabTglwrap.dataset.close.split(' '),
+                    openIcon = tabTglwrap.dataset.open.split(' '),
+                    toggleIcon = tabTglwrap.querySelector('.table-toggle-icon'),
+                    tpTOC = tabTglwrap.querySelector('.tpgb-toc');
+
+                if((width > 1200 && defaultToggle.md) || (width < 1201 && width >= 768 && defaultToggle.sm) || (width < 768 && defaultToggle.xs)) {
+                    tabTglwrap.classList.add("active");
+                    slideDownP(tpTOC, 500);
+                    if(toggleIcon != null){
+                        toggleIcon.classList.remove(closeIcon[0],closeIcon[1]);
+                        toggleIcon.classList.add(openIcon[0],openIcon[1]);
+                    }
+                    
+                }else{
+                    tabTglwrap.classList.remove("active");
+                    slideUpP(tpTOC, 500);
+                    if(toggleIcon != null){
+                        toggleIcon.classList.remove(openIcon[0],openIcon[1]);
+                        toggleIcon.classList.add(closeIcon[0],closeIcon[1]);
+                    }
+                }
+
+                let tocHead = tabTglwrap.querySelector('.tpgb-toc-heading');
+                if(tocHead){
+                    tocHead.addEventListener('click', function(el) {
+                        var toggleWrap = el.currentTarget.closest('.table-toggle-wrap');
+                        if(toggleWrap){
+                            let toggleIcon = toggleWrap.querySelector('.table-toggle-icon'),
+                                tpTOC = toggleWrap.querySelector('.tpgb-toc');
+                
+                            if (toggleWrap.classList.contains('active')) {
+                                toggleWrap.classList.remove("active");
+                                slideUpP(tpTOC, 500);
+                                toggleIcon.classList.remove(openIcon[0],openIcon[1]);
+                                toggleIcon.classList.add(closeIcon[0],closeIcon[1]);
+                            } else {
+                                toggleWrap.classList.add("active");
+                                slideDownP(tpTOC, 500);
+                                toggleIcon.classList.remove(closeIcon[0],closeIcon[1]);
+                                toggleIcon.classList.add(openIcon[0],openIcon[1]);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    }
+});

@@ -9,10 +9,20 @@
 			var $this = $(this),
 				setting = $this.data('setting');
 			if( setting.imgType == 'background' && setting.imgLocation == 'section' ){
-				$this.closest('.tpgb-section').prepend($this.tpOuterHTML());
+				if($this.closest('.tpgb-section').length){
+					$this.closest('.tpgb-section').prepend($this.tpOuterHTML());
+				}else{
+					$this.closest('.tpgb-container-row').prepend($this.tpOuterHTML());
+				}
+				
 				$this.remove();
 			}else if( setting.imgType == 'background' && setting.imgLocation == 'column' ){
-				$this.closest('.tpgb-column').prepend($this.tpOuterHTML());
+				if($this.closest('.tpgb-column').length){
+					$this.closest('.tpgb-column').prepend($this.tpOuterHTML());
+				}else{
+					$this.closest('.tpgb-container-col').prepend($this.tpOuterHTML());
+				}
+				
 				$this.remove();
 			}
 		});

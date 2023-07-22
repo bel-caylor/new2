@@ -328,6 +328,33 @@ function tpgb_social_icons() {
 			'default' => ['md' => 'center'],
 			'scopy' => true,
 		],
+		'iconPadd' => [
+			'type' => 'object',
+			'default' => (object) [ 
+				'md' => [
+					"top" => '',
+					"right" => '',
+					"bottom" => '',
+					"left" => '',
+				],
+				"unit" => 'px',
+			],
+			'style' => [
+				(object) [
+					'condition' => [(object) ['key' => 'style', 'relation' => '==', 'value' => 'style-1' ] ],
+					'selector' => '{{PLUS_WRAP}}.style-1 .tpgb-social-list > div .tpgb-icon-link{padding: {{iconPadd}};}',
+				],
+				(object) [
+					'condition' => [(object) ['key' => 'style', 'relation' => '==', 'value' => 'style-2' ] ],
+					'selector' => '{{PLUS_WRAP}}.style-2 .tpgb-social-list > div .tpgb-icon-link{padding: {{iconPadd}};}',
+				],
+				(object) [
+					'condition' => [(object) ['key' => 'style', 'relation' => '==', 'value' => 'style-14' ] ],
+					'selector' => '{{PLUS_WRAP}}.style-14 .tpgb-social-list > div .tpgb-icon-link{padding: {{iconPadd}};}',
+				],
+			],
+			'scopy' => true,
+		],
 		'iconGap' => [
 			'type' => 'object',
 			'default' => (object) [ 

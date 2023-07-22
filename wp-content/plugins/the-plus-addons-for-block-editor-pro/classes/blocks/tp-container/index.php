@@ -1,5 +1,5 @@
 <?php
-/* Block : TP Container(Section)
+/* Block : Container(Section)
  * @since : 1.3.0
  */
 defined( 'ABSPATH' ) || exit;
@@ -14,6 +14,9 @@ function tpgb_tp_container_render_callback( $attributes, $content) {
     $customClass = (!empty($attributes['customClass'])) ? $attributes['customClass'] : '';
 	$customId = (!empty($attributes['customId'])) ? 'id="'.esc_attr($attributes['customId']).'"' : '';
 	
+	$liveCopy = (!empty($attributes['liveCopy'])) ? 'yes' : 'no';
+    $currentID = (!empty($attributes['currentID'])) ? $attributes['currentID'] : get_queried_object_id();
+
 	$deepBgopt = (!empty($attributes['deepBgopt'])) ? $attributes['deepBgopt'] : '';
 	$colorList = (!empty($attributes['colorList'])) ? $attributes['colorList'] : [];
 	$animdur = (!empty($attributes['animdur'])) ? (int) $attributes['animdur'] : 3;
@@ -49,6 +52,8 @@ function tpgb_tp_container_render_callback( $attributes, $content) {
 	$contentWidth = (!empty($attributes['contentWidth'])) ? $attributes['contentWidth'] : 'wide';
 
 	$tagName = (!empty($attributes['tagName'])) ? $attributes['tagName'] : '';
+	$NormalBg = (!empty($attributes['NormalBg'])) ? (array) $attributes['NormalBg'] : [] ;
+
 	$equalHeightAtt = Tpgbp_Pro_Blocks_Helper::global_equal_height( $attributes );
 	$equalHclass = '';
 	if(!empty($equalHeightAtt)){
@@ -85,13 +90,27 @@ function tpgb_tp_container_render_callback( $attributes, $content) {
 	}
 
 
+	$flexChildCss = '';
 	// Set Flex child css
 	if(!empty($showchild) ){
 		if( !empty($flexChild)){
-			$flexChildCss = Tpgbp_Pro_Blocks_Helper::tpgbp_flex_child_css( $flexChild , '.tpgb-block-'.esc_attr($block_id).'.tpgb-container-row > *:nth-child'  );
+			$flexChildCss .= Tpgbp_Pro_Blocks_Helper::tpgbp_flex_child_css( $flexChild , '.tpgb-block-'.esc_attr($block_id).'.tpgb-container-row > *:nth-child'  );
 		}
 	}
-	
+
+	global $post;
+	if(isset($NormalBg) && !empty($NormalBg) && $NormalBg['openBg'] == 1 && $NormalBg['bgType']== 'image' && isset($NormalBg['bgImage']['dynamic']) && isset($NormalBg['bgImage']['dynamic']['dynamicUrl']) ){
+		if( class_exists('Tpgbp_Pro_Blocks_Helper') ) {
+			$sectionClass .= ' tpgb-container-'.esc_attr($post->ID).'';
+			$dyImgUrl = Tpgbp_Pro_Blocks_Helper::tpgb_dynamic_repeat_url($NormalBg['bgImage']);
+
+			if( !empty($dyImgUrl) ){
+				$flexChildCss .= '.tpgb-block-'.esc_attr($block_id).'.tpgb-container-'.esc_attr($post->ID).'{ background-image : url('.esc_url($dyImgUrl ).') }';
+			}
+			
+		}
+	}
+
 	
 	$shapeContent = '';
 	$shapePath = TPGB_PATH . 'assets/images/shape-divider';
@@ -112,7 +131,7 @@ function tpgb_tp_container_render_callback( $attributes, $content) {
 
 	//Set Row Backgroung Attr
 
-	$dataAttr=$classname=$rowBgClass=$rowclass=$cssrule=$videoattr=$videoUrl=$midclass=$dataAttr2=$midlayer=$loop = '';
+	$dataAttr=$classname=$rowBgClass=$rowclass=$cssrule=$videoattr=$videoUrl=$midclass=$dataAttr2=$midlayer=$loop =$midclass1 = '';
 	$colors = array();
 	if(!empty($deepBgopt) && ($deepBgopt == 'bg_color' || $deepBgopt == 'bg_animate_gradient' || $deepBgopt == 'scroll_animate_color' )){
 		if(!empty($colorList)){
@@ -124,21 +143,30 @@ function tpgb_tp_container_render_callback( $attributes, $content) {
 				if($deepBgopt == 'bg_color' || $deepBgopt == 'bg_animate_gradient'){
 					$colors[] = $item['aniColor'];
 				}else{
-					if(!empty($item['aniColor']) && empty($item['scrollImg']['url']) ) {
-						$colors[] = $item['aniColor'];
+					if( empty($item['scrollImg']['url']) ) {
+						if( isset($item['aniBgtype']['openBg']) && !empty($item['aniBgtype']['openBg']) ){
+							if( isset($item['aniBgtype']['bgType']) && $item['aniBgtype']['bgType'] == 'color' && isset($item['aniBgtype']['bgDefaultColor']) && !empty($item['aniBgtype']['bgDefaultColor']) ){
+								$colors[] = $item['aniBgtype']['bgDefaultColor'];
+							}else{
+								if( isset($item['aniBgtype']['bgType']) && $item['aniBgtype']['bgType'] == 'gradient' && isset($item['aniBgtype']['bgGradient']) && !empty($item['aniBgtype']['bgGradient']) ){
+									$colors[] = $item['aniBgtype']['bgGradient'];
+								}
+							}
+						}
 						if($i==0){
 							$cssrule = 'background:'.esc_attr($item['aniColor']).';';
-							$actclass = 'active';
+							$actclass = ( $scrollchg=='no' ) ? 'active' : '';
 						}
 						if(!empty($scrollchg) && $scrollchg=='no'){
 							$loop .='<div class="tp-repeater-item-'.esc_attr($item['_key']).' tpgb-section-bg-scrolling '.esc_attr($actclass).'" style="background:'.esc_attr($item['aniColor']).';transition-duration: '.esc_attr($scrolltra).'s"></div>';
 						}
+						
 					}
 					if(!empty($scrollchg) && $scrollchg=='no' && !empty($item['scrollImg']) && !empty($item['scrollImg']['url'])) {
 						$colors[] = $item['scrollImg']['url'];
 						if($i==0){
 							$cssrule='background:url('.esc_url($item['scrollImg']['url']).');';
-							$actclass='active';
+							$actclass = ( $scrollchg=='no' ) ? 'active' : '';
 						}
 						if(!empty($scrollchg) && $scrollchg=='no'){
 							$loop .= '<div class="tp-repeater-item-'.esc_attr($item['_key']).' tpgb-section-bg-scrolling '.esc_attr($actclass).'" style="background:url('.esc_url($item['scrollImg']['url']).');transition-duration : '.esc_attr($scrolltra).'s"></div>';
@@ -209,11 +237,11 @@ function tpgb_tp_container_render_callback( $attributes, $content) {
 			$videoattr .= !empty($attributes['videoloop']) ? ' loop=true' : ' loop=true' ;
 			if(!empty($attributes['mp4Url'])) {
 				$mp4url = Tpgbp_Pro_Blocks_Helper::tpgb_dynamic_val($attributes['mp4Url']);
-				$videoUrl .= ' data-dk-mp4="'.esc_url($mp4url).'"';
+				$videoUrl .= ' src="'.esc_url($mp4url).'"';
 			}
 			if(!empty($attributes['WebMUrl'])){
 				$weburl = Tpgbp_Pro_Blocks_Helper::tpgb_dynamic_val($attributes['WebMUrl']);
-				$videoUrl .= ' data-dk-webm="'.esc_url($weburl).'"';
+				$videoUrl .= ' src="'.esc_url($weburl).'"';
 			}
 			
 		}
@@ -228,7 +256,11 @@ function tpgb_tp_container_render_callback( $attributes, $content) {
 			$canShape =  (!empty($attributes['canShape'])) ? $attributes['canShape'] :'';
 			$ctmJson = (!empty($attributes['ctmJson'])) ? $attributes['ctmJson'] : '';
 
-			$midclass = 'canvas-'.$canvasSty;
+			$midclass = 'canvas-'.$canvasSty.$block_id;
+			if( $canvasSty == 'style-1' || $canvasSty == 'style-4' || $canvasSty == 'style-8' ){
+				$midclass1 .= ' canvas-'.esc_attr($canvasSty).'';
+			}
+
 			$canvasarr = array();
 			if($canvasSty == 'style-1'){
 				$particleList = (!empty($attributes['particleList'])) ? $attributes['particleList'] : [] ;
@@ -273,7 +305,7 @@ function tpgb_tp_container_render_callback( $attributes, $content) {
 					if(!empty($item['parallaxImg']) && !empty($item['parallaxImg']['url'] )){
 						$imgsrc = $item['parallaxImg']['url'] ;
 					}
-					if($midOption == 'moving_image'){
+					if( $midOption == 'moving_image' && !empty($imgsrc) ){
 						$imgcss .= 'background-image: url('.esc_url($imgsrc).');background-size:'.(!empty($item['imgSize']) ? esc_attr($item['imgSize']) : '' ).' ';
 					}
 
@@ -345,7 +377,7 @@ function tpgb_tp_container_render_callback( $attributes, $content) {
 					}
 
 					//Set Transforn origin
-					if( !empty($item['modImgeff']) && $item['modImgeff'] == 'rotating' && !empty($item["tranOrigin"]) ){
+					if( isset( $item['modImgeff'] ) && !empty($item['modImgeff']) && $item['modImgeff'] == 'rotating' && !empty($item["tranOrigin"]) ){
 						$animCss .= '-webkit-transform-origin: '.esc_attr($item["tranOrigin"]).';-moz-transform-origin:'.esc_attr($item["tranOrigin"]).';-ms-transform-origin:'.esc_attr($item["tranOrigin"]).';-o-transform-origin:'.esc_attr($item["tranOrigin"]).';transform-origin:'.esc_attr($item["tranOrigin"]).';';
 					}
 					$midlayer .= '<div class="tpgb-parlximg-wrap tp-repeater-item-'.esc_attr($item['_key']).' '.(($midOption == 'mordern_image_effect' ? 'tpgb-repet-img' : '')).' '.esc_attr($visibility).' '.( $midOption == 'mordern_image_effect' && !empty($item['tpgbMagicScroll']) ? ' tpgb_magic_scroll' : '').' " style="'.esc_attr($imgcss).'  " data-direction="'.(!empty($item['imgDire']) ? esc_attr($item['imgDire']) : '' ).'" data-trasition="'.esc_attr($Effectin).'" '.$magicAttr.' >';
@@ -353,7 +385,7 @@ function tpgb_tp_container_render_callback( $attributes, $content) {
 							if(!empty($item['tpgbMagicScroll'])){
 								$midlayer .=  '<div>';
 							}
-							$midlayer .=  '<img class="tpgb-parlximg '.(!empty($item['modImgeff'] && $midOption == 'mordern_image_effect' ) ? 'tpgb-imgeffect tpgb-'.$item['modImgeff'] : '').'" src="'.esc_url($imgsrc).'" alt="'.esc_html__('Parallax_img','tpgbp').'" data-parallax="'.esc_attr($Effectin).'" style="'.$animCss.'" />';
+							$midlayer .=  '<img class="tpgb-parlximg '.( isset( $item['modImgeff'] ) && !empty( $item['modImgeff'] ) && $midOption == 'mordern_image_effect' ? 'tpgb-imgeffect tpgb-'.$item['modImgeff'] : '').'" src="'.esc_url($imgsrc).'" alt="'.esc_html__('Parallax_img','tpgbp').'" data-parallax="'.esc_attr($Effectin).'" style="'.$animCss.'" />';
 							if(!empty($item['tpgbMagicScroll'])){
 								$midlayer .=  '</div>';
 							}
@@ -372,6 +404,10 @@ function tpgb_tp_container_render_callback( $attributes, $content) {
 		$cssrule .='-webkit-animation: bg-kenburns-effect '.esc_attr($Kbeffctdir).'s cubic-bezier(0.445, 0.050, 0.550, 0.950) infinite '.esc_attr($Kbeffctdir).' both;animation: bg-kenburns-effect '.esc_attr($effctDure).'s cubic-bezier(0.445, 0.050, 0.550, 0.950) infinite '.esc_attr($Kbeffctdir).' both;';
 	}
 	
+	if( defined('TPGBP_DEVELOPER') && TPGBP_DEVELOPER && $liveCopy == 'yes' ){
+		$linkdata .= ' data-tpcp__live="'.esc_attr($liveCopy).'"';
+		$linkdata .= ' data-post-id="'.esc_attr($currentID ).'"';
+	}
 
 	$output .= '<'.Tp_Blocks_Helper::validate_html_tag($tagName).' '.$customId.' class="tpgb-container-row tpgb-block-'.esc_attr($block_id).' '.esc_attr($sectionClass).' '.esc_attr($customClass).'  '.esc_attr( $rowclass ).' '.esc_attr($blockClass).' '.esc_attr($equalHclass).' '.($colDir == 'c100' || $colDir == 'r100' ? ' tpgb-container-inline' : '').' tpgb-container-'.$contentWidth.' " data-id="'.esc_attr($block_id).'" '.$linkdata.' '.$equalHeightAtt.' >';
 
@@ -388,8 +424,8 @@ function tpgb_tp_container_render_callback( $attributes, $content) {
 					$deepimgSize  =  (!empty($attributes['deepimgSize'])) ? $attributes['deepimgSize'] : '';
 					$deepgcss = '';
 					
-					if( $deepBgopt == 'bg_image' && !empty($crativeImg) && !empty($crativeImg['url'])){
-						$deepgcss .= '.tpgb-block-'.esc_attr($block_id).' .tpgb-row-background .tpgb-deep-layer{ background-image: url('.( isset($crativeImg['url']) && !empty($crativeImg['url']) ? esc_url($crativeImg['url']) : '').'); }';
+					if( $deepBgopt == 'bg_image' && !empty($crativeImg) && isset($crativeImg['url']) && !empty($crativeImg['url'])){
+						$deepgcss .= '.tpgb-block-'.esc_attr($block_id).' .tpgb-row-background .tpgb-deep-layer{ background-image: url('.esc_url($crativeImg['url']).'); }';
 		
 						// Position Css
 						if( isset($deepimgPosition['md']) && !empty($deepimgPosition['md']) ){
@@ -453,8 +489,14 @@ function tpgb_tp_container_render_callback( $attributes, $content) {
 
 						if($deepBgopt == 'bg_video'){
 							$videoImgUrl = (isset($videoImg['dynamic'])) ? Tpgbp_Pro_Blocks_Helper::tpgb_dynamic_repeat_url($videoImg) : (!empty($videoImg['url']) ? $videoImg['url'] : '');
+
+							$vposterCss = '';
+							if(!empty($videoImgUrl)){
+								$vposterCss = 'style="background-image: url('.esc_url($videoImgUrl).');"';
+							}
+
 							$iframeTitle = (!empty($attributes['iframeTitle'])) ? esc_attr($attributes['iframeTitle']) : esc_attr__('My Video','tpgbp');
-							$output .= '<div class="video-poster-img video-tpgb-iframe-'.esc_attr($block_id).' '.(!empty($videoImg) && !empty($videoImg['url']) ? 'tp-loading' : '').'" style="background-image: url('.esc_url($videoImgUrl).');" >';
+							$output .= '<div class="video-poster-img video-tpgb-iframe-'.esc_attr($block_id).' '.(!empty($videoImg) && !empty($videoImg['url']) ? 'tp-loading' : '').'" '.( !empty($vposterCss) ? $vposterCss : '' ).' >';
 								$output .= '<div class="tpgb-video-wrap">';
 									if($videosour == 'youtube'){
 										$output .= '<iframe class="tpgb-iframe" id="tpgb-iframe-'.esc_attr($block_id).'" width="100%" height="100%" '.esc_attr($videoattr).'  src="https://www.youtube.com/embed/'.esc_attr($youtubeId).'?wmode=opaque&amp;enablejsapi=1&amp;showinfo=0&amp;controls=0&amp;rel=0'.esc_attr($videoUrl).'" frameborder="0" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" title="'.$iframeTitle.'"></iframe>';
@@ -497,7 +539,7 @@ function tpgb_tp_container_render_callback( $attributes, $content) {
 				
 				if(!empty($midOption)){
 				
-					$output .= '<div id="'.($midOption == 'canvas' ? esc_attr($midclass) : '').'" class="tpgb-middle-layer '.esc_attr($midclass).'" '.$dataAttr2.' >';
+					$output .= '<div id="'.($midOption == 'canvas' ? esc_attr($midclass) : '').'" class="tpgb-middle-layer '.esc_attr($midclass).esc_attr($midclass1).'" '.$dataAttr2.' >';
 						$output .= $midlayer;
 					$output .= '</div>';
 					
@@ -515,8 +557,10 @@ function tpgb_tp_container_render_callback( $attributes, $content) {
 					if($topOption == 'texture-img' && !empty($textureImg) && !empty($textureImg['url'])){
 						$topimgsrc = $textureImg['url'];
 
-						$topbgcss .= '.tpgb-block-'.esc_attr($block_id).' .tpgb-row-background .tpgb-top-layer{ background-image: url('.(!empty($topimgsrc) ? esc_url($topimgsrc) : '').'); }';
-
+						if( isset($topimgsrc) && !empty($topimgsrc) ){
+							$topbgcss .= '.tpgb-block-'.esc_attr($block_id).' .tpgb-row-background .tpgb-top-layer{ background-image: url('.(!empty($topimgsrc) ? esc_url($topimgsrc) : '').'); }';
+						}
+						
 						// Position Css
 						if( isset($teximgPosition['md']) && !empty($teximgPosition['md']) ){
 							$topbgcss .= '.tpgb-block-'.esc_attr($block_id).' .tpgb-row-background .tpgb-top-layer { background-position : '.esc_attr($teximgPosition['md']).'; }';
@@ -568,6 +612,7 @@ function tpgb_tp_container_render_callback( $attributes, $content) {
 						if( isset($teximgSize['xs']) && !empty($teximgSize['xs']) ){
 							$topbgcss .= '@media (max-width: 767px){ .tpgb-block-'.esc_attr($block_id).' .tpgb-row-background .tpgb-top-layer { background-size : '.esc_attr($teximgSize['xs']).'; } }';
 						}
+
 					}						
 					
 					$output .= '<div class="tpgb-top-layer">';
@@ -661,7 +706,7 @@ function tpgb_tp_container_row() {
 				'style' => [
 					(object) [
 						'condition' => [ (object) ['key' => 'contentWidth', 'relation' => '==', 'value' => 'full']],
-						'selector' => '{{PLUS_WRAP}}.tpgb-container-row{ --content-width : {{containerFull}}; } {{PLUS_WRAP}}.tpgb-container-full{ max-width : {{containerFull}} !important; width : 100% }',
+						'selector' => '{{PLUS_WRAP}}.tpgb-container-row{ --content-width : {{containerFull}}; } {{PLUS_WRAP}}.tpgb-container-full{ max-width : {{containerFull}} !important; width : {{containerFull}} }',
 					],
 				],
 			],
@@ -714,6 +759,14 @@ function tpgb_tp_container_row() {
 						'selector' => '{{PLUS_WRAP}}.tpgb-container-row{ overflow: {{overflow}}; }',
 					],
 				],
+			],
+			'liveCopy' => [
+				'type' => 'boolean',
+				'default' => false,
+			],
+			'currentID' => [
+					'type' => 'number',
+					'default' => '',
 			],
 			'customClass' => [
 				'type' => 'string',
@@ -1204,10 +1257,6 @@ function tpgb_tp_container_row() {
 				'default' => '1',
 				'scopy' => true,
 			],
-			'scrollPara' => [
-				'type' => 'boolean',
-				'default' => false,
-			],
 			'inverted' => [
 				'type' => 'boolean',
 				'default' => false,
@@ -1307,7 +1356,7 @@ function tpgb_tp_container_row() {
 			'videoImg' => [
 				'type' => 'object',
 				'default' => [
-					'url' => TPGB_ASSETS_URL.'assets/images/tpgb-placeholder.jpg',
+					'url' => '',
 				],
 			],
 			'parallax' => [
@@ -1975,6 +2024,21 @@ function tpgb_tp_container_row() {
 				'default' => false,
 				'scopy' => true,
 			],
+			'flexRespreverse' => [
+				'type' => 'boolean',
+				'default' => false,
+				'scopy' => true,
+			],
+			'flexTabreverse' => [
+				'type' => 'boolean',
+				'default' => false,
+				'scopy' => true,
+			],
+			'flexMobreverse' => [
+				'type' => 'boolean',
+				'default' => false,
+				'scopy' => true,
+			],
 			'flexDirection' => [
 				'type' => 'object',
 				'default' => [ 'md' => '', 'sm' =>  '', 'xs' =>  '' ],
@@ -1986,6 +2050,30 @@ function tpgb_tp_container_row() {
 					(object) [
 						'condition' => [ (object) ['key' => 'flexreverse', 'relation' => '==', 'value' => true]],
 						'selector' => '{{PLUS_WRAP}}.tpgb-container-row,{{PLUS_WRAP}}.tpgb-container-row-editor > .block-editor-inner-blocks > .block-editor-block-list__layout{ flex-direction: {{flexDirection}}-reverse }',
+					],
+					(object) [
+						'condition' => [ (object) [ 'key' => 'flexRespreverse', 'relation' => '==', 'value' => true ],
+							(object) ['key' => 'flexTabreverse', 'relation' => '==', 'value' => false] 
+						],
+						'selector' => '@media (max-width: 1024px) and (min-width:768px) { {{PLUS_WRAP}}.tpgb-container-row,{{PLUS_WRAP}}.tpgb-container-row-editor > .block-editor-inner-blocks > .block-editor-block-list__layout{ flex-direction: {{flexDirection}} } }' ,
+					],
+					(object) [
+						'condition' => [ (object) [ 'key' => 'flexRespreverse', 'relation' => '==', 'value' => true ],
+							(object) ['key' => 'flexTabreverse', 'relation' => '==', 'value' => true] 
+						],
+						'selector' => '@media (max-width: 1024px) and (min-width:768px) { {{PLUS_WRAP}}.tpgb-container-row,{{PLUS_WRAP}}.tpgb-container-row-editor > .block-editor-inner-blocks > .block-editor-block-list__layout{ flex-direction: {{flexDirection}}-reverse  } }',
+					],
+					(object) [
+						'condition' => [ (object) [ 'key' => 'flexRespreverse', 'relation' => '==', 'value' => true ],
+							(object) ['key' => 'flexMobreverse', 'relation' => '==', 'value' => false] 
+						],
+						'selector' => '@media (max-width: 767px) { {{PLUS_WRAP}}.tpgb-container-row,{{PLUS_WRAP}}.tpgb-container-row-editor > .block-editor-inner-blocks > .block-editor-block-list__layout{ flex-direction: {{flexDirection}} } }' ,
+					],
+					(object) [
+						'condition' => [ (object) [ 'key' => 'flexRespreverse', 'relation' => '==', 'value' => true ], 
+							(object) ['key' => 'flexMobreverse', 'relation' => '==', 'value' => true] 
+						],
+						'selector' => '@media (max-width: 767px){ {{PLUS_WRAP}}.tpgb-container-row,{{PLUS_WRAP}}.tpgb-container-row-editor > .block-editor-inner-blocks > .block-editor-block-list__layout{ flex-direction: {{flexDirection}}-reverse  } }',
 					],
 				],
 				'scopy' => true,

@@ -1,47 +1,57 @@
-(function($) {
-	"use strict";
-		$('.tpgb-process-steps').each(function() {
-		   var container = $(this),
-				loop_item = container.find(".tpgb-p-s-wrap"),
-				data_conn = container.data("connection"),
-				data_eventtype = container.data("eventtype");
-
-			if (container.hasClass('style-2')) {
-				let tabletRes = container.hasClass('verticle-tablet');
-				var w = $(window).innerWidth();
-				if ((w >= 768 && !tabletRes) || (tabletRes && w>=1024)) {
-					var total_item = loop_item.length;
-					var divWidth = container.width();
-					var margin = total_item * 20;
-
-					var new_divWidth = divWidth - margin;
-					var per_box_width = new_divWidth / total_item;
-					loop_item.css('width', per_box_width);
-						
-					$(window).on('resize', function() {                    
-						var total_item = loop_item.length;
-						var divWidth = container.width();
-						var margin = total_item * 20;
-
-						new_divWidth = divWidth - margin;
-						per_box_width = new_divWidth / total_item;
-						loop_item.css('width', per_box_width);
-
-					});
-				}
-			}
-			if(data_conn!='' && data_conn!=undefined){
-				if(data_conn!='' && data_eventtype=='con_pro_hover'){
-					loop_item.on("mouseenter", function() {
-						$(this ).closest('.tpgb-process-steps').find(".tpgb-p-s-wrap").removeClass("active");
-                        $(this).addClass("active");
-					});
-				}else if(data_conn!='' && data_eventtype=='con_pro_click'){
-					loop_item.on('click',function(){
-						$(this ).closest('.tpgb-process-steps').find(".tpgb-p-s-wrap").removeClass("active");
-                        $(this).addClass("active");
-					});
-				}
-			}
+/** Process Steps */
+document.addEventListener('DOMContentLoaded', (event) => {
+	progressStepsJS();
+});
+function progressStepsJS(){
+    let processSteps = document.querySelectorAll('.tpgb-process-steps');
+    if(processSteps){
+        processSteps.forEach((self) => {
+            let data_eventtype = self.getAttribute('data-eventtype'),
+                data_conn = self.getAttribute('data-connection'),
+                wrapper = self.querySelectorAll(".tpgb-p-s-wrap");
+            wrapper.forEach((self) => {
+                if(data_conn!='' && data_conn!=undefined){
+                    if(data_eventtype == "con_pro_hover"){
+                        self.addEventListener('mouseover', (event) => {
+                            processFun(wrapper);
+                            self.classList.add('active');
+                        })
+                    }else{
+                        self.addEventListener('click', (event) => {
+                            processFun(wrapper);
+                            self.classList.add('active');
+                        })
+                    }
+                }
+            });
+            if(self.classList.contains('style-2')){
+                var w = document.body.clientWidth,
+                    tabletRes = self.classList.contains('verticle-tablet');
+                if((w >= 768 && !tabletRes) || (tabletRes && w>=1024)){
+                    setWidth(wrapper,self);
+                    window.addEventListener('resize', function() {
+                        setWidth(wrapper,self);
+                    });
+                }
+            }
         });
-})(jQuery);
+    }
+}
+function setWidth(wrapper,self){
+    var total_item = wrapper.length,
+		divWidth = self.offsetWidth,
+		margin = total_item * 20;
+    
+    var new_divWidth = divWidth - margin;
+    var per_box_width = new_divWidth / total_item;
+    wrapper.forEach((ww) => {
+        ww.style.width = per_box_width+'px';
+    });
+}
+function processFun(wrapper){
+    wrapper.forEach((self) => {
+        if(self.classList.contains('active')){
+            self.classList.remove('active');
+        }
+    });
+}

@@ -112,13 +112,13 @@ function tpgb_pricing_list( $attributes, $content) {
 									$output .=$getDesc;
 					$output .='</div></div></div>';
 				}
-		$output .='</div></div>';
+			$output .='</div>';
+			if(!empty($cssData)){
+				$output .= '<style>'.$cssData.'</style>';
+			}
+		$output .='</div>';
 		
 		$output = Tpgb_Blocks_Global_Options::block_Wrap_Render($attributes, $output);
-		
-		if(!empty($cssData)){
-			$output .= '<style>'.$cssData.'</style>';
-		}
 		
   	return $output;
 }
@@ -628,6 +628,25 @@ function tpgb_tp_pricing_list() {
 				(object) [
 					'condition' => [(object) ['key' => 'style', 'relation' => '==', 'value' => 'style-3' ] , ['key' => 'imageField', 'relation' => '!=', 'value' => '' ], ['key' => 'imageField.url', 'relation' => '!=', 'value' => '' ]],
 					'selector' => '{{PLUS_WRAP}} .food-menu-box .food-flex-imgs.food-flex-img',
+				],
+			],
+			'scopy' => true,
+		],
+		'bgPadding' => [
+			'type' => 'object',
+			'default' => (object) [ 
+				'md' => [
+					"top" => '',
+					"right" => '',
+					"bottom" => '',
+					"left" => '',
+				],
+				"unit" => 'px',
+			],
+			'style' => [
+				(object) [
+					'condition' => [(object) ['key' => 'style', 'relation' => '==', 'value' => 'style-3' ]],
+					'selector' => '{{PLUS_WRAP}} .food-menu-box {padding: {{bgPadding}};}',
 				],
 			],
 			'scopy' => true,

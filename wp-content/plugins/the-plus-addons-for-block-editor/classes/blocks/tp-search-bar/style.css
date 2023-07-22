@@ -166,7 +166,8 @@
 .tpgb-search-bar .tpgb-serpost-title {
     font-size: 16px;
     font-weight: 700;
-    padding-left: 15px
+    padding-left: 15px;
+    transition: 0.3s linear;
 }
 .tpgb-search-bar .tpgb-serpost-excerpt, .tpgb-search-bar .tpgb-serpost-price, .tpgb-search-bar .tpgb-serpost-shortDesc {
     font-size: 15px;
@@ -265,6 +266,13 @@
     font-size: 13px;
     color: #888;
     cursor: pointer;
+}
+.tpgb-search-bar .tpgb-sbar-dropdown .tpgb-select .tpgb-ajx-loading, .tpgb-search-bar .tpgb-sbar-dropdown .tpgb-select .tpgb-close-btn {
+    right: auto;
+    top: auto;
+    transform: unset;
+    position: relative;
+    margin-left: 5px;
 }
 .tpgb-search-bar .tpgb-sbar-dropdown:active {
     background-color: #f8f8f8;

@@ -4004,6 +4004,7 @@ function tpgbp_tp_social_feed_render_callback( $attributes, $content) {
 					$PopupSylNum = "{$block_id}-{$F_index}-{$uniqEach}";
 					$RKey = (!empty($AllVmData['RKey'])) ? $AllVmData['RKey'] : '';
 					$PostId = (!empty($AllVmData['PostId'])) ? $AllVmData['PostId'] : '';
+					$UName = (!empty($AllVmData['UName'])) ? $AllVmData['UName'] : '';
 					$selectFeed = (!empty($AllVmData['selectFeed'])) ? $AllVmData['selectFeed'] : '';
 					$Massage = (!empty($AllVmData['Massage'])) ? $AllVmData['Massage'] : '';
 					$Description = (!empty($AllVmData['Description'])) ? $AllVmData['Description'] : '';
@@ -4065,7 +4066,10 @@ function tpgbp_tp_social_feed_render_callback( $attributes, $content) {
 					}
 					$ImageURL=$videoURL="";
 					if( ($Type == 'video' || $Type == 'photo') && $selectFeed != 'Instagram' ){
-						$videoURL = $PostLink;
+						$sepPostId = explode("_",$PostId);
+						$newPId = (!empty($sepPostId[1])) ? $sepPostId[1] : '';
+						$fbPostRD = 'https://www.facebook.com/'.esc_attr($UName).'/posts/'.esc_attr($newPId);
+						$videoURL = ($selectFeed == 'Facebook' && $PopupOption == 'GoWebsite') ? $fbPostRD : $PostLink;
 						$ImageURL = $PostImage;
 					}
 					$IGGP_Icon='';
@@ -4098,7 +4102,7 @@ function tpgbp_tp_social_feed_render_callback( $attributes, $content) {
 					if( (!in_array($PostId,$FeedId) && $F_index < $TotalPost) && ( ($MediaFilter == 'default') || ($MediaFilter == 'ompost' && !empty($PostLink) && !empty($PostImage)) || ($MediaFilter == 'hmcontent' &&  empty($PostLink) && empty($PostImage) )) ){
 						$SocialFeed .= '<div class="grid-item splide__slide '.esc_attr('feed-'.$selectFeed.' '.$desktop_class .' '.$RKey.' '.$category_filter).'" data-index="'.esc_attr($selectFeed).esc_attr($F_index).'" >';
 							ob_start();
-								include TPGBP_INCLUDES_URL. "social-feed/social-feed-{$style}.php"; 
+								include TPGBP_INCLUDES_URL. "social-feed/".sanitize_file_name('social-feed-'.$style.'.php');
 								$SocialFeed .= ob_get_contents();
 							ob_end_clean();
 						$SocialFeed .= '</div>';
@@ -4180,13 +4184,17 @@ function tpgbp_FacebookFeed($social,$attr){
 		
 		if( $GetFbRL != $url || $GetFbTime != $FbTime ){
 			$FbAllData = tpgbp_api_call($url,$SSL_VER);
-				set_transient("Fb-Url-$FbKey", $url, $FbTime);
-				set_transient("Data-Fb-$FbKey", $FbAllData, $FbTime);
-				set_transient("Fb-Time-$FbKey", $FbTime, $FbTime);
+			$FbAllData = json_encode($FbAllData);
+			set_transient("Fb-Url-$FbKey", $url, $FbTime);
+			set_transient("Data-Fb-$FbKey", $FbAllData, $FbTime);
+			set_transient("Fb-Time-$FbKey", $FbTime, $FbTime);
 		}else{
 			$FbAllData = get_transient("Data-Fb-$FbKey");
 		}
-		
+		if(!is_array($FbAllData)){   
+			$FbAllData = json_decode($FbAllData,true);
+		}
+
 		$status = (!empty($FbAllData['HTTP_CODE']) ? $FbAllData['HTTP_CODE'] : '');
 		if($status == 200){
 			$FbPost = '';
@@ -4200,6 +4208,7 @@ function tpgbp_FacebookFeed($social,$attr){
 				
 				$link = (!empty($FbAllData['link']) ? $FbAllData['link'] : '');
 				$name = (!empty($FbAllData['name']) ? $FbAllData['name'] : '');
+				$u_name = (!empty($FbAllData['username']) ? $FbAllData['username'] : '');
 				$id = (!empty($FbData['id']) ? $FbData['id'] : '');
 				$type = (!empty($FbData['type']) ? $FbData['type'] : '');
 				$FbMessage = (!empty($FbData['message']) ? $FbData['message'] : '');
@@ -4208,8 +4217,6 @@ function tpgbp_FacebookFeed($social,$attr){
 				$FbReactions = (!empty($FbData['reactions']['summary']['total_count']) ? tpgbp_number_short($FbData['reactions']['summary']['total_count']) : 0);
 				$FbComments = (!empty($FbData['comments']['summary']['total_count']) ? tpgbp_number_short($FbData['comments']['summary']['total_count']) : 0);
 				$Fbshares = (!empty($FbData['shares']['count']) ? tpgbp_number_short($FbData['shares']['count']) : '');
-				
-				
 
 				if($type == "video"){
 					$FbSource = (!empty($FbData['source']) ? $FbData['source'] : '');
@@ -4226,7 +4233,6 @@ function tpgbp_FacebookFeed($social,$attr){
 						$FbSource = (!empty($FbData['attachments']['data'][0]['media']['source']) ? $FbData['attachments']['data'][0]['media']['source'] : '');
 					}
 				}
-				
 
 				if(!empty($FbAlbum)){
 					$type = 'video'; 
@@ -4248,6 +4254,7 @@ function tpgbp_FacebookFeed($social,$attr){
 						"CreatedTime" 	=> $Created_time,
 						"PostImage" 	=> $FbPicture,
 						"UserName" 		=> $name,
+						"UName" 		=> $u_name,
 						"UserImage" 	=> (!empty($FbAllData['picture']['data']['url']) ? $FbAllData['picture']['data']['url'] : ''),
 						"UserLink" 		=> $link,
 						"share" 		=> $Fbshares,
@@ -4521,12 +4528,16 @@ function tpgbp_InstagramFeed($social, $attr){
 		$IGData = '';
 		if( ($GetURL != $IGAPI) || ($GetProfile != $Profile) || ($GetTime != $TimeFrq ) ){
 			$IGData = tpgbp_api_call($IGAPI,$SSL_VER);
+			$IGData = json_encode($IGData);
 			set_transient("IG-Url-$IGKey", $IGAPI, $TimeFrq);
 			set_transient("Data-IG-$IGKey", $IGData, $TimeFrq);
 			set_transient("IG-Profile-$IGKey", $Profile, $TimeFrq);
 			set_transient("IG-Time-$IGKey", $TimeFrq, $TimeFrq);
 		}else{
 			$IGData = get_transient("Data-IG-$IGKey");
+		}
+		if(!is_array($IGData)){   
+			$IGData = json_decode($IGData,true);
 		}
 		$IGStatus = (!empty($IGData['HTTP_CODE'])) ? $IGData['HTTP_CODE'] : 400;
 		if( $IGStatus == 200 ){
@@ -4584,11 +4595,15 @@ function tpgbp_InstagramFeed($social, $attr){
 		
 		if( ($GetURL != $UserID_API) || ($GetTime != $TimeFrq) ){
 			$UserID_Res = tpgbp_api_call($UserID_API,$SSL_VER);
+			$UserID_Res = json_encode($UserID_Res);
 			set_transient("IG-GP-Url-$IGKey", $UserID_API, $TimeFrq);
 			set_transient("IG-GP-Time-$IGKey", $TimeFrq, $TimeFrq);
 			set_transient("IG-GP-Data-$IGKey", $UserID_Res, $TimeFrq);
 		}else{
 			$UserID_Res = get_transient("IG-GP-Data-$IGKey");
+		}
+		if(!is_array($UserID_Res)){   
+			$UserID_Res = json_decode($UserID_Res,true);
 		}
 		$UserID_CODE = !empty($UserID_Res['HTTP_CODE']) ? $UserID_Res['HTTP_CODE'] : 400;
 		
@@ -4606,10 +4621,14 @@ function tpgbp_InstagramFeed($social, $attr){
 				$UserPost_Res=[];
 				if( $UserPost_Databash != $UserPost_API || $GetTime != $TimeFrq ){
 					$UserPost_Res = tpgbp_api_call($UserPost_API,$SSL_VER);
+					$UserPost_Res = json_encode($UserPost_Res);
 					set_transient("IG-GP-UserFeed-Url-$IGKey", $UserPost_API, $TimeFrq);
 					set_transient("IG-GP-UserFeed-Data-$IGKey", $UserPost_Res, $TimeFrq);
 				}else{
 					$UserPost_Res = get_transient("IG-GP-UserFeed-Data-$IGKey");
+				}
+				if(!is_array($UserPost_Res)){   
+					$UserPost_Res = json_decode($UserPost_Res,true);
 				}
 				$UserPost_CODE = !empty($UserPost_Res['HTTP_CODE']) ? $UserPost_Res['HTTP_CODE'] : 400;
 				
@@ -4698,10 +4717,14 @@ function tpgbp_InstagramFeed($social, $attr){
 				$Hashtag_Res = [];
 				if( $Hashtag_Databash != $HashtagID_API || $GetTime != $TimeFrq ){
 					$Hashtag_Res = tpgbp_api_call($HashtagID_API,$SSL_VER);
+					$Hashtag_Res = json_encode($Hashtag_Res);
 					set_transient("IG-GP-HashtagID-Url-$IGKey", $HashtagID_API, $TimeFrq);
 					set_transient("IG-GP-HashtagID-data-$IGKey", $Hashtag_Res, $TimeFrq);
 				}else{
 					$Hashtag_Res = get_transient("IG-GP-HashtagID-data-$IGKey");
+				}
+				if(!is_array($Hashtag_Res)){   
+					$Hashtag_Res = json_decode($Hashtag_Res,true);
 				}
 
 				$Hashtag_CODE = !empty($Hashtag_Res['HTTP_CODE']) ? $Hashtag_Res['HTTP_CODE'] : 400;
@@ -4713,10 +4736,14 @@ function tpgbp_InstagramFeed($social, $attr){
 					$Hashtag_Data_Res = [];
 					if( $Hashtag_Data_Databash != $Hashtag_Data || $GetTime != $TimeFrq ){
 						$Hashtag_Data_Res = tpgbp_api_call($Hashtag_Data,$SSL_VER);
+						$Hashtag_Data_Res = json_encode($Hashtag_Data_Res);
 						set_transient("IG-GP-HashtagData-Url-$IGKey", $Hashtag_Data, $TimeFrq);
 						set_transient("IG-GP-Hashtag-Data-$IGKey", $Hashtag_Data_Res, $TimeFrq);
 					}else{
 						$Hashtag_Data_Res = get_transient("IG-GP-Hashtag-Data-$IGKey");
+					}
+					if(!is_array($Hashtag_Data_Res)){   
+						$Hashtag_Data_Res = json_decode($Hashtag_Data_Res,true);
 					}
 
 					$Hashtag_Data_CODE = !empty($Hashtag_Data_Res['HTTP_CODE']) ? $Hashtag_Data_Res['HTTP_CODE'] : 400;
@@ -4802,10 +4829,14 @@ function tpgbp_InstagramFeed($social, $attr){
 				$Tag_Res=[];
 				if( $Tag_Databash != $Tag_API || $GetTime != $TimeFrq ){
 					$Tag_Res = tpgbp_api_call($Tag_API,$SSL_VER);
+					$Tag_Res = json_encode($Tag_Res);
 					set_transient("IG-GP-Tag-Url-$IGKey", $Tag_API, $TimeFrq);
 					set_transient("IG-GP-Tag-Data-$IGKey", $Tag_Res, $TimeFrq);
 				}else{
 					$Tag_Res = get_transient("IG-GP-Tag-Data-$IGKey");
+				}
+				if(!is_array($Tag_Res)){   
+					$Tag_Res = json_decode($Tag_Res,true);
 				}
 
 				$Tag_CODE = !empty($Tag_Res['HTTP_CODE']) ? $Tag_Res['HTTP_CODE'] : 400;

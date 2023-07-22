@@ -285,8 +285,9 @@ function tpgb_preloader_render_callback( $attributes, $content) {
 			}
 			endforeach;
 		}
-		$output .= '</div>';
 		$output .= '<style>'.$dyCss.$progressColor.'</style>';
+		$output .= '</div>';
+		
 		if(!empty($pageLoadTrans) && $pageLoadTrans=='pageloadtriplesw'){
 			$output .='<div class="tpgb-preload-reveal-layer-box">
 				<div style="background:'.esc_attr($tpgb4color1).'" class="tpgb-preload-reveal-layer"></div>

@@ -4,14 +4,15 @@
  */
 defined( 'ABSPATH' ) || exit;
 function tpgb_tp_hovercard_render_callback( $attributes, $content) {
+
 	$output = '';
 	$block_id = (!empty($attributes['block_id'])) ? $attributes['block_id'] : uniqid("title");
 	$cardList = (!empty($attributes['cardList'])) ? $attributes['cardList'] : [];
 	
 	$blockClass = Tp_Blocks_Helper::block_wrapper_classes( $attributes );
 	
-    $output .= '<div class="tpgb-hovercard tpgb-relative-block tpgb-block-'.esc_attr($block_id).' '.esc_attr($blockClass).'">';
-		$output .= '<div class="tpgb-hovercard-wrap">';
+    $output .= '<div class="tpgb-hovercard tpgb-block-'.esc_attr($block_id).' '.esc_attr($blockClass).'">';
+		$output .= '<div class="tpgb-hovercard-wrap tpgb-relative-block">';
 			$output .= tpgb_get_html_structure($attributes,'attr');
 		$output .= "</div>";
     $output .= "</div>";
@@ -319,6 +320,9 @@ function tpgb_tp_hovercard() {
 						],
 						'normalBg' => [
 							'type' => 'object',
+							'default' => (object) [
+								'openBg'=> 0,
+							],
 							'style' => [
 								(object) [
 									'selector' => '{{PLUS_WRAP}} {{TP_REPEAT_ID}}',
@@ -395,6 +399,9 @@ function tpgb_tp_hovercard() {
 						],
 						'hoverBg' => [
 							'type' => 'object',
+							'default' => (object) [
+								'openBg'=> 0,
+							],
 							'style' => [
 								(object) [
 									'condition' => [(object) ['key' => 'customHvr', 'relation' => '==', 'value' => false]],
@@ -723,6 +730,8 @@ function tpgb_get_html_structure($attr,$load=''){
 	$tagname = (isset($_POST['tagname']) && !empty($_POST['tagname'])) ? map_deep( wp_unslash( $_POST['tagname'] ), 'sanitize_text_field' ) : $attr['cardList'];
 	$block_id = (isset($_POST['block_id']) && !empty($_POST['block_id'])) ? sanitize_key($_POST['block_id']) : $attr['block_id'];
 	
+	global $post;
+
 	$html= '';
 	$i = 0;
 
@@ -731,7 +740,8 @@ function tpgb_get_html_structure($attr,$load=''){
 	}else if(empty($tagname) && $load=='attr'){
 		return null;
 	}
-	$cssStyle ='';
+
+	$cssStyle = $dyImgUrl = '';
 	foreach($tagname as $item){
 
 		//Set OpenTag
@@ -750,18 +760,38 @@ function tpgb_get_html_structure($attr,$load=''){
 
 		//Set Anchor Tag Link
 		$linkattr = ''; 
+		
 		if(!empty($item['openTag']) && $item['openTag']=="a"){
-			if ( !empty( $item['aLink']['url'] ) ) {	
-				$linkattr .= 'href="'.(($item['aLink'] && $item['aLink']['url']) ? esc_url($item['aLink']['url'])   : '#').'" ';
+			
+			if ( !empty( $item['aLink']) ) {	
+				if(class_exists('Tpgbp_Pro_Blocks_Helper') && isset($item['aLink']['dynamic'])){
+					$linkattr .= 'href = "'.esc_url(Tpgbp_Pro_Blocks_Helper::tpgb_dynamic_repeat_url($item['aLink'])).'" ';
+				}else{
+					if( !empty($item['aLink']['url']) ){
+						$linkattr .= 'href = "'.esc_url($item['aLink']['url']).'" ';
+					}
+				}
 				$linkattr .= 'target = "'.(($item['aLink']['target']!='') ? '_blank' : '').'" ';
 				$linkattr .= 'rel = "'.(($item['aLink']['nofollow']!='') ? 'nofollow' : '').'" ';
 				$linkattr .= Tp_Blocks_Helper::add_link_attributes($item['aLink']);
 			}									
 		}
 
+		$uniClass = '';
+		//Set Backgorund Dynamic
+		if(isset($item['normalBg']) && !empty($item['normalBg']) && $item['normalBg']['openBg'] == 1 && $item['normalBg']['bgType']== 'image' && isset($item['normalBg']['bgImage']['dynamic']) && isset($item['normalBg']['bgImage']['dynamic']['dynamicUrl']) ){
+			if(isset($post->ID) && !empty($post->ID)){
+				$uniClass .= ' tpgb-qupost-'.esc_attr($post->ID).'';
+				if( class_exists('Tpgbp_Pro_Blocks_Helper') ) {
+					$dyImgUrl .= Tpgbp_Pro_Blocks_Helper::tpgb_dynamic_repeat_url($item['normalBg']['bgImage']);
+					$cssStyle .= '.tpgb-block-'.esc_attr($block_id).'  .tpgb-qupost-'.esc_attr($post->ID).'.tp-repeater-item-'.esc_attr($item ['_key']).'{ background-image : url('.esc_url($dyImgUrl ).') }';
+				}
+			}
+		}
+
 		//Output Html
 		if(!empty($open_tag)){ 
-			$html .= '<'.esc_attr($open_tag).' class="tp-repeater-item-'.esc_attr($item ['_key']).' '.(!empty($item['className']) ? esc_attr($item['className']) : '' ).' '.(!empty($item['Hvrclass'] ) ? esc_attr($item['Hvrclass']) : '' ).' '.(($item['content'] == 'text' && !empty($item['customtxtHvr']) && $item['txtHvrclass'] != '') ? esc_attr($item['txtHvrclass']) : '').'  '.(($item['content'] == 'img' && !empty($item['customimgHvr']) && $item['Hvrimgclass'] != '') ? esc_attr($item['Hvrimgclass']) : '').'  " '.($item['openTag']=="a" ? $linkattr :'').' >';
+			$html .= '<'.esc_attr($open_tag).' class="tp-repeater-item-'.esc_attr($item ['_key']).' '.$uniClass.' '.(!empty($item['className']) ? esc_attr($item['className']) : '' ).' '.(!empty($item['Hvrclass'] ) ? esc_attr($item['Hvrclass']) : '' ).' '.(($item['content'] == 'text' && !empty($item['customtxtHvr']) && $item['txtHvrclass'] != '') ? esc_attr($item['txtHvrclass']) : '').'  '.(($item['content'] == 'img' && !empty($item['customimgHvr']) && $item['Hvrimgclass'] != '') ? esc_attr($item['Hvrimgclass']) : '').'  " '.($item['openTag']=="a" ? $linkattr :'').' >';
 		}
 		// Content
 		if(!empty($item['content']) && $item['content'] != 'none'){
@@ -774,7 +804,13 @@ function tpgb_get_html_structure($attr,$load=''){
 				if(isset($cntImg['id']) && !empty($cntImg['id'])){
 					$cntUrl = wp_get_attachment_image( $cntImg['id'], 'full');
 				}else{
-					$cntUrl = '<img src="'.esc_url($item['cntImg']['url']).'" alt="'.esc_attr__('card-Img','tpgb').'" />';
+					if(isset($item['cntImg']['dynamic']) && class_exists('Tpgbp_Pro_Blocks_Helper')) {
+						$dyImgUrl = Tpgbp_Pro_Blocks_Helper::tpgb_dynamic_repeat_url($item['cntImg']);
+						$cntUrl = '<img src="'.esc_url($dyImgUrl).'" alt="'.esc_attr__('card-Img','tpgb').'" />';
+					}else{
+						$cntUrl = '<img src="'.esc_url($item['cntImg']['url']).'" alt="'.esc_attr__('card-Img','tpgb').'" />';
+					}
+					
 				}
 				$html .= $cntUrl; 
 			}
@@ -792,7 +828,7 @@ function tpgb_get_html_structure($attr,$load=''){
 		$cssStyle .= tpgb_hovercard_style($item,$block_id);
 		$i++;
 	}
-	
+				
 	if(!empty($cssStyle)){
 		$html .= '<style>';
 		$html .= $cssStyle;
@@ -812,7 +848,6 @@ add_action('wp_ajax_get_html_structure', 'tpgb_get_html_structure');
 function tpgb_hovercard_style($item,$block_id){
 	$selector = '';
 	$css = '';
-	
 		if(!empty($item['customHvr']) && !empty($item['Hvrclass'])){
 			$selector = '.tpgb-block-'.esc_attr($block_id).' .'.esc_attr($item['Hvrclass']).':hover .tp-repeater-item-'.esc_attr($item ['_key']);
 			if(!empty($item['hoverBg']) && $item['hoverBg']['openBg'] == 1) {
@@ -920,6 +955,6 @@ function tpgb_hovercard_style($item,$block_id){
 				$css .= $selector.'{ opacity: '.esc_attr($item['hvrimgopacity']).';}';
 			}
 		}
-	
+		
 	return $css;
 }

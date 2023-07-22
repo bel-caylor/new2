@@ -13,7 +13,7 @@ function tpgb_table_content_render_callback( $attr, $content) {
     $openIcon = (!empty($attr['openIcon'])) ? $attr['openIcon'] : '';
     $closeIcon = (!empty($attr['closeIcon'])) ? $attr['closeIcon'] : '';
     $DefaultToggle = (!empty($attr['DefaultToggle'])) ? $attr['DefaultToggle'] : ['md' => true, 'sm' => true, 'xs' => false];
-	
+	$totitleAlign = (!empty($attr['totitleAlign'])) ? $attr['totitleAlign'] : ['md' => '', 'sm' => '', 'xs' => ''];
 	$blockClass = Tp_Blocks_Helper::block_wrapper_classes( $attr );
 
 	$selectorHeading ='';
@@ -51,7 +51,28 @@ function tpgb_table_content_render_callback( $attr, $content) {
 	}
 	
 	$toggleActive=' active';
-		
+
+	// Alignment Css
+	$style_atts = '';
+	if(( isset($totitleAlign['md']) && !empty($totitleAlign['md']) && $totitleAlign[ 'md'] == 'right' )) {
+		$style_atts .= '@media (min-width: 1024px) { .tpgb-block-'.esc_attr($block_id).'.tpgb-table-content{margin-left: auto;} } ';
+	}
+	if( isset($totitleAlign['sm']) && !empty($totitleAlign['sm']) && $totitleAlign['sm'] == 'right'){
+		$style_atts .= '@media (max-width: 1024px) and (min-width:768px) { .tpgb-block-'.esc_attr($block_id).'.tpgb-table-content{margin-left: auto} } ';
+	}
+	if( isset($totitleAlign['xs']) && !empty($totitleAlign['xs']) && $totitleAlign['xs'] == 'right'){
+		$style_atts .= '@media (max-width: 767px) { .tpgb-block-'.esc_attr($block_id).'.tpgb-table-content{margin-left: auto} } ';
+	}
+	if(( isset($totitleAlign['md']) && !empty($totitleAlign['md']) && $totitleAlign['md'] == 'center' )){
+		$style_atts .= '@media (min-width: 1024px) { .tpgb-block-'.esc_attr($block_id).'.tpgb-table-content{margin-left: auto; margin-right: auto;} }';
+	}
+	if( isset($totitleAlign['sm']) && !empty($totitleAlign['sm']) && $totitleAlign['sm'] == 'center' ) {
+		$style_atts .= '@media (max-width: 1024px) and (min-width:768px) { .tpgb-block-'.esc_attr($block_id).'.tpgb-table-content{margin-left: auto;margin-right: auto;} } ';
+	}
+	if( isset($totitleAlign['xs']) && !empty($totitleAlign['xs']) && $totitleAlign['xs'] == 'center' ) {
+		$style_atts .= '@media (max-width: 767px){ .tpgb-block-'.esc_attr($block_id).'.tpgb-table-content{margin-left: auto; margin-right: auto;} }';
+	}
+
     $output .= '<div class="tpgb-table-content tpgb-block-'.esc_attr($block_id).' table-'.esc_attr($Style).' '.esc_attr($blockClass).'" data-settings="'.htmlspecialchars(json_encode($settings), ENT_QUOTES, 'UTF-8').'" >';
 		$output .= '<div class="tpgb-toc-wrap '.esc_attr($toggleClass).esc_attr($toggleActive).'" '.$toggleAttr.'>';
 			if( !empty($attr['showText']) && !empty($attr['contentText']) ) {
@@ -69,6 +90,10 @@ function tpgb_table_content_render_callback( $attr, $content) {
 			$output .= '<div class="tpgb-toc toc"></div>';
 		$output .= '</div>';
     $output .= '</div>';
+
+	if(!empty($style_atts)){
+		$output .= '<style>'.$style_atts.'</style>';
+	}
 	
 	$output = Tpgb_Blocks_Global_Options::block_Wrap_Render($attr, $output);
 	
@@ -194,7 +219,12 @@ function tpgb_tp_table_content() {
 				'type' => 'object',
 				'default' => ['md' => true,'sm' => true,'xs' => false],
 			],
-			
+
+			'totitleAlign' => [
+				'type' => 'object',
+				'default' => [ 'md' => '', 'sm' =>  '', 'xs' =>  '' ],
+			],
+
 			'Level1Typo' => [
 				'type' => 'object',
 				'default' => (object) [

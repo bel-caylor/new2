@@ -10,7 +10,7 @@ function tpgb_tp_timeline_render_callback( $attributes, $content) {
 	$style = ( !empty($attributes['style']) ) ? $attributes['style'] : 'style-1';
 	$MLayout = ( !empty($attributes['MLayout']) ) ? $attributes['MLayout'] : false;
 	$RContent = ( !empty($attributes['RContent']) ) ? $attributes['RContent'] : [];
-	$Alignment = 'timeline-'.$attributes['Alignment'].'-align';
+	$Alignment = ( !empty($attributes['Alignment']) ) ? $attributes['Alignment'] : 'center';
 	$PinStyle = ( !empty($attributes['PinStyle']) ) ? $attributes['PinStyle'] : 'style-1';
 	$StartPin = ( !empty($attributes['StartPin']) ) ? $attributes['StartPin'] : 'none';
 	$StartText = ( !empty($attributes['StartText']) ) ? $attributes['StartText'] : '';
@@ -29,7 +29,7 @@ function tpgb_tp_timeline_render_callback( $attributes, $content) {
 		$Mtype = 'masonry';
 	}
 
-	$Timeline .= '<div id="tpgb_timeline" class="tpgb-block-'.esc_attr($block_id).' tpgb-relative-block tpgb-timeline-list tpgb-layout '.esc_attr($layout).' '.esc_attr($Alignment).' timeline-'.esc_attr($style).' '.esc_attr($blockClass).'" data-id="'.esc_attr($block_id).'" data-masonry-type="'.esc_attr($Mtype).'">';
+	$Timeline .= '<div id="tpgb_timeline" class="tpgb-block-'.esc_attr($block_id).' tpgb-relative-block tpgb-timeline-list tpgb-layout '.esc_attr($layout).' timeline-'.esc_attr($Alignment).'-align timeline-'.esc_attr($style).' '.esc_attr($blockClass).'" data-id="'.esc_attr($block_id).'" data-masonry-type="'.esc_attr($Mtype).'">';
 		$Timeline .= '<div class="'.esc_attr($Rowclass).' post-loop-inner tpgb-relative-block '.esc_attr($ArrowStyle).'" >';
 
 			$Timeline .= '<div class="timeline-track"></div>';
@@ -1036,6 +1036,25 @@ function tpgb_tp_timeline() {
 				],
 				'scopy' => true,
 			],
+			'TextMargin' => [
+				'type' => 'object',
+				'default' => (object) [
+					'md' => [
+						"top" => '',
+						"right" => '',
+						"bottom" => '',
+						"left" => '',
+					],
+					"unit" => 'px'
+				],
+				'style' => [
+					(object) [
+						'condition' => [(object) ['key' => 'StartPin', 'relation' => '==', 'value' => 'text']],
+						'selector' => '{{PLUS_WRAP}} .tpgb-timeline-text.tpgb-text-start{ margin :{{TextMargin}};}',
+					],
+				],
+				'scopy' => true,
+			],
 			'TextBg' => [
 				'type' => 'object',
 				'default' => (object) [
@@ -1164,6 +1183,25 @@ function tpgb_tp_timeline() {
 					(object) [
 						'condition' => [(object) ['key' => 'EndPin', 'relation' => '==', 'value' => 'text']],
 						'selector' => '{{PLUS_WRAP}} .tpgb-text-end{padding:{{ETextPad}};}',
+					],
+				],
+				'scopy' => true,
+			],
+			'eTextMargin' => [
+				'type' => 'object',
+				'default' => (object) [
+					'md' => [
+						"top" => '',
+						"right" => '',
+						"bottom" => '',
+						"left" => '',
+					],
+					"unit" => 'px'
+				],
+				'style' => [
+					(object) [
+						'condition' => [(object) ['key' => 'EndPin', 'relation' => '==', 'value' => 'text']],
+						'selector' => '{{PLUS_WRAP}} .tpgb-text-end{ margin :{{eTextMargin}}; }',
 					],
 				],
 				'scopy' => true,

@@ -25,12 +25,12 @@
                         
                         $.ajax({
                             type:'POST',
-                            data: {
+                            data: { 
                                 action : 'tpgb_post_load',
                                 option : stoption,
                                 dyOpt : option,
                             },
-                            url:tpgb_load.ajaxUrl,
+                            url: ( tpgb_config && tpgb_config.ajax_url ) ? tpgb_config.ajax_url : tpgb_load.ajaxUrl,
                             beforeSend: function() {
                                 $(current_click).text(option.loadingtxt);
                             },
@@ -38,12 +38,12 @@
                                 if(data==''){
                                     $(current_click).addClass("hide");
                                 }else{
-                                    $("#"+option.load_class+' .post-loop-inner').append( data );
+                                    $("#"+option.load_class+' > .post-loop-inner').append( data );
                                     if(option.layout=='grid' || option.layout=='masonry'){
                                         if($("#"+option.load_class).hasClass("tpgb-isotope")){
                                             var $newItems = $('');
-                                            $("#"+option.load_class+' .post-loop-inner').isotope( 'insert', $newItems );
-                                            $("#"+option.load_class+' .post-loop-inner').isotope( 'layout' ).isotope( 'reloadItems' ); 
+                                            $("#"+option.load_class+' > .post-loop-inner').isotope( 'insert', $newItems );
+                                            $("#"+option.load_class+' > .post-loop-inner').isotope( 'layout' ).isotope( 'reloadItems' ); 
                                         }
                                     }
                                 }
@@ -83,9 +83,34 @@
                                         });
                                     }
                                 }
+                                
+                                if($("#"+option.load_class).hasClass("tpgb-isotope")){
+                                    if(option.layout=='grid' || option.layout=='masonry'){
+                                        let container = $("#"+option.load_class),
+                                            innerDiv = container.find('.post-loop-inner');
+                                            
+                                            innerDiv.isotope({
+                                                itemSelector: ".grid-item",
+                                                resizable: !0,
+                                                sortBy: "original-order",
+                                                transitionDuration:  (option.disableAnim) ? 0 : '0.4s' ,
+                                                resizesContainer: true,
+                                            });
+                                            innerDiv.isotope('layout');
+                                            setTimeout(function(){
+                                                innerDiv.isotope('layout');
+                                            }, 30);
+                                    }
+                                }
 
                                 if($("#"+option.load_class).hasClass("tpgb-metro")){
                                     tpgb_metro_layout('all');
+                                    $('.tpgb-metro .post-loop-inner').isotope({
+                                        itemSelector: ".grid-item",
+                                        resizable: !0,
+                                        sortBy: "original-order",
+                                        transitionDuration:  (option.disableAnim) ? 0 : '0.4s' ,
+                                    })
                                     $('.tpgb-metro .post-loop-inner').isotope('layout').isotope( 'reloadItems' );
                                 }
 
@@ -95,27 +120,54 @@
                                         equalHeightFun(eDiv)
                                     }
                                 }
-                                
+
+                                if($("#"+option.load_class).find('.tpgb-messagebox').length ){
+                                    let msgbDiv = $("#"+option.load_class).find('.tpgb-messagebox');
+                                    msgbDiv.each(function(obj){
+                                        let $this = $(this),
+                                            disBtn = $this.find('.msg-dismiss-content');
+                                        if(disBtn.length > 0){
+                                            disBtn.on('click', function(e) {
+                                                $this.slideUp(500);
+                                            })
+                                        }
+                                    })
+                                }
                                 current_click.data('requestRunning', false);
+
+                                if($("#"+option.load_class).find('.tpgb-fancy-popup').length ){
+                                    let fancyDiv = $("#"+option.load_class).find('.tpgb-fancy-popup');
+                                    fancyDiv.each(function(){
+                                        tpgb_fancy_popup($(this))
+                                    })
+                                }
                             }
                             }).then(function(){
                                 if($("#"+option.load_class).hasClass("tpgb-isotope")){
                                     if(option.layout=='grid' || option.layout=='masonry'){
-                                        var container = $("#"+option.load_class+' .post-loop-inner');
+                                        var container = $("#"+option.load_class+' > .post-loop-inner');
 
                                         container.isotope({
                                             itemSelector: ".grid-item",
                                             resizable: !0,
                                             sortBy: "original-order",
+                                            resizesContainer: true,
                                             transitionDuration:  (option.disableAnim) ? 0 : '0.4s' ,
                                         });						
                                     }
+                                    container.isotope('layout');
                                     setTimeout(function(){
-                                        container.isotope( 'layout' );
+                                        container.isotope('layout');
                                     }, 30);
                                 }
                                 if($("#"+option.load_class).hasClass("tpgb-metro")){
                                     tpgb_metro_layout('all');
+                                    $('.tpgb-metro .post-loop-inner').isotope({
+                                        itemSelector: ".grid-item",
+                                        resizable: !0,
+                                        sortBy: "original-order",
+                                        transitionDuration:  (option.disableAnim) ? 0 : '0.4s' ,
+                                    })
                                     $('.tpgb-metro .post-loop-inner').isotope('layout').isotope( 'reloadItems' );
                                 }
 
@@ -123,6 +175,23 @@
                                     if(typeof equalHeightFun == 'function'){
                                         var eDiv = document.getElementById(option.load_class);
                                         equalHeightFun(eDiv)
+                                    }
+                                }
+                                if($("#"+option.load_class).find('.tpgb-messagebox').length ){
+                                    let msgbDiv = $("#"+option.load_class).find('.tpgb-messagebox');
+                                    msgbDiv.each(function(obj){
+                                        let $this = $(this),
+                                            disBtn = $this.find('.msg-dismiss-content');
+                                        if(disBtn.length > 0){
+                                            disBtn.on('click', function(e) {
+                                                $this.slideUp(500);
+                                            })
+                                        }
+                                    })
+                                }
+                                if($("#"+option.load_class).find('.tpgb-accordion').length ){
+                                    if(typeof accordionJS == 'function'){
+                                        accordionJS();
                                     }
                                 }
                             })
@@ -164,21 +233,6 @@
                 containerHeight = $(this).height();
                 containerOffset = $(this).offset().top;
 
-                var tabCnt = $(this).closest('.tpgb-tab-content');
-                
-                var parentOfParent1 = $(this).closest('.tpgb-tab-content').parent().closest('.tpgb-tab-content').parent().closest('.tpgb-tab-content');
-                if( parentOfParent1 && parentOfParent1.length && !parentOfParent1.hasClass('active')){
-                    return;
-                }
-
-                var parentOfParent = $(this).closest('.tpgb-tab-content').parent().closest('.tpgb-tab-content');
-                if( parentOfParent && parentOfParent.length && !parentOfParent.hasClass('active')){
-                    return;
-                }
-
-                if( tabCnt && tabCnt.length > 0 && !tabCnt.hasClass('active')){
-                    return;
-                }
 
                 if($(this).find(".post-lazy-load").length && scrollTop < documentHeight && scrollTop > (containerHeight + containerOffset - windowHeight) && typeof tpgb_lazy_load_ajax === "function" ){
                     tpgb_lazy_load_ajax($(this));                    
@@ -194,7 +248,23 @@ function tpgb_lazy_load_ajax($this = ''){
     if(!$this){
         return;
     }
+	
+	var tabCnt = $this.closest('.tpgb-tab-content');
+                
+	var parentOfParent1 = $this.closest('.tpgb-tab-content').parent().closest('.tpgb-tab-content').parent().closest('.tpgb-tab-content');
+	if( parentOfParent1 && parentOfParent1.length && !parentOfParent1.hasClass('active')){
+		return;
+	}
 
+	var parentOfParent = $this.closest('.tpgb-tab-content').parent().closest('.tpgb-tab-content');
+	if( parentOfParent && parentOfParent.length && !parentOfParent.hasClass('active')){
+		return;
+	}
+
+	if( tabCnt && tabCnt.length > 0 && !tabCnt.hasClass('active')){
+		return;
+	}
+	
     var $ = jQuery,
     current_click= $this.find(".post-lazy-load"),
     option = current_click.data('dypost'),
@@ -219,7 +289,7 @@ function tpgb_lazy_load_ajax($this = ''){
                 option : stoption,
                 dyOpt : option,
             },
-            url:tpgb_load.ajaxUrl,
+             url: ( tpgb_config && tpgb_config.ajax_url ) ? tpgb_config.ajax_url : tpgb_load.ajaxUrl,
             beforeSend: function() {
                 $(current_click).text(option.loadingtxt);
             },
@@ -227,12 +297,12 @@ function tpgb_lazy_load_ajax($this = ''){
                 if(data==''){
                     $(current_click).addClass("hide");
                 }else{
-                    $("#"+option.load_class+' .post-loop-inner').append( data );
+                    $("#"+option.load_class+' > .post-loop-inner').append( data );
                     if(option.layout=='grid' || option.layout=='masonry'){
                         if($("#"+option.load_class).hasClass("tpgb-isotope")){
                             var $newItems = $('');
-                            $("#"+option.load_class+' .post-loop-inner').isotope( 'insert', $newItems );
-                            $("#"+option.load_class+' .post-loop-inner').isotope( 'layout' ).isotope( 'reloadItems' ); 
+                            $("#"+option.load_class+' > .post-loop-inner').isotope( 'insert', $newItems );
+                            $("#"+option.load_class+' > .post-loop-inner').isotope( 'layout' ).isotope( 'reloadItems' ); 
                         }
                     }
                 }
@@ -272,10 +342,33 @@ function tpgb_lazy_load_ajax($this = ''){
                         });
                     }
                 }
-                
+                if($("#"+option.load_class).hasClass("tpgb-isotope")){
+                    if(option.layout=='grid' || option.layout=='masonry'){
+                        let container = $("#"+option.load_class),
+                            innerDiv = container.find('.post-loop-inner');
+                            innerDiv.isotope({
+                                itemSelector: ".grid-item",
+                                resizable: true,
+                                sortBy: "original-order",
+                                resizesContainer: true,
+                                initLayout : false
+                            });		
+                            innerDiv.isotope('layout');
+                            setTimeout( function() {
+                                innerDiv.isotope('layout');
+                            }, 50 );       
+                    }
+                }
+
                 //  Metro Re Layout
                 if($("#"+option.load_class).hasClass("tpgb-metro")){
                     tpgb_metro_layout('all');
+                    $('.tpgb-metro .post-loop-inner').isotope({
+                        itemSelector: ".grid-item",
+                        resizable: !0,
+                        sortBy: "original-order",
+                        transitionDuration:  (option.disableAnim) ? 0 : '0.4s' ,
+                    })
                     $('.tpgb-metro .post-loop-inner').isotope('layout').isotope( 'reloadItems' );
                 }
                 
@@ -286,19 +379,37 @@ function tpgb_lazy_load_ajax($this = ''){
                     }
                 }
 
+                if($("#"+option.load_class).find('.tpgb-heading-animation').length ){
+                    $("#"+option.load_class).find('.tpgb-heading-animation').each(function(obj){
+                        var settings = obj.data('settings');
+                        if('textAnim' === settings.style){
+                            if(typeof tpgbHeadingAnimation == 'function'){
+                                tpgbHeadingAnimation( $this, settings.animStyle )
+                            }
+                        }
+                    })
+                }
                 current_click.data('requestRunning', false);
+                if($("#"+option.load_class).find('.tpgb-fancy-popup').length ){
+                    let fancyDiv = $("#"+option.load_class).find('.tpgb-fancy-popup');
+                    fancyDiv.each(function(){
+                        tpgb_fancy_popup($(this))
+                    })
+                }
             }
             }).then(function(){
                 if($("#"+option.load_class).hasClass("tpgb-isotope")){
                     if(option.layout=='grid' || option.layout=='masonry'){
-                        var container = $("#"+option.load_class+' .post-loop-inner');
+                        var container = $("#"+option.load_class+' > .post-loop-inner');
                         container.isotope({
                             itemSelector: ".grid-item",
                             resizable: !0,
                             sortBy: "original-order",
+                            resizesContainer: true,
                             transitionDuration:  (option.disableAnim) ? 0 : '0.4s' ,
                         });						
                     }
+                    container.isotope( 'layout' );
                     setTimeout(function(){
                         container.isotope( 'layout' );
                     }, 30);
@@ -306,6 +417,12 @@ function tpgb_lazy_load_ajax($this = ''){
 
                 if($("#"+option.load_class).hasClass("tpgb-metro")){
                     tpgb_metro_layout('all');
+                    $('.tpgb-metro .post-loop-inner').isotope({
+                        itemSelector: ".grid-item",
+                        resizable: !0,
+                        sortBy: "original-order",
+                        transitionDuration:  (option.disableAnim) ? 0 : '0.4s' ,
+                    })
                     $('.tpgb-metro .post-loop-inner').isotope('layout').isotope( 'reloadItems' );
                 }
 
@@ -313,6 +430,22 @@ function tpgb_lazy_load_ajax($this = ''){
                     if(typeof equalHeightFun == 'function'){
                         var eDiv = document.getElementById(option.load_class);
                         equalHeightFun(eDiv)
+                    }
+                }
+                if($("#"+option.load_class).find('.tpgb-heading-animation').length ){
+                    $("#"+option.load_class).find('.tpgb-heading-animation').each(function(obj){
+                        var settings = obj.data('settings');
+                        if('textAnim' === settings.style){
+                            if(typeof tpgbHeadingAnimation == 'function'){
+                                tpgbHeadingAnimation( $this, settings.animStyle )
+                            }
+                        }
+                    })
+                }
+
+                if($("#"+option.load_class).find('.tpgb-accordion').length ){
+                    if(typeof accordionJS == 'function'){
+                        accordionJS();
                     }
                 }
         })

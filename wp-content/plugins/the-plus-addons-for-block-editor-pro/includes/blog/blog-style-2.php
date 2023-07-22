@@ -15,7 +15,7 @@
 	<div class="post-content-image">
 		<?php include TPGBP_INCLUDES_URL. 'blog/format-image.php'; ?>
 		<?php if($showPostCategory=='yes' && $styleLayout=='style-2'){ ?>
-			<?php include TPGBP_INCLUDES_URL. 'blog/category-'.$postCategoryStyle.'.php'; ?>
+			<?php include TPGBP_INCLUDES_URL. 'blog/'.sanitize_file_name('category-'.$postCategoryStyle.'.php'); ?>
 		<?php } ?>
 	</div>
 	<?php } ?>
@@ -23,7 +23,7 @@
 	<div class="tpgb-content-bottom <?php echo ($style2Alignment=='center') ? 'text-center' : 'text-left'; ?>">
 		<?php if($showPostCategory=='yes' && $styleLayout=='style-1' || ( ($styleLayout=='style-2' && $layout == 'metro')) ){ ?>
 			<div class="tpgb-post-metro-category-top <?php echo ($style2Alignment=='center') ? 'text-center' : 'text-left'; ?>">
-				<?php include TPGBP_INCLUDES_URL. 'blog/category-'.$postCategoryStyle.'.php'; ?>
+				<?php include TPGBP_INCLUDES_URL. 'blog/'.sanitize_file_name('category-'.$postCategoryStyle.'.php'); ?>
 			</div>
 		<?php } ?>
 		<?php if($layout == 'metro'){?>
@@ -41,7 +41,7 @@
 			}
 			
 			if(!empty($showPostMeta) && $showPostMeta=='yes'){
-				include TPGBP_INCLUDES_URL. 'blog/post-meta-'.$postMetaStyle.'.php';
+				include TPGBP_INCLUDES_URL. 'blog/'.sanitize_file_name('post-meta-'.$postMetaStyle.'.php');
 			}
 			?>
 		</div>

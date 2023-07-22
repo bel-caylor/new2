@@ -53,6 +53,9 @@ if ( !class_exists( 'TP_Gutenberg_Loader' ) ) {
                 add_filter( 'plugin_action_links_' . TPGB_BASENAME, array( $this, 'tpgb_settings_pro_link' ) );
                 add_filter( 'plugin_row_meta', array( $this, 'tpbg_extra_links_plugin_row_meta' ), 10, 2 );
             }
+
+            // Activation hook For Redirect.
+            add_action( 'activated_plugin', array( $this,'tpgb_activate_redirect') );
         }
         
         /**
@@ -104,6 +107,9 @@ if ( !class_exists( 'TP_Gutenberg_Loader' ) ) {
 			require TPGB_PATH . 'includes/rollback.php';
             require TPGB_PATH . 'includes/plus-settings-options.php';
             
+            // Reusable Short code
+            require_once TPGB_PATH . 'classes/extras/tpag-reusable-shortcode.php';
+
             require_once TPGB_PATH . 'classes/tp-block-helper.php';
         }
         
@@ -226,6 +232,16 @@ if ( !class_exists( 'TP_Gutenberg_Loader' ) ) {
 			}
 			 
 			return $plugin_meta;
+        }
+
+         /*
+         * Activation Reset
+         * @since 2.0.9
+         */
+        public function tpgb_activate_redirect($plugin){
+            if( $plugin == 'the-plus-addons-for-block-editor/the-plus-addons-for-block-editor.php' ) {
+                exit( wp_redirect( admin_url( 'admin.php?page=tpgb_welcome_page' ) ) );
+            }
         }
     }
     

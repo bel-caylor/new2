@@ -59,6 +59,11 @@
 .tpgb-audioplay-wrap.style-6 .tracker {
     width: 97%
 }
+.tpgb-audioplay-wrap.style-6 .ap-st5-content {
+    background-repeat: no-repeat!important;
+    background-size: cover!important;
+    background-position: center!important
+}
 
 @media only screen and (max-width:425px) {
     .tpgb-audioplay-wrap.style-6 .ap-st5-img {

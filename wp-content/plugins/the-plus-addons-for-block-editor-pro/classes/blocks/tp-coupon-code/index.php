@@ -240,10 +240,11 @@ function tpgb_coupon_code_render_callback( $attributes, $content) {
 				$output .= '<div class="coupon-code-overlay"></div>';
 			$output .= '</div>';
 		}
+		if($couponType=='standard' && $actionType=='popup' && !empty($ovBackFilt)){
+			$output .= '<style>.tpgb-block-'.esc_attr($block_id).' .copy-code-wrappar::after{ backdrop-filter: grayscale('.esc_js($backGscale).')  blur('.esc_js($backBlur).'px); }</style>';
+		}
     $output .= '</div>';
-	if($couponType=='standard' && $actionType=='popup' && !empty($ovBackFilt)){
-		$output .= '<style>.tpgb-block-'.esc_attr($block_id).' .copy-code-wrappar::after{ backdrop-filter: grayscale('.esc_js($backGscale).')  blur('.esc_js($backBlur).'px); }</style>';
-	}
+
 	$output = Tpgb_Blocks_Global_Options::block_Wrap_Render($attributes, $output);
 	
     return $output;

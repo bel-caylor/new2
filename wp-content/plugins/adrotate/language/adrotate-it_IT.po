@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AdRotate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-15 17:49-0700\n"
-"PO-Revision-Date: 2023-04-15 18:02-0700\n"
+"POT-Creation-Date: 2023-05-25 00:27-0600\n"
+"PO-Revision-Date: 2023-05-25 00:28-0600\n"
 "Last-Translator: Arnan de Gans <support@ajdg.solutions>\n"
 "Language-Team: Arnan de Gans\n"
 "Language: it\n"
@@ -446,20 +446,20 @@ msgid "Buy now"
 msgstr "Acquista ora"
 
 #: adrotate-output.php:928
-msgid "Two Site License"
-msgstr "Licenza per due siti"
+msgid "Duo License"
+msgstr "Licenza Duo"
 
 #: adrotate-output.php:928
 msgid "Use on TWO WordPress installations."
 msgstr "Utilizzare su due installazioni WordPress."
 
 #: adrotate-output.php:939
-msgid "Need help fast? Or do you have a question?"
-msgstr "Hai bisogno di aiuto in fretta? O hai una domanda?"
+msgid "Do you have a question?"
+msgstr "Hai una domanda?"
 
 #: adrotate-output.php:940
-msgid "Help AdRotate Banner Manager Grow"
-msgstr "Aiuta AdRotate Banner Manager a crescere"
+msgid "Support AdRotate Banner Manager"
+msgstr "Supporto AdRotate Banner Manager"
 
 #: adrotate-output.php:947
 msgid ""
@@ -488,14 +488,12 @@ msgstr "Acquista il ticket di supporto"
 msgid ""
 "Arnan needs your help. Please consider writing a review or sharing AdRotate "
 "in Social media if you find the plugin useful. Writing a review and sharing "
-"AdRotate on social media costs you nothing but doing so is super helpful to "
-"ensure future development."
+"AdRotate on social media costs you nothing but doing so is super helpful."
 msgstr ""
-"Arnan ha bisogno del tuo aiuto. Considera la possibilità di scrivere una "
-"recensione, condividere AdRotate sui social media o fare una donazione se ti "
-"piace il plug-in o se lo trovi utile. Scrivere una recensione e condividere "
-"AdRotate sui social media non ti costa nulla, ma farlo è super utile come "
-"promozione che aiuta a garantire lo sviluppo futuro."
+"Arnan ha bisogno del tuo aiuto. Prendi in considerazione la possibilità di "
+"scrivere una recensione o condividere AdRotate nei social media se trovi "
+"utile il plugin. Scrivere una recensione e condividere AdRotate sui social "
+"media non ti costa nulla, ma farlo è super utile."
 
 #: adrotate-output.php:955
 msgid "Post Tweet"
@@ -3484,6 +3482,9 @@ msgstr ""
 "markup, codice o layout possono essere applicati nel wrapper di gruppo "
 "durante la modifica del gruppo."
 
+#~ msgid "Two Site License"
+#~ msgstr "Licenza per due siti"
+
 #~ msgid ""
 #~ "When posting on the forum, please include a brief description of the "
 #~ "problem, include any errors or symptoms. Often it helps if you try to "
@@ -3528,9 +3529,6 @@ msgstr ""
 #~ "della pubblicità. Dai un'occhiata alla scheda di confronto delle "
 #~ "funzionalità in una qualsiasi delle pagine dei prodotti per vedere cosa "
 #~ "AdRotate Pro ha da offrire per te!"
-
-#~ msgid "Multi License"
-#~ msgstr "Licenza multipla"
 
 #~ msgid "Use on up to FIVE WordPress installations."
 #~ msgstr "Utilizzare su un massimo di cinque installazioni WordPress."

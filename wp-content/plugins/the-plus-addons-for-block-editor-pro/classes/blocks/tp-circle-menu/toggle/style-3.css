@@ -6,7 +6,7 @@
     right: 0;
     text-align: center;
     transform: scale(0.2) rotate(45deg);
-    transition: all .4s ease-in-out;
+    transition: transform .4s ease-in-out;
     width: 50%;
     height: 2px;
     z-index: 1;
@@ -22,7 +22,7 @@
     top: 50%;
     left: 50%;
     transform: translate3d(-50%,-50%,0) rotate(-90deg);
-    transition: all .4s ease-in-out;
+    transition: transform .4s ease-in-out;
     width: 100%;
     height: 2px;
     z-index: 1;
@@ -38,7 +38,7 @@
     transform: scale(1);
 	opacity:1;
 	visibility:visible;
-	transition: all .4s ease-in-out;
+	transition: transform .4s ease-in-out;
 }
 .tpgb-circle-menu .circleMenu-open .tpgb-circle-main-menu-list.style-3 a.main_menu_icon .toggle-icon-wrap{
     transform: scale(0.2);

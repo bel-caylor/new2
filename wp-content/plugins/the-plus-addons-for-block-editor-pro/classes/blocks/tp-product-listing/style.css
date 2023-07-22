@@ -569,3 +569,13 @@
     }
 }
 /* Col 8 Css */
+@media (min-width: 992px) and (max-width: 1140px){
+    .tpgb-product-listing a.add_to_cart_button.product_type_simple{
+        font-size: 9px;
+    }
+}
+/* Twenty Twenty Three Theme Image */
+/* Twenty Twenty Three Theme Image */
+.theme-twentytwentythree .product-content-image .product-image img,.theme-gutenify-base .product-content-image .product-image img{
+    height: auto;
+}

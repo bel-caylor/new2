@@ -295,8 +295,8 @@
 				if(eleAll){
 				 	eleAll = eleAll.querySelectorAll(n);
 					eleAll.forEach(function(el) {
-						var aaa = jQuery(el).closest(e.ignoreSelector);
-						if(!aaa.length){
+						var aaa = el.closest(e.ignoreSelector);
+						if(!aaa){
 							allSelector.push(el); 
 						}
 					});

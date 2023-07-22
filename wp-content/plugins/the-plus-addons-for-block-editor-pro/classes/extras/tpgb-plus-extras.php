@@ -318,6 +318,59 @@ class Tpgbp_Plus_Extras_Opt {
 				],
 				'scopy' => true,
 			],
+
+			'etFacebook' => [
+				'type' => 'boolean',
+				'default' => false,
+			],
+			'fbEventType' => [
+				'type' => 'string',
+				'default' => 'ViewContent',
+			],
+			'fbCsmEventName' => [
+				'type' => 'string',
+				'default' => '',
+			],
+			'etGoogle' => [
+				'type' => 'boolean',
+				'default' => false,
+			],
+			'gglEventType' => [
+				'type' => 'string',
+				'default' => 'recommended',
+			],
+			'gglSelEvent' => [
+				'type' => 'string',
+				'default' => 'ad_impression',
+			],
+			'gCsmEventName' => [
+				'type' => 'string',
+				'default' => '',
+			],
+			'eventProperties' => [
+				'type'=> 'array',
+				'repeaterField' => [
+					(object) [
+						'eProName' => [
+							'type' => 'string',
+							'default' => '',
+						],
+						'eProValue' => [
+							'type' => 'string',
+							'default' => '',
+						],
+					],
+				],
+				'default' => [
+					[ 
+						"_key" => '0',
+						'eProName' => '',
+						'eProValue' => '',
+					],
+				],
+				'scopy' => true,
+			],
+			
 			'globalPosition' => [
 				'type' => 'object',
 				'default' => [ 'md' => '','sm' => '','xs' => '' ],	

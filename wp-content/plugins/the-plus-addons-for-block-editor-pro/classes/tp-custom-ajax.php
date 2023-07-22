@@ -57,14 +57,6 @@ class Tp_Blocks_Ajax {
         add_action( 'wp_ajax_tpgb_facebook_login',  array($this, 'tpgb_facebook_login')  );
         add_action( 'wp_ajax_nopriv_tpgb_facebook_login', array($this, 'tpgb_facebook_login') );
 
-        // Register With Google
-        add_action( 'wp_ajax_tpgb_google_register',  array( $this, 'tpgb_google_register')  );
-        add_action( 'wp_ajax_nopriv_tpgb_google_register', array( $this , 'tpgb_google_register' ) );
-        
-        // Login With Google
-        add_action( 'wp_ajax_tpgb_google_login',  array( $this, 'tpgb_google_login')  );
-        add_action( 'wp_ajax_nopriv_tpgb_google_login', array( $this , 'tpgb_google_login' ) );
-
         add_action( 'wp_ajax_tpgb_google_pic',  array( $this, 'tpgb_google_pic')  );
         add_action( 'wp_ajax_nopriv_tpgb_google_pic', array( $this , 'tpgb_google_pic' ) );
         

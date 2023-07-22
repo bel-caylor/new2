@@ -125,7 +125,7 @@
     }
 }
 
-@media (max-width:1024px) and (min-width:768px) {
+@media (max-width:1023px) and (min-width:768px) {
     .tpgb-animated-service-boxes.sliding-boxes .service-item-loop.sb_t_1 {
         flex: 0 0 100%;
         max-width: 100%

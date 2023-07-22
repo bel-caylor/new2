@@ -28,6 +28,8 @@ function tpgb_advanced_buttons_render_callback( $attributes ) {
 	
 	$blockClass = Tp_Blocks_Helper::block_wrapper_classes( $attributes );
 	
+	$btnLink = (isset($attributes['btnLink']['dynamic'])) ? Tpgbp_Pro_Blocks_Helper::tpgb_dynamic_repeat_url($attributes['btnLink']) : (!empty($attributes['btnLink']['url']) ? $attributes['btnLink']['url'] : '');
+
 	$dyWidth = (array)$attributes['cta10Width'];
 	$dyHeight = (array)$attributes['cta10Height'];
 	$ctaMDWidth = $ctaMDHeight = '';
@@ -508,6 +510,14 @@ function tpgb_tp_advanced_buttons() {
 					(object) [
 						'condition' => [(object) ['key' => 'ctaStyle', 'relation' => '==', 'value' => ['style-1','style-2'] ]],
 						'selector' => '{{PLUS_WRAP}} .tpgb-adv-btn-inner.ab-cta.tpgb-cta-style-1 .adv-button-link-wrap:hover::before ,{{PLUS_WRAP}} .tpgb-adv-btn-inner.ab-cta.tpgb-cta-style-2 .adv-button-link-wrap:hover::before',
+					],
+					(object) [
+						'condition' => [(object) ['key' => 'ctaStyle', 'relation' => '==', 'value' => 'style-3' ]],
+						'selector' => '{{PLUS_WRAP}} .tpgb-adv-btn-inner.ab-cta.tpgb-cta-style-3 .adv-button-link-wrap:hover',
+					],
+					(object) [
+						'condition' => [(object) ['key' => 'ctaStyle', 'relation' => '==', 'value' => 'style-4' ]],
+						'selector' => '{{PLUS_WRAP}} .tpgb-adv-btn-inner.ab-cta.tpgb-cta-style-4 .adv-button-link-wrap:hover , {{PLUS_WRAP}} .tpgb-adv-btn-inner.ab-cta.tpgb-cta-style-4:hover .pulsing:before , {{PLUS_WRAP}} .tpgb-adv-btn-inner.ab-cta.tpgb-cta-style-4:hover .pulsing:after',
 					],
 					(object) [
 						'condition' => [(object) ['key' => 'ctaStyle', 'relation' => '==', 'value' => ['style-3','style-4','style-5','style-6','style-7','style-8','style-9','style-11','style-12','style-13'] ]],

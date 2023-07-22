@@ -1,28 +1,29 @@
-( function( $ ) {
-	"use strict";
-	$(document).ready(function(){
-		var progressbar = $('.tpgb-progress-bar');
-		if( progressbar.length > 0 ){
-			progressbar.each(function(){
-				var b=$(this);
-				if(!b.hasClass('tpgb-piechart')){
-					var e= $(this).find(".progress-bar-skill-bar-filled"),
-						width = e.data("width");
-						
-					b.waypoint(function(direction) {
-						if (direction === 'down') {
-							if(!b.hasClass("done-progress")){
-								e.css("width", width);
-								if(b.find(".progress-bar-media.large")){
-									b.find(".progress-bar-media.large").css("width", width);
-									
-								}
-								b.addClass("done-progress");
-							}
-						}
-					}, { offset: '90%' });
-				}
-			});
-		}
-	});
-})(jQuery);
+/** Progress Bar */
+document.addEventListener("DOMContentLoaded", function () {
+    let progressbar = document.querySelectorAll(".tpgb-progress-bar");
+  
+    if (progressbar) {
+        progressbar.forEach(function (pb) {
+            if (!pb.classList.contains("tpgb-piechart")) {
+                var pbskill = pb.querySelector(".progress-bar-skill-bar-filled"),
+                    width = pbskill.dataset.width;
+                var waypoint = new Waypoint({
+                    element: pb,
+                    handler: function (direction) {
+                        if (direction === "down") {
+                            if (!pb.classList.contains("done-progress")) {
+                                pbskill.style.width = width;
+                                let pbLarge = pb.querySelector(".progress-bar-media.large");
+                                if(pbLarge) {
+                                    pbLarge.style.width = width;
+                                }
+                                pb.classList.add("done-progress");
+                            }
+                        }
+                    },
+                    offset: "90%",
+                });
+            }
+        });
+    }
+});

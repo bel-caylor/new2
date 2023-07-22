@@ -94,7 +94,7 @@ function tpgb_tp_datatable_callback( $attributes, $content) {
                                         $DTHeader .= '</span>';
                                 $DTHeader .= '</th>';
                                 
-                                    $headerArray[$Mob_thc] = wp_kses_post($item['thtext']);
+                                    $headerArray[$Mob_thc] = isset($item['thtext']) ? wp_kses_post($item['thtext']) : '';
                                     $headerArrayicon[$Mob_thc] = $ThIcon;
                                     $headerArrayimage[$Mob_thc] = $ThImg;
 
@@ -454,14 +454,33 @@ function tpgb_tp_datatable_render() {
                         'type' => 'string',
                         'default' => '',
                     ],
+                    'resColWidth' => [
+                        'type' => 'boolean',
+                        'default' => false,	
+                    ],
                     'thColumnWidth' => [
                         'type' => 'object',
                         'default' => '',
                         'style' => [
                             (object) [
+                                'condition' => [(object) ['key' => 'resColWidth', 'relation' => '==', 'value' => false]],
                                 'selector' => '{{PLUS_WRAP}} th{{TP_REPEAT_ID}}{width:{{thColumnWidth}}px;}',
                             ],
                         ],
+                    ],
+                    'thResColumnWidth' => [
+                        'type' => 'object',
+                        'default' => [ 
+                            'md' => '',
+                            "unit" => 'px',
+                        ],
+                        'style' => [
+                            (object) [
+                                'condition' => [(object) ['key' => 'resColWidth', 'relation' => '==', 'value' => true]],
+                                'selector' => '{{PLUS_WRAP}} th{{TP_REPEAT_ID}}{width:{{thResColumnWidth}};}',
+                            ],
+                        ],
+                        'scopy' => true,
                     ],
                     'ThTextAlignment' => [
                         'type' => 'string',
@@ -496,9 +515,9 @@ function tpgb_tp_datatable_render() {
             ],
             'default' => [ 
                 ['_key'=> 'r1','thAction'=>'row'],
-                ['_key'=> 'r2','thAction'=>'cell','thtext'=>'ID'],
-                ['_key'=> 'r3','thAction'=>'cell','thtext'=>'Title 1'],
-                ['_key'=> 'r4','thAction'=>'cell','thtext'=>'Title 2'],
+                ['_key'=> 'r2','thAction'=>'cell','thtext'=>'ID', 'resColWidth'=> false],
+                ['_key'=> 'r3','thAction'=>'cell','thtext'=>'Title 1', 'resColWidth'=> false],
+                ['_key'=> 'r4','thAction'=>'cell','thtext'=>'Title 2', 'resColWidth'=> false],
             ],
         ],
         'Tablebody' => [
@@ -627,7 +646,7 @@ function tpgb_tp_datatable_render() {
         ],
         'TbSort' => [
             'type' => 'boolean',
-            'default' => false,	
+            'default' => false,
             'style' => [
                 (object) [
                     'selector' => '{{PLUS_WRAP}} .tpgb-sort-icon{ display : block }',

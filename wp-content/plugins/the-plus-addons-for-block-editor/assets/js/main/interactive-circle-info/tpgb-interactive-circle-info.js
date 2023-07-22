@@ -1,5 +1,5 @@
 /* Interactive Circle Info Start */
-window.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', (event) => {
     let intCircle = document.querySelectorAll('.tpgb-ia-circle-info');
     if(intCircle){
         intCircle.forEach( el => {
@@ -10,12 +10,12 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
                 if(mTrigger && mTrigger=='hover'){
                     tglBtn.addEventListener("mouseenter",function(ev){
-                        toggleFun(ev.currentTarget);
+                        inActToggleFun(ev.currentTarget);
                     })
                 }
                 if(mTrigger && mTrigger=='click'){
                     tglBtn.addEventListener("click",function(ev){
-                        toggleFun(ev.currentTarget);
+                        inActToggleFun(ev.currentTarget);
                     })
                 }
             });
@@ -43,7 +43,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     }
 });
 
-function toggleFun(tglBtn) {
+function inActToggleFun(tglBtn) {
     let closeRep = tglBtn.closest('.tpgb-ia-circle-item');
     if(!closeRep.classList.contains('active')){
         let mainWrap = tglBtn.closest('.ia-circle-inner');

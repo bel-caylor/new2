@@ -28,3 +28,15 @@
 .button-link-wrap img.btn-icon {
     width: 20px;
 }
+
+/* Button Fancy Box Css */
+.tpgb-btn-fpopup{
+    padding: 0px;
+    display: none;
+}
+.tpgb-button-fancy .fancybox-close-small:hover{
+    background: none;
+}
+.tpgb-button-fancy .fancybox-close-small svg path{
+    fill: #000;
+}

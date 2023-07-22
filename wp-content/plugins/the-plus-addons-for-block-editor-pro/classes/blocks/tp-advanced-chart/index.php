@@ -63,7 +63,6 @@ function tpgb_advanced_chart_render_callback( $attributes, $content) {
 	$anDuration = (!empty($attributes['anDuration'])) ? $attributes['anDuration'] : '1000';
 	
 	$tooltip = (!empty($attributes['tooltip'])) ? $attributes['tooltip'] : false;
-	$aspctRatio = (!empty($attributes['aspctRatio'])) ? $attributes['aspctRatio'] : false;
 	$mAspctRatio = (!empty($attributes['mAspctRatio'])) ? $attributes['mAspctRatio'] : false;
 	$tipEvent = (!empty($attributes['tipEvent'])) ? $attributes['tipEvent'] : 'hover';
 	$tipFontSize = (!empty($attributes['tipFontSize'])) ? $attributes['tipFontSize'] : '12';
@@ -325,10 +324,6 @@ function tpgb_advanced_chart_render_callback( $attributes, $content) {
 			
 		}else{
 			$options['tooltips'] = [ 'enabled' => false ];
-		}
-		
-		if (!empty($aspctRatio)) {
-			$options['aspectRatio'] = 1;
 		}
 
 		if (!empty($mAspctRatio)) {
@@ -850,11 +845,6 @@ function tpgb_advanced_chart() {
 		'tooltipBG' => [
 			'type' => 'string',
 			'default' => '#ff5a6e99',
-			'scopy' => true,
-		],
-		'aspctRatio' => [
-			'type' => 'boolean',
-			'default' => false,	
 			'scopy' => true,
 		],
 		'mAspctRatio' => [

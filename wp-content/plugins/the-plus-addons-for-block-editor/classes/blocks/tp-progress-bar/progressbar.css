@@ -48,7 +48,7 @@
     top: 50%;
 	width: 15%;
     padding: 0 10px;
-    transition: width 1s ease-in-out;
+    transition: width 2s cubic-bezier(0, 0, 0.2, 1) .2s;
 }
 .progress-bar-media.large .prog-title.prog-icon.large .progres-ims, .progress-bar-media.large .prog-title.prog-icon.large .progress-bar-title {
     color: #fff;

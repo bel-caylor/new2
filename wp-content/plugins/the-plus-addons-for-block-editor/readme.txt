@@ -4,7 +4,7 @@ Donate link: https://theplusblocks.com/
 Tags: blocks, block editor, Gutenberg, Gutenberg blocks, WordPress blocks, Gutenberg addons,
 Requires at least: 4.0
 Tested up to: 6.2
-Stable tag: 2.0.4
+Stable tag: 3.0.4
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://opensource.org/licenses/GPL-3.0
@@ -128,6 +128,7 @@ https://youtu.be/3SDphcu5vuU
 - <strong>[On Scroll Animation ](https://theplusblocks.com/plus-extras/on-scroll-animations/)</strong> - Amazing On Scroll Animations for all your individual Blocks of Gutenberg, You can set up one-time scroll animation in Gutenberg or dual scroll animation It has more than 30 Animation styles.
 - <strong>[Live Copy Paste](https://theplusblocks.com/plus-extras/live-copy-paste/)</strong> - Use "Plus Copy" to transfer your Gutenberg Sections, Widgets & Columns from One site to another with simple method. It will change the way you are using Plus Design Templates, You just need to Live Copy from our demo pages and Paste it on your website directly.
 - <strong>[Smooth Scroll](https://theplusblocks.com/plus-blocks/smooth-scroll/)</strong> - Some pages of your site needs amazing smooth experience. You can do it using this plugin to have a smooth scroll effect for amazing UX on your website.
+- <strong>[Reading Progress Scroll](https://theplusblocks.com/plus-blocks/reading-scroll-bar/)</strong> - Display a visual indicator of user progress while scrolling through your webpage. This block helps you enhance the user experience by visually tracking their progress as they navigate your content. Scroll Circle and Bar Tracker for Blog readers.
 - <strong>[Display Condition Rules](https://theplusblocks.com/plus-extras/display-rules/) - Compatible with all  Gutenberg Blocks like Kadence Blocks, Premium Blocks, Essential Blocks, Stackable Blocks, Spectra Blocks or Ultimate Gutenberg Blocks
 - <strong>[Dark Mode](https://theplusblocks.com/plus-blocks/dark-mode/)</strong> - for Gutenberg Block Editor, works across all devices and is fully responsive. Instantly make your website more appealing to your audience.
 - <strong>[Ajax Search Bar](https://theplusblocks.com/plus-blocks/advanced-wp-ajax-searchbar/)</strong> - for WordPress Gutenberg. Using this Free Block you create Search Bar for WooCommerce Products, Blogs or any Custom Post Types with dropdown filters.
@@ -166,7 +167,7 @@ https://www.youtube.com/watch?v=tBMkpew1Uew&list=PLFRO-irWzXaLLiwxYWM0-FbzAKFHhx
 -  <strong>[Social Feeds](https://theplusblocks.com/plus-blocks/social-reviews)</strong> - Show Live Social Media Feed for YouTube, Facebook, Instagram, Vimeo, Twitter in multiple Grid, Carousel Layouts for WordPress Gutenberg. See Live Demo [YouTube Feed](https://theplusblocks.com/plus-blocks/social-feed/youtube-feed/) | [Vimeo Feed](https://.theplusblocks.com/plus-blocks/social-feed/vimeo-feed/) | [Twitter Feed](https://theplusblocks.com/plus-blocks/social-feed/twitter-feed/) | [Facebook Feed](https://.theplusblocks.com/plus-blocks/social-feed/facebook-feed/) | [Instagram Feed](https://theplusblocks.com/plus-blocks/social-feed/instagram-feed/)
 -  <strong>[Social Embed](https://theplusblocks.com/plus-blocks/social-embed/)</strong> - Directly embed any social media Post from Facebook, Instagram, Twitter, YouTube, Vimeo easily without any 3rd Party API connection.
 -  <strong>[Dynamic Meta Fields Support for Gutenberg](https://theplusblocks.com/dynamic-content/)</strong> - Create Advanced Dynamic WordPress website with our Dynamic Support in all our Blocks, using this you can also create Custom Loop Skin for WordPress site for Blog Post, Custom Post Types or WooCommerce Product Skin
--  <strong>[Preloader Animations & Page Transitions](https://theplusblocks.com/plus-blocks/preloader/)</strong> - Add Page Loading Screen Animation for WordPress with using Custom Image, Text, Lottie Files, CSS, or shortcodes. That's not all you also get to choose from our multiple predefine preloading page animations and page transitions
+-  <strong>[Preloader Animations & Page Transitions](https://theplusblocks.com/plus-blocks/preloader/)</strong> - Add Page Loading Screen Animation for WordPress with using Custom Image, Text, Lottie Files, CSS, or shortcodes. That's not all you also get to choose from our multiple predefine preloading page animations and page transitions.
 -  <strong>[Custom Mouse Cursor Icons](https://theplusblocks.com/plus-blocks/mouse-cursor-icon-block/)</strong> - Create Custom Mouse Cursor Icons on WordPress. Upload custom PNG, JPEG or even GIF with Follow Text and Circle.
 -  <strong>[Coupon Codes for WordPress](https://theplusblocks.com/plus-blocks/coupon-code/)</strong> - The one and only Gutenberg Block required to create coupons codes website in Gutenberg. choose from multiple types of button with popup, slider, peel and scratch coupon card effects.
 -  <strong>[Code Syntax Highlighter](https://theplusblocks.com/plus-blocks/source-code-syntax-highlighter/)</strong> - Make your boring codes stylist. Using this 22+ Code Highlighter Gutenberg block, you can show code with copy button in 8 stylish designs.
@@ -189,7 +190,8 @@ https://www.youtube.com/watch?v=tBMkpew1Uew&list=PLFRO-irWzXaLLiwxYWM0-FbzAKFHhx
 - <strong>[Mobile Menu](https://theplusblocks.com/plus-blocks/mobile-menu/)</strong> - Special responsive and mobile-friendly menu designs crafted for easier navigation
 - <strong>[Before After](https://theplusblocks.com/plus-blocks/before-after/)</strong> - Display two different versions of a webpage or product for comparison, measurement, and decision-making
 - <strong>[Product listing](https://theplusblocks.com/plus-listing/product-grid/)</strong> - List your WooCommerce Store Products on your website with intuitive filters and categories.
-<strong>[Magic Scroll](https://theplusblocks.com/plus-extras/magic-scroll/)</strong> - Animate your Gutenberg blocks from range of smooth on-scroll animation to create mesmerizing on page scrolling effects.
+- <strong>[Magic Scroll](https://theplusblocks.com/plus-extras/magic-scroll/)</strong> - Animate your Gutenberg blocks from range of smooth on-scroll animation to create mesmerizing on page scrolling effects.
+- <strong>[Spline 3d Viewer](https://theplusblocks.com/plus-blocks/spline-3d-viewer/)</strong> - Embed interactive 3D models from Spline into your WordPress website effortlessly. Customize their appearance with lighting, background color, and camera controls, and choose from various viewing modes for an immersive 3D experience. Support for OBJ, STL, and GLB formats allows versatile integration and enhances user engagement.
 - <strong>[Display Conditional Rules](https://theplusblocks.com/plus-extras/display-rules/)</strong> works with all The Plus Addons for Gutenberg Blocks,Kadence Blocks, Stackable Blocks, Spectra (Ultimate Addons for Gutenberg), Gutentor, Gutenverse, Ultimate Blocks – Gutenberg Blocks Plugin, PostX – Gutenberg Post Grid Blocks, Toolkit for Block Theme, CoBlocks, Otter, Qubely, Cwickly, EditorsKit, Extendify, Essential Blocks, Premium Blocks and more.
 - <strong>[Equal Height for WordPress](https://theplusblocks.com/plus-extras/equal-height/)</strong> - Make all the boxes of equal height in Infobox, Iconbox, service box regardless of any content size
 - <strong>[Global Tooltips for WordPress](https://theplusblocks.com/global-tooltip/)</strong> - Add extra information on hover or click on any block/section with text, media or reusable block templates. In short any form of tooltip data
@@ -326,6 +328,74 @@ Thank you so much for showing interesting in shaping the feature of The Plus Add
 11. Facebook & Google Reviews with 1 Click API Generation
 
 == Changelog ==
+= 3.0.4 = 18 July 2023
+- Fix : Block Context Error Bug Fix
+
+= 3.0.3 = 17 July 2023
+- Added : Info Box : Carousel Option
+- Added : Global Options : Gradient Color Field
+- Added : Global Options : Disable Global options Completely - No Assets will be loaded on Frontend - #7790
+- Compatibility : MemberPress Courses : Courses and Lessons Page Compatibility
+- Fix : Search Bar : On First load Results Visibility Bug
+- Fix : FSE Theme Editor : All Plus Blocks Advanced Tab : Custom CSS Field Bug
+- Fix : Carousel Option : Arrow Responsive Bug
+
+= 3.0.2 = 04 July 2023
+- Added : Container : New Property Align Item normal & Justify content Space Evenly Options add.
+- Added : Container : Add Reverse Column Options with Responsive.
+- Added : Info box : Add Padding Option for Title and Description
+- Added : Search Bar : Add Option for Selected Taxonomy All result on load
+- Added : Social Icons : Add Padding Option for Style-1, Style-2 and Style-14
+- Fix : Container : Equal Column Bug Fix in Backend
+- Fix : Post Meta : Dynamic Field Bug Fix
+- Fix : Social Feed : Post URL Bug Fix
+- Fix : Core Blocks : RSS, Archives, Latest Comments, Tag Cloud Bug Fix
+- Fix : More Improvement and Bug Fix
+
+= 3.0.1 = 19 June 2023
+- Added : Post Meta Info : Post Reading Time Add Option & Custom Meta Field Repeater Option Add
+- Component : Range Field : Unit Value bug fix
+- Update : The Plus Settings : On Boarding Process update text
+- Fix : More Improvement and Bug Fix
+
+= 3.0.0 = 17 June 2023
+- Added : Progress Tracker : New Block
+- Added : Reusable Block : Add Shortcode Support.
+- Added : The Plus Settings : On Boarding Process
+- Update : Remove All Block Title "TP" word
+- Update : Components : Responsive Mode Change Unit value (px to em) Range Slider and Dimension Fields
+- Fix : External Form Styler : Container block Bug
+- Fix : Social Feed : Feed Image URL change to Feed Post URL
+- Fix : Tab Tours : CSS Bug
+- Fix : More Improvements and Bugs Fixed
+
+= 2.0.7 = 30 May 2023
+- Improved : Plus Paste : Live Copy to Paste Content Import Media Improvements
+- Added : TP Button : Add Fancy Box Popup options.
+- Added : TP Search Bar : Reusable Block layout for search result
+- Compatibility : TP Post Image : Background Compatible With TP Container.
+- Revamped : TP Heading Title : Made it jQuery Free and converted in Vanilla JS for Top notch performance.
+- Revamped : TP Progress Bar : Progress type Made it jQuery Free and converted in Vanilla JS for Top notch performance.
+- Revamped : TP Smooth Scroll : Made it jQuery Free and converted in Vanilla JS for Top notch performance.
+- Fix : TP Heading Title : Title Limit Bug Fix
+- Fix : TP Social Icons : Tooltip JS Bug Fix
+
+= 2.0.6 = 12 May 2023
+- Update : TP Post Content : Bug fix
+- Component : Repeater : Bug fix
+
+= 2.0.5 = 11 May 2023
+- Added : TP Info Box : Dynamic Heading Tag option for Title and Description Fields
+- Added : TP Data Table : Responsive Column Width Option for Table Header
+- Added : TP Search Bar : Disable option for Input Search Field
+- Compatibility : Polylang plugin : Site Editor Templates
+- Compatibility : WP Rocket : Generate Cache Exclude Dynamic CSS
+- Revamped : TP External Form Styler : Made it jQuery Free and converted in Vanilla JS for Top notch performance.
+- Deprecated : TP External Form Styler : Caldera Form Style Options deprecated
+- Fix : Caching : On Demand Assets Cache bug fix template load
+- Fix : Caching : Smart Optimized bug fix
+- Fix : Responsive CSS Bug Fix
+
 = 2.0.4 = 13 April 2023
 - Added : TP Data Table : Table Header Alignment Option
 - Fix : TP Container : Front End Tag Bug Fix

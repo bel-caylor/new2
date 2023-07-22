@@ -169,3 +169,8 @@
         margin-right: 0
     }
 }
+
+/* Twenty Twenty Three Theme Image Issue */
+.theme-twentytwentythree .tpgb-post-listing .post-loop-inner .tpgb-post-img{
+    height: auto;
+}

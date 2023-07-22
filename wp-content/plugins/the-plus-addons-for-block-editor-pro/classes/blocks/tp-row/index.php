@@ -1,5 +1,5 @@
 <?php
-/* Block : TP Row(Section)
+/* Block : Row(Section)
  * @since : 1.3.0
  */
 defined( 'ABSPATH' ) || exit;
@@ -16,6 +16,9 @@ function tpgb_tp_section_row_render_callback( $attributes, $content) {
     $customClass = (!empty($attributes['customClass'])) ? $attributes['customClass'] : '';
 	$customId = (!empty($attributes['customId'])) ? 'id="'.esc_attr($attributes['customId']).'"' : '';
 	
+	$liveCopy = (!empty($attributes['liveCopy'])) ? 'yes' : 'no';
+    $currentID = (!empty($attributes['currentID'])) ? $attributes['currentID'] : get_queried_object_id();
+
 	$deepBgopt = (!empty($attributes['deepBgopt'])) ? $attributes['deepBgopt'] : '';
 	$colorList = (!empty($attributes['colorList'])) ? $attributes['colorList'] : [];
 	$animdur = (!empty($attributes['animdur'])) ? (int) $attributes['animdur'] : 3;
@@ -108,7 +111,7 @@ function tpgb_tp_section_row_render_callback( $attributes, $content) {
 
 	//Set Row Backgroung Attr
 
-	$dataAttr=$classname=$rowBgClass=$rowclass=$cssrule=$videoattr=$videoUrl=$midclass=$dataAttr2=$midlayer=$loop = '';
+	$dataAttr=$classname=$rowBgClass=$rowclass=$cssrule=$videoattr=$videoUrl=$midclass=$dataAttr2=$midlayer=$loop =$midclass1 = '';
 	$colors = array();
 	if(!empty($deepBgopt) && ($deepBgopt == 'bg_color' || $deepBgopt == 'bg_animate_gradient' || $deepBgopt == 'scroll_animate_color' )){
 		if(!empty($colorList)){
@@ -204,11 +207,11 @@ function tpgb_tp_section_row_render_callback( $attributes, $content) {
 			$videoattr .= !empty($attributes['videoloop']) ? ' loop=true' : ' loop=true' ;
 			if(!empty($attributes['mp4Url'])) {
 				$mp4url = Tpgbp_Pro_Blocks_Helper::tpgb_dynamic_val($attributes['mp4Url']);
-				$videoUrl .= ' data-dk-mp4="'.esc_url($mp4url).'"';
+				$videoUrl .= ' src="'.esc_url($mp4url).'"';
 			}
 			if(!empty($attributes['WebMUrl'])){
 				$weburl = Tpgbp_Pro_Blocks_Helper::tpgb_dynamic_val($attributes['WebMUrl']);
-				$videoUrl .= ' data-dk-webm="'.esc_url($weburl).'"';
+				$videoUrl .= ' src="'.esc_url($weburl).'"';
 			}
 			
 		}
@@ -223,7 +226,13 @@ function tpgb_tp_section_row_render_callback( $attributes, $content) {
 			$canShape =  (!empty($attributes['canShape'])) ? $attributes['canShape'] :'';
 			$ctmJson = (!empty($attributes['ctmJson'])) ? $attributes['ctmJson'] : '';
 
-			$midclass = 'canvas-'.$canvasSty;
+			$midclass = 'canvas-'.$canvasSty.$block_id;
+
+			$midclass = 'canvas-'.$canvasSty.$block_id;
+			if( $canvasSty == 'style-1' || $canvasSty == 'style-4' || $canvasSty == 'style-8' ){
+				$midclass1 .= ' canvas-'.esc_attr($canvasSty).'';
+			}
+
 			$canvasarr = array();
 			if($canvasSty == 'style-1'){
 				$particleList = (!empty($attributes['particleList'])) ? $attributes['particleList'] : [] ;
@@ -277,7 +286,7 @@ function tpgb_tp_section_row_render_callback( $attributes, $content) {
 					}
 					$midlayer .= '<div class="tpgb-parlximg-wrap tp-repeater-item-'.esc_attr($item['_key']).' '.(($midOption == 'mordern_image_effect' ? 'tpgb-repet-img' : '')).' '.esc_attr($visibility).' " style="'.esc_attr($imgcss).'" data-direction="'.(!empty($item['imgDire']) ? esc_attr($item['imgDire']) : '' ).'" data-trasition="'.esc_attr($Effectin).'">';
 						if( $midOption == 'mordern_image_effect' ){
-							$midlayer .=  '<img class="tpgb-parlximg '.( isset($item['modImgeff']) && !empty($item['modImgeff'] && $midOption == 'mordern_image_effect' ) ? 'tpgb-imgeffect tpgb-'.$item['modImgeff'] : '').'" src="'.esc_url($imgsrc).'" alt="'.esc_html__('Parallax_img','tpgbp').'" data-parallax="'.esc_attr($Effectin).'" style="'.$animCss.'" />';
+							$midlayer .=  '<img class="tpgb-parlximg '.(isset($item['modImgeff']) && !empty($item['modImgeff'] && $midOption == 'mordern_image_effect' ) ? 'tpgb-imgeffect tpgb-'.$item['modImgeff'] : '').'" src="'.esc_url($imgsrc).'" alt="'.esc_html__('Parallax_img','tpgbp').'" data-parallax="'.esc_attr($Effectin).'" style="'.$animCss.'" />';
 						}
 					$midlayer .= '</div>';
 				}
@@ -293,6 +302,11 @@ function tpgb_tp_section_row_render_callback( $attributes, $content) {
 		$cssrule .='-webkit-animation: bg-kenburns-effect '.esc_attr($Kbeffctdir).'s cubic-bezier(0.445, 0.050, 0.550, 0.950) infinite '.esc_attr($Kbeffctdir).' both;animation: bg-kenburns-effect '.esc_attr($effctDure).'s cubic-bezier(0.445, 0.050, 0.550, 0.950) infinite '.esc_attr($Kbeffctdir).' both;';
 	}
 	
+	if( defined('TPGBP_DEVELOPER') && TPGBP_DEVELOPER && $liveCopy == 'yes' ){
+		$linkdata .= ' data-tpcp__live="'.esc_attr($liveCopy).'"';
+		$linkdata .= ' data-post-id="'.esc_attr($currentID ).'"';
+	}
+
 	$output .= '<div '.$customId.' class="tpgb-section tpgb-block-'.esc_attr($block_id).' '.esc_attr($sectionClass).' '.esc_attr($customClass).'  '.esc_attr( $rowclass ).' '.esc_attr($blockClass).' '.esc_attr($equalHclass).' " data-id="'.esc_attr($block_id).'" '.$linkdata.' '.$equalHeightAtt.' >';
 		
 		/* Row Background Start  */
@@ -307,7 +321,13 @@ function tpgb_tp_section_row_render_callback( $attributes, $content) {
 						if($deepBgopt == 'bg_video'){
 							$videoImgUrl = (isset($videoImg['dynamic'])) ? Tpgbp_Pro_Blocks_Helper::tpgb_dynamic_repeat_url($videoImg) : (!empty($videoImg['url']) ? $videoImg['url'] : '');
 							$iframeTitle = (!empty($attributes['iframeTitle'])) ? esc_attr($attributes['iframeTitle']) : esc_attr__('My Video','tpgbp');
-							$output .= '<div class="video-poster-img video-tpgb-iframe-'.esc_attr($block_id).' '.(!empty($videoImg) && !empty($videoImg['url']) ? 'tp-loading' : '').'" style="background-image: url('.esc_url($videoImgUrl).');" >';
+
+							$vposterCss = '';
+							if(!empty($videoImgUrl)){
+								$vposterCss = 'style="background-image: url('.esc_url($videoImgUrl).');"';
+							}
+
+							$output .= '<div class="video-poster-img video-tpgb-iframe-'.esc_attr($block_id).' '.(!empty($videoImg) && !empty($videoImg['url']) ? 'tp-loading' : '').'"  '.( !empty($vposterCss) ? $vposterCss : '' ).'  >';
 								$output .= '<div class="tpgb-video-wrap">';
 									if($videosour == 'youtube'){
 										$output .= '<iframe class="tpgb-iframe" id="tpgb-iframe-'.esc_attr($block_id).'" width="100%" height="100%" '.esc_attr($videoattr).'  src="https://www.youtube.com/embed/'.esc_attr($youtubeId).'?wmode=opaque&amp;enablejsapi=1&amp;showinfo=0&amp;controls=0&amp;rel=0'.esc_attr($videoUrl).'" frameborder="0" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" title="'.$iframeTitle.'"></iframe>';
@@ -351,7 +371,7 @@ function tpgb_tp_section_row_render_callback( $attributes, $content) {
 				
 				if(!empty($midOption)){
 				
-					$output .= '<div id="'.($midOption == 'canvas' ? esc_attr($midclass) : '').'" class="tpgb-middle-layer '.esc_attr($midclass).'" '.$dataAttr2.' >';
+					$output .= '<div id="'.($midOption == 'canvas' ? esc_attr($midclass) : '').'" class="tpgb-middle-layer '.esc_attr($midclass).esc_attr($midclass1).'" '.$dataAttr2.' >';
 						$output .= $midlayer;
 					$output .= '</div>';
 					
@@ -574,6 +594,14 @@ function tpgb_tp_section_row() {
 						'selector' => '{{PLUS_WRAP}}.tpgb-section{ overflow: {{overflow}}; }',
 					],
 				],
+			],
+			'liveCopy' => [
+				'type' => 'boolean',
+				'default' => false,
+			],
+			'currentID' => [
+					'type' => 'number',
+					'default' => '',
 			],
 			'customClass' => [
 				'type' => 'string',
@@ -1152,7 +1180,7 @@ function tpgb_tp_section_row() {
 			'videoImg' => [
 				'type' => 'object',
 				'default' => [
-					'url' => TPGB_ASSETS_URL.'assets/images/tpgb-placeholder.jpg',
+					'url' => '',
 				],
 			],
 			'parallax' => [

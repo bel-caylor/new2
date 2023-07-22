@@ -58,8 +58,8 @@ let slideUpP = (target, duration=500) => {
   
    let slideToggleP = (target, duration = 500) => {
     if (window.getComputedStyle(target).display === 'none') {
-      return slideDown(target, duration);
+      return slideDownP(target, duration);
     } else {
-      return slideUp(target, duration);
+      return slideUpP(target, duration);
     }
   }

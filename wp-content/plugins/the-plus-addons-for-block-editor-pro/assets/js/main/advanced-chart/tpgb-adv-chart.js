@@ -1,5 +1,5 @@
 /** Chart Js */
-window.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', (event) => {
     let allChart = document.querySelectorAll('.tpgb-advanced-chart');
     if(allChart){
         allChart.forEach((ac)=>{

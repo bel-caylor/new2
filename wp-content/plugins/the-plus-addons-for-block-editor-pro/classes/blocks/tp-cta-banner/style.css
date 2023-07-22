@@ -120,3 +120,8 @@
 .cta_img_vertical:hover .cta-block-inner_img img {
     transform: scale(1.1) rotate(2deg)
 }
+
+/* Twenty Twenty Three Theme Image */
+.theme-twentytwentythree .cta-block-inner_img img{
+    height: auto;
+}

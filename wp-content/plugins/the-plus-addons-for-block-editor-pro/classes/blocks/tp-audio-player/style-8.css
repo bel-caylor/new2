@@ -104,4 +104,9 @@
     display: inline-block;
     margin-top: 15px
 }
+.tpgb-audioplay-wrap.style-8 .tpgb-player {
+    background-repeat: no-repeat!important;
+    background-size: cover!important;
+    background-position: center!important
+}
 /*style-8*/

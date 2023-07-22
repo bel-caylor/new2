@@ -31,6 +31,23 @@ var onTpgbJsLoad = function onTpgbJsLoad() {
       document.body.appendChild(tpgbLottieJs); 
     }, 150);
   }
+  if(tpgbLoadScripts && tpgbLoadScripts.splineviewer){
+    setTimeout(() => {
+      var tpgbsplineviewerJs = document.createElement("script");
+      tpgbsplineviewerJs.src = tpgbLoadScripts.splineviewer;
+      tpgbsplineviewerJs.id = 'tpgb-spline3d-js';
+      tpgbsplineviewerJs.type="module",
+      document.body.appendChild(tpgbsplineviewerJs),
+      tpgbsplineviewerJs.onload=()=>{
+            let svLoad = document.querySelectorAll('.tpgb-sv-loading');
+            if(svLoad){
+                svLoad.forEach((sv)=>{
+                    sv.style.display = 'none';
+                })
+            }
+        }
+    }, 150);
+  }
 };
 document.body.addEventListener("mouseover", onTpgbJsLoad, {once: true});
 document.body.addEventListener("touchmove", onTpgbJsLoad, {once: true});

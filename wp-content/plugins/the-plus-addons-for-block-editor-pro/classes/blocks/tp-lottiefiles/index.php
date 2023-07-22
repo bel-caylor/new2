@@ -106,8 +106,7 @@ function tpgb_lottiefiles_render_callback( $attributes, $content) {
 		$style_atts .= '@media (min-width: 1024px) { .tpgb-block-'.esc_attr($block_id).'.tpgb-lottiefiles .tpgb-bodymovin{margin-left: auto; margin-right: auto;} }';
 	}
 	if( isset($content_align['sm']) && !empty($content_align['sm']) && $content_align['sm'] == 'center' ) {
-		$style_atts .= '@media (max-width: 1024px) and (min-width:768px) { .tpgb-block-'.esc_attr($block_id).'.tpgb-lottiefiles.
-		tpgb-bodymovin{margin-left: auto;margin-right: auto;} } ';
+		$style_atts .= '@media (max-width: 1024px) and (min-width:768px) { .tpgb-block-'.esc_attr($block_id).'.tpgb-lottiefiles .tpgb-bodymovin{margin-left: auto;margin-right: auto;} } ';
 	}
 	if( isset($content_align['xs']) && !empty($content_align['xs']) && $content_align['xs'] == 'center' ) {
 		$style_atts .= '@media (max-width: 767px){ .tpgb-block-'.esc_attr($block_id).'.tpgb-lottiefiles .tpgb-bodymovin{margin-left: auto; margin-right: auto;} }';

@@ -2144,7 +2144,7 @@ function tpgb_tp_login() {
 			'default' => '',
 			'style' => [
 				(object) [
-					'selector' => '{{PLUS_WRAP}} .tpgb-login-wrap .tpgb-account-menu .tpgb-account-btn{ color : {{usernColor}}; }',
+					'selector' => '{{PLUS_WRAP}} .tpgb-login-wrap .tpgb-account-menu .tpgb-account-btn .tpgb-acc-text{ color : {{usernColor}}; }',
 				],
 			],
 			'scopy' => true,

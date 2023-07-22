@@ -42,6 +42,7 @@
     min-height: 275px;
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
 }
 .social-feed-style-4 .tpgb-sf-contant-img:before {
     position: absolute;

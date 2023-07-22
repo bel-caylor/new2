@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-03 14:39+0530\n"
+"POT-Creation-Date: 2023-05-10 17:58+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -97,178 +97,177 @@ msgstr ""
 msgid "Full"
 msgstr ""
 
-#: classes/tp-block-helper.php:415 classes/tp-block-helper.php:435
-#: classes/tp-block-helper.php:451
+#: classes/tp-block-helper.php:416 classes/tp-block-helper.php:432
 msgid "Select Form"
 msgstr ""
 
-#: classes/tp-block-helper.php:424 classes/tp-block-helper.php:458
-msgid "Form Not Found!"
-msgstr ""
-
-#: classes/tp-block-helper.php:440
+#: classes/tp-block-helper.php:421
 msgid "No everest forms found"
 msgstr ""
 
-#: classes/tp-block-helper.php:470
+#: classes/tp-block-helper.php:439
+msgid "Form Not Found!"
+msgstr ""
+
+#: classes/tp-block-helper.php:451
 msgid "Select Ninja Form"
 msgstr ""
 
-#: classes/tp-block-helper.php:477 classes/tp-block-helper.php:500
+#: classes/tp-block-helper.php:458 classes/tp-block-helper.php:481
 msgid "Create a Form First"
 msgstr ""
 
-#: classes/tp-block-helper.php:493
+#: classes/tp-block-helper.php:474
 msgid "Select a WPForm"
 msgstr ""
 
-#: classes/tp-block-helper.php:514
+#: classes/tp-block-helper.php:495
 #, php-format
 msgid "Archive by \"%s\""
 msgstr ""
 
-#: classes/tp-block-helper.php:515
+#: classes/tp-block-helper.php:496
 #, php-format
 msgid "Search Results for \"%s\""
 msgstr ""
 
-#: classes/tp-block-helper.php:516
+#: classes/tp-block-helper.php:497
 #, php-format
 msgid "Posts Tagged \"%s\""
 msgstr ""
 
-#: classes/tp-block-helper.php:517
+#: classes/tp-block-helper.php:498
 #, php-format
 msgid "Articles Posted by %s"
 msgstr ""
 
-#: classes/tp-block-helper.php:518
+#: classes/tp-block-helper.php:499
 msgid "Error 404"
 msgstr ""
 
-#: classes/tp-block-helper.php:952
+#: classes/tp-block-helper.php:933
 msgid "Page"
 msgstr ""
 
-#: classes/tp-block-helper.php:1175
+#: classes/tp-block-helper.php:1163
 msgid "Not a Valid"
 msgstr ""
 
-#: classes/tp-block-helper.php:1183
+#: classes/tp-block-helper.php:1171
 msgid "Empty Content."
 msgstr ""
 
-#: classes/tp-block-helper.php:1294
+#: classes/tp-block-helper.php:1282
 msgid "System"
 msgstr ""
 
-#: classes/tp-block-helper.php:1296 includes/metabox/includes/CMB2_JS.php:173
+#: classes/tp-block-helper.php:1284 includes/metabox/includes/CMB2_JS.php:173
 msgid "Default"
 msgstr ""
 
-#: classes/tp-block-helper.php:1297
+#: classes/tp-block-helper.php:1285
 msgid "Arial"
 msgstr ""
 
-#: classes/tp-block-helper.php:1298
+#: classes/tp-block-helper.php:1286
 msgid "Georgia"
 msgstr ""
 
-#: classes/tp-block-helper.php:1299
+#: classes/tp-block-helper.php:1287
 msgid "Helvetica"
 msgstr ""
 
-#: classes/tp-block-helper.php:1300
+#: classes/tp-block-helper.php:1288
 msgid "Tahoma"
 msgstr ""
 
-#: classes/tp-block-helper.php:1301
+#: classes/tp-block-helper.php:1289
 msgid "Times New Roman"
 msgstr ""
 
-#: classes/tp-block-helper.php:1302
+#: classes/tp-block-helper.php:1290
 msgid "Trebuchet MS"
 msgstr ""
 
-#: classes/tp-block-helper.php:1303
+#: classes/tp-block-helper.php:1291
 msgid "Verdana"
 msgstr ""
 
-#: classes/tp-block-helper.php:1308
+#: classes/tp-block-helper.php:1296
 msgid "Custom Fonts"
 msgstr ""
 
 #: classes/tp-core-init-blocks.php:130
-msgid "The Plus Addons Blocks"
+msgid "The Plus Blocks"
 msgstr ""
 
-#: classes/tp-core-init-blocks.php:356
+#: classes/tp-core-init-blocks.php:355
 msgid "The Plus Different sized of featured images"
 msgstr ""
 
-#: classes/tp-core-init-blocks.php:370
+#: classes/tp-core-init-blocks.php:369
 msgid "Post Listing of get Post Meta Info."
 msgstr ""
 
-#: classes/tp-core-init-blocks.php:384
+#: classes/tp-core-init-blocks.php:383
 msgid "Category list links"
 msgstr ""
 
-#: classes/tp-core-init-blocks.php:401
+#: classes/tp-core-init-blocks.php:400
 msgid "Product Data."
 msgstr ""
 
-#: classes/tp-core-init-blocks.php:525
+#: classes/tp-core-init-blocks.php:524
 msgid "Settings parameter is missing!"
 msgstr ""
 
-#: classes/tp-core-init-blocks.php:535
+#: classes/tp-core-init-blocks.php:534
 msgid "ThePlus Global settings updated!"
 msgstr ""
 
-#: classes/tp-core-init-blocks.php:582 classes/tp-core-init-blocks.php:612
-#: classes/tp-core-init-blocks.php:690
+#: classes/tp-core-init-blocks.php:581 classes/tp-core-init-blocks.php:611
+#: classes/tp-core-init-blocks.php:749
 msgid "CSS can not be load due to permission!!!"
 msgstr ""
 
-#: classes/tp-core-init-blocks.php:644
+#: classes/tp-core-init-blocks.php:703
 msgid "Plus block css updated."
 msgstr ""
 
-#: classes/tp-core-init-blocks.php:646
+#: classes/tp-core-init-blocks.php:705
 msgid "Plus block preview css updated."
 msgstr ""
 
-#: classes/tp-core-init-blocks.php:1010
+#: classes/tp-core-init-blocks.php:1069
 msgid ", "
 msgstr ""
 
-#: classes/tp-core-init-blocks.php:1070
+#: classes/tp-core-init-blocks.php:1129
 #, php-format
 msgid "%s"
 msgstr ""
 
-#: classes/tp-core-init-blocks.php:1160
+#: classes/tp-core-init-blocks.php:1219
 msgid "Sale"
 msgstr ""
 
-#: classes/tp-registered-blocks.php:2100
+#: classes/tp-registered-blocks.php:2123
 msgid "TPAG Performance"
 msgstr ""
 
-#: classes/tp-registered-blocks.php:2107
+#: classes/tp-registered-blocks.php:2130
 msgid "Purge All Pages"
 msgstr ""
 
-#: classes/tp-registered-blocks.php:2115
+#: classes/tp-registered-blocks.php:2138
 msgid "Purge Current Page"
 msgstr ""
 
-#: classes/tp-registered-blocks.php:2133
+#: classes/tp-registered-blocks.php:2156
 msgid "Edit Template"
 msgstr ""
 
-#: classes/blocks/tp-button/index.php:194
+#: classes/blocks/tp-button/index.php:198
 msgid "Button"
 msgstr ""
 
@@ -345,7 +344,7 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
-#: classes/blocks/tp-post-author/index.php:60 includes/welcome-page.php:217
+#: classes/blocks/tp-post-author/index.php:60 includes/welcome-page.php:221
 msgid "facebook"
 msgstr ""
 
@@ -353,7 +352,7 @@ msgstr ""
 msgid "twitter"
 msgstr ""
 
-#: classes/blocks/tp-post-author/index.php:66 includes/welcome-page.php:218
+#: classes/blocks/tp-post-author/index.php:66 includes/welcome-page.php:222
 msgid "instagram"
 msgstr ""
 
@@ -1139,95 +1138,111 @@ msgid ""
 msgstr ""
 
 #: includes/welcome-page.php:102
-msgid "03 April 2023"
+msgid "11 May 2023"
 msgstr ""
 
 #: includes/welcome-page.php:102
-msgid "2.0.3"
+msgid "2.0.5"
 msgstr ""
 
 #: includes/welcome-page.php:104
-msgid "Added : TP Search Bar : Query Include/Exclude terms from search result"
+msgid ""
+"Added : TP Info Box : Dynamic Heading Tag option for Title and Description "
+"Fields"
 msgstr ""
 
 #: includes/welcome-page.php:105
-msgid "Added : TP Pricing List : Add RichText for Price Field"
+msgid "Added : TP Data Table : Responsive Column Width Option for Table Header"
 msgstr ""
 
 #: includes/welcome-page.php:106
-msgid "Added : Social Review : Add Disable option for Social Icon and Profile"
+msgid "Added : TP Search Bar : Disable option for Input Search Field"
 msgstr ""
 
 #: includes/welcome-page.php:107
-msgid "Compatibility : TP Container : GeneratePress Theme"
+msgid "Compatibility : PolyLang plugin compatibility of site editor Templates"
 msgstr ""
 
 #: includes/welcome-page.php:108
-msgid "Fix : Gravity Form : Display Rules Bug"
+msgid "Compatibility : WP Rocket : Generate Cache Exclude Dynamic CSS TPAG"
 msgstr ""
 
 #: includes/welcome-page.php:109
-msgid "Fix : Frontend  Caching Performance code 80% Improvement"
+msgid ""
+"Deprecated : TP External Form Styler : Caldera Form Style Options Remove"
 msgstr ""
 
 #: includes/welcome-page.php:110
 msgid ""
-"Fix : Backend Editor Reusable blocks use Loop Listing improve loading "
-"Performance Editor Side"
+"Improved : TP External Form Styler : Contact Form 7 Converting jQuery To "
+"Javascript for Front End for Better Performance"
 msgstr ""
 
 #: includes/welcome-page.php:111
-msgid "Fix : Accordion : Minor JS Bug"
+msgid "Fix : Caching : On Demand Assets Cache bug fix template load."
 msgstr ""
 
 #: includes/welcome-page.php:112
-msgid "Fix : More Improvements and Bugs Fixes"
+msgid "Fix : Caching : Smart Optimized bug fix."
 msgstr ""
 
-#: includes/welcome-page.php:117
-msgid "14 March 2023"
+#: includes/welcome-page.php:113
+msgid "Fix : Responsive CSS Bug Fix "
 msgstr ""
 
-#: includes/welcome-page.php:117
-msgid "2.0.2"
+#: includes/welcome-page.php:118
+msgid "13 April 2023"
 msgstr ""
 
-#: includes/welcome-page.php:119
-msgid ""
-"Compatibility: TP Container: Astra, Kadence, OceanWP, GeneratePress, Neve, "
-"Blocsy, BlockPress, and Twenty Twenty-Three Themes Testing, Improvement and "
-"Compatibility"
+#: includes/welcome-page.php:118
+msgid "2.0.4"
 msgstr ""
 
 #: includes/welcome-page.php:120
-msgid "Fix: TP Draw SVG: Firefox Browser CSS Bug"
+msgid "Added : TP Data Table : Table Header Alignment Option"
 msgstr ""
 
 #: includes/welcome-page.php:121
-msgid "Compatibility: Kadence Pro Plugin: Latest V1.0.9 compatibility"
+msgid "Fix : TP Container : Front End Tag Bug Fix"
+msgstr ""
+
+#: includes/welcome-page.php:122
+msgid "Fix : Frontend Preview : Global Load CSS Bug Fix"
+msgstr ""
+
+#: includes/welcome-page.php:123
+msgid "Fix : Backend Responsive Bug Fix"
+msgstr ""
+
+#: includes/welcome-page.php:124
+msgid "Fix : Responsive Device Page Crash Bug Fix"
 msgstr ""
 
 #: includes/welcome-page.php:125
+msgid "Fix : More Improvements and Bugs Fixes"
+msgstr ""
+
+#: includes/welcome-page.php:129
 msgid "change log"
 msgstr ""
 
-#: includes/welcome-page.php:125
+#: includes/welcome-page.php:129
 msgid "Full Change log"
 msgstr ""
 
-#: includes/welcome-page.php:130
+#: includes/welcome-page.php:134
 msgid "Frequently Asked Questions"
 msgstr ""
 
-#: includes/welcome-page.php:131
+#: includes/welcome-page.php:135
 msgid "You might have some, We have tried to answer them all."
 msgstr ""
 
-#: includes/welcome-page.php:134
+#: includes/welcome-page.php:138
 msgid "How to get Help/Support?"
 msgstr ""
 
-#: includes/welcome-page.php:135
+#: includes/welcome-page.php:139
 #, php-format
 msgid ""
 "You can have a look at <a href=\"%1$s\" target=\"_blank\" rel=\"noopener "
@@ -1238,11 +1253,11 @@ msgid ""
 "noreferrer\">Facebook channel</a> to get help from community."
 msgstr ""
 
-#: includes/welcome-page.php:138
+#: includes/welcome-page.php:142
 msgid "What is this Performance option about?"
 msgstr ""
 
-#: includes/welcome-page.php:139
+#: includes/welcome-page.php:143
 msgid ""
 "First of all, Performance is our highest priority. We have setup caching "
 "architecture in which, It generates One CSS & One JS files for each page. "
@@ -1253,11 +1268,11 @@ msgid ""
 "performance."
 msgstr ""
 
-#: includes/welcome-page.php:142
+#: includes/welcome-page.php:146
 msgid "When and Why Need to remove cache?"
 msgstr ""
 
-#: includes/welcome-page.php:143
+#: includes/welcome-page.php:147
 msgid ""
 "When you make any updated in your page and If that is not reflecting "
 "properly in frontend, You need to remove cache. When you click on Purge All "
@@ -1265,22 +1280,22 @@ msgid ""
 "those files when you visit that page for first time."
 msgstr ""
 
-#: includes/welcome-page.php:146
+#: includes/welcome-page.php:150
 msgid "What If I want to remove cache of only one page?"
 msgstr ""
 
-#: includes/welcome-page.php:147
+#: includes/welcome-page.php:151
 msgid ""
 "You can do that from admin bar of page editor. That is available on top for "
 "all pages you check from front end. You will see option “The Plus "
 "Performance” -> “Purge Current Page”."
 msgstr ""
 
-#: includes/welcome-page.php:150
+#: includes/welcome-page.php:154
 msgid "Site is not working well even after removing cache at frontend."
 msgstr ""
 
-#: includes/welcome-page.php:151
+#: includes/welcome-page.php:155
 msgid ""
 "If your website is not working well even after removing cache from above "
 "button. You need to check your 3rd party caching plugin and remove cache "
@@ -1288,135 +1303,135 @@ msgid ""
 "Reload and/or try on incognito mode."
 msgstr ""
 
-#: includes/welcome-page.php:153
+#: includes/welcome-page.php:157
 msgid "More FAQs"
 msgstr ""
 
-#: includes/welcome-page.php:198
+#: includes/welcome-page.php:202
 msgid "Technical Support"
 msgstr ""
 
-#: includes/welcome-page.php:199
+#: includes/welcome-page.php:203
 msgid "Let’s find a solution for your question."
 msgstr ""
 
-#: includes/welcome-page.php:201
+#: includes/welcome-page.php:205
 msgid ""
 "Tried everything but not found a solution? Our support team is always there "
 "for your backup. Just a few quick details to "
 msgstr ""
 
-#: includes/welcome-page.php:201
+#: includes/welcome-page.php:205
 msgid "check at here before submitting ticket."
 msgstr ""
 
-#: includes/welcome-page.php:201
+#: includes/welcome-page.php:205
 msgid " You may read our "
 msgstr ""
 
-#: includes/welcome-page.php:201
+#: includes/welcome-page.php:205
 msgid "Support Policy"
 msgstr ""
 
-#: includes/welcome-page.php:201
+#: includes/welcome-page.php:205
 msgid " to find out, Which things are covered."
 msgstr ""
 
-#: includes/welcome-page.php:203
+#: includes/welcome-page.php:207
 msgid "Support Time : Mon-Fri | 9 AM to 6 PM (Time Zone :UTC+5:30)"
 msgstr ""
 
-#: includes/welcome-page.php:205
+#: includes/welcome-page.php:209
 msgid "Average Response Time : 24 Hours (Weekdays)"
 msgstr ""
 
-#: includes/welcome-page.php:207
+#: includes/welcome-page.php:211
 msgid "Live Chat"
 msgstr ""
 
-#: includes/welcome-page.php:208
+#: includes/welcome-page.php:212
 msgid "Free Support"
 msgstr ""
 
-#: includes/welcome-page.php:213
+#: includes/welcome-page.php:217
 msgid "We are social"
 msgstr ""
 
-#: includes/welcome-page.php:214
+#: includes/welcome-page.php:218
 msgid "Join us to get regular Social Updates."
 msgstr ""
 
-#: includes/welcome-page.php:216
+#: includes/welcome-page.php:220
 msgid ""
 "Get to know about plugin updates, tips & tricks, New Offers and lots more "
 "from our social media accounts."
 msgstr ""
 
-#: includes/welcome-page.php:219
+#: includes/welcome-page.php:223
 msgid "youtube"
 msgstr ""
 
-#: includes/welcome-page.php:220
+#: includes/welcome-page.php:224
 msgid "Facebook Community"
 msgstr ""
 
-#: includes/welcome-page.php:227
+#: includes/welcome-page.php:231
 msgid "Rate Us"
 msgstr ""
 
-#: includes/welcome-page.php:228
+#: includes/welcome-page.php:232
 msgid "Maximum Rating motivate us to do more and better."
 msgstr ""
 
-#: includes/welcome-page.php:230
+#: includes/welcome-page.php:234
 msgid ""
 "Sharing your kind words about us and our widget means a lot to us. You can "
 "share your review at below."
 msgstr ""
 
-#: includes/welcome-page.php:231
+#: includes/welcome-page.php:235
 msgid "Rate on WordPress"
 msgstr ""
 
-#: includes/welcome-page.php:232
+#: includes/welcome-page.php:236
 msgid "Rate on Facebook"
 msgstr ""
 
-#: includes/welcome-page.php:237
+#: includes/welcome-page.php:241
 msgid "Any Feedback or Suggestions?"
 msgstr ""
 
-#: includes/welcome-page.php:238
+#: includes/welcome-page.php:242
 msgid "We love constructive views of yours."
 msgstr ""
 
-#: includes/welcome-page.php:240
+#: includes/welcome-page.php:244
 msgid ""
 "We always believe in improving and growth. Your all kind of suggestions for "
 "new blocks, Features, Improvements, Customer Service Suggestions and "
 "anything else are most welcome. We do appreciate your time."
 msgstr ""
 
-#: includes/welcome-page.php:241
+#: includes/welcome-page.php:245
 msgid "Share Feedback"
 msgstr ""
 
-#: includes/welcome-page.php:246
+#: includes/welcome-page.php:250
 msgid "Join 14,573 Subscribers"
 msgstr ""
 
-#: includes/welcome-page.php:247
+#: includes/welcome-page.php:251
 msgid "Get latest updates, Offers and more on your email."
 msgstr ""
 
-#: includes/welcome-page.php:249
+#: includes/welcome-page.php:253
 msgid ""
 "Want to join our newsletter? We share tricks & tips related to Product and "
 "WordPress itself. On top of that, You will get timely notifications of new "
 "plugin updates and lots more."
 msgstr ""
 
-#: includes/welcome-page.php:250
+#: includes/welcome-page.php:254
 msgid "Subscribe Us"
 msgstr ""
 

@@ -162,6 +162,26 @@ class TPGBP_Pro_Init_Blocks {
 					wp_enqueue_script('tpgb-lottie', TPGBP_URL . 'assets/js/main/lottiefiles/tpgb-lottiefiles.min.js', ['tpgb-lottie-extra'], $plus_version, true);
 			}
 		}
+		if( has_block( 'tpgb/tp-spline-3d-viewer' ) || (!empty($elements) && in_array('tpgb/tp-spline-3d-viewer',$elements)) ){
+			if($this->get_delay_css_js()){
+				$loader['splineviewer'] = TPGBP_URL . 'assets/js/main/spline-3d-viewer/spline-viewer.js';
+			}else{
+				wp_enqueue_script('tpgb-spline-viewer', TPGBP_URL . 'assets/js/main/spline-3d-viewer/tpgb-spline-viewer.min.js', [], $plus_version, true);
+				wp_localize_script( 'tpgb-spline-viewer', 'tpgbsplinesrc', ['src' => TPGBP_URL . 'assets/js/main/spline-3d-viewer/spline-viewer.js']);
+			}
+		}
+
+		$event_tracking_data = get_option( 'tpgb_connection_data' );
+		$eventTrackArr = [
+			'switch' => (!empty($event_tracking_data) && isset($event_tracking_data['tpgb_event_tracking']) && $event_tracking_data['tpgb_event_tracking']=== 'disable') ? false : true,
+			'google_track' => (!empty($event_tracking_data) && !empty($event_tracking_data['event_track_google'])) ? $event_tracking_data['event_track_google'] : '',
+			'facebook_track' => (!empty($event_tracking_data) && !empty($event_tracking_data['event_track_facebook'])) ? $event_tracking_data['event_track_facebook'] : ''
+		];
+		if(!empty($eventTrackArr) && !empty($eventTrackArr['switch'])){
+			wp_enqueue_script('tpgb-event-tracker', TPGBP_URL . 'assets/js/main/plus-extras/plus-event-tracker.min.js', [], $plus_version, true);
+			wp_localize_script('tpgb-event-tracker', 'trackerVar', ['google_track' => $eventTrackArr['google_track'], 'facebook_track' => $eventTrackArr['facebook_track']]);
+		}
+		
 		return array_merge($scripts_loader, $loader);
 	}
 	
@@ -663,7 +683,7 @@ class TPGBP_Pro_Init_Blocks {
 									}else if(!empty($attchUrl)){
 										$outputImg['url'] =  $attchUrl;
 									}else{
-										$outputImg['url'] = '';
+										$outputImg['url'] = $imgAcf;
 									}
 								}else{
 									$outputImg = [

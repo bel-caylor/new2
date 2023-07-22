@@ -1,4 +1,8 @@
 document.addEventListener('DOMContentLoaded', (event) => {
+	accordionJS();
+});
+
+function accordionJS(){
 	let allAccordion = document.querySelectorAll('.tpgb-accor-wrap');
 	if(allAccordion){
 		allAccordion.forEach((el)=>{
@@ -30,38 +34,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
 					})
 				}
 			});
-			
 		})
 
-		function toggleFun(currBtn, accrodionList, atoneopen){
-			let content = currBtn.nextSibling;
-			if(currBtn.classList.contains('active')){
-				if(atoneopen=="no"){
-					currBtn.classList.remove('active');
-					content.classList.remove('active');
-					slideUpP(content, 500);
-				}
-			}else{
-			accrodionList.forEach((ell) => {
-				let actCon = ell.querySelector('.tpgb-accordion-header');
-
-				if(actCon.classList.contains('active')){
-				actCon.classList.remove('active');
-				actCon.nextSibling.classList.remove('active');
-				slideUpP(actCon.nextSibling, 500);
-				}
-			})
-			currBtn.classList.add('active');
-			content.classList.add('active');
-			slideDownP(content, 500);
-			}
-		}
-
 		var hash = window.location.hash;
-		document.addEventListener("DOMContentLoaded", () =>{
 		if(hash!='' && hash!=undefined){
 			let getHash = document.querySelector(hash);
-
 			if(!getHash.classList.contains('active') && getHash){
 			var hashOffset = getHash.getBoundingClientRect();
 			window.scrollTo({top : hashOffset.top, behavior : "smooth"});
@@ -71,9 +48,40 @@ document.addEventListener('DOMContentLoaded', (event) => {
 			toggleFun(getHash, acList);
 			}
 		}
-		})
 	}
-});
+}
+
+function toggleFun(currBtn, accrodionList, atoneopen){
+	let content = currBtn.nextSibling;
+	if(currBtn.classList.contains('active')){
+		if(atoneopen=="no"){
+			currBtn.classList.remove('active');
+			content.classList.remove('active');
+			slideUpP(content, 500);
+		}
+	}else{
+		accrodionList.forEach((ell) => {
+			let actCon = ell.querySelector('.tpgb-accordion-header');
+
+			if(actCon.classList.contains('active')){
+				actCon.classList.remove('active');
+				actCon.nextSibling.classList.remove('active');
+				slideUpP(actCon.nextSibling, 500);
+			}
+		})
+		currBtn.classList.add('active');
+		content.classList.add('active');
+		slideDownP(content, 500);
+	}	
+	setTimeout(scrollTStart,500,currBtn)
+}
+
+function scrollTStart(currBtn){
+    let checkWsize = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+	if(checkWsize < 767){
+		currBtn.scrollIntoView({ behavior: 'smooth', block: 'start' });
+	}
+}
 
 function changeEventAccordion(el){
   var isotope_class = " .tpgb-isotope .post-loop-inner",

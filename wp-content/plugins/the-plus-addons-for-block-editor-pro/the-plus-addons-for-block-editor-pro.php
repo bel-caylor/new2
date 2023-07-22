@@ -3,7 +3,7 @@
 * Plugin Name: The Plus Addons for Block Editor Pro
 * Plugin URI: https://theplusblocks.com/
 * Description: Highly Customizable 85+ Advanced WordPress Blocks for Performance-Driven Website. Keep the Free Version Active to Access all of its Features.
-* Version: 2.0.4
+* Version: 3.0.3
 * Author: POSIMYTH
 * Author URI: https://posimyth.com
 * Text Domain: tpgbp
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-defined( 'TPGBP_VERSION' ) or define( 'TPGBP_VERSION', '2.0.4' );
+defined( 'TPGBP_VERSION' ) or define( 'TPGBP_VERSION', '3.0.3' );
 define( 'TPGBP_FILE__', __FILE__ );
 
 define( 'TPGBP_PATH', plugin_dir_path( __FILE__ ) );
@@ -22,6 +22,7 @@ define( 'TPGBP_URL', plugins_url( '/', __FILE__ ) );
 define( 'TPGBP_ASSETS_URL', TPGBP_URL );
 define( 'TPGBP_INCLUDES_URL', TPGBP_PATH.'includes/' );
 define( 'TPGBP_CATEGORY', 'tpgb' );
+define( 'TPGBP_DEVELOPER', false );
 
 function tpgb_pro_Dynamic_Gutenberg(){
 	

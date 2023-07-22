@@ -40,13 +40,12 @@ function tpgb_tp_creative_image_callback( $settings, $content) {
 		$contentImage = '<div class="creative-scroll-image" style="background-image: url('.esc_url($fancyImg).')"></div>';
 		$scrollImage = 'scroll-image-wrap';
 	}
-
+	
 	$href = $target = $rel = '';
-	if (!empty($settings['link']['url'])) {
-		$href  = ($settings['link']['url'] !== '' ) ? $settings['link']['url'] : ''; 
-		$target  = (!empty($settings['link']['target'])) ? 'target="_blank"' : ''; 
-		$rel = (!empty($settings['link']['rel'])) ? 'rel="nofollow"' : '';
-	}
+	$href  = (isset($settings['link']['dynamic'])) ? Tpgbp_Pro_Blocks_Helper::tpgb_dynamic_repeat_url($settings['link']) : (!empty($settings['link']['url']) ? $settings['link']['url'] : ''); 
+	$target  = (!empty($settings['link']['target'])) ? 'target="_blank"' : ''; 
+	$rel = (!empty($settings['link']['rel'])) ? 'rel="nofollow"' : '';
+	
 
 	$maskImage='';
 	if(!empty($settings["showMaskImg"])){
@@ -56,16 +55,18 @@ function tpgb_tp_creative_image_callback( $settings, $content) {
 
 	$dataImage = '';
 	$fancyImg = TPGB_ASSETS_URL. 'assets/images/tpgb-placeholder.jpg';
-	if(!empty($settings['SelectImg']['id'])) {
-		$fullImage = wp_get_attachment_image_src( $imgID, 'full' );
-		$fancyImg= isset($fullImage[0]) ? $fullImage[0] : '';
-		$dataImage = (!empty($fullImage)) ? 'background: url('.esc_url($fullImage[0]).');' : '';
-	}else if(!empty($settings['SelectImg']['url'])){
-		$fancyImg = (isset($settings['SelectImg']['dynamic'])) ? Tpgbp_Pro_Blocks_Helper::tpgb_dynamic_repeat_url($settings['SelectImg']) : (!empty($settings['SelectImg']['url']) ? $settings['SelectImg']['url'] : '');
-		$fullImage = '<img src="'.esc_url($fancyImg).'" />';
-		$dataImage = (!empty($fancyImg)) ? 'background: url('.esc_url($fancyImg).');' : '';
-	} else {
-		$dataImage = tpgb_loading_image_grid('','background');
+	if( !empty($settings["ScrollRevelImg"]) || !empty($fancyBox) ){
+		if(!empty($settings['SelectImg']['id'])) {
+			$fullImage = wp_get_attachment_image_src( $imgID, 'full' );
+			$fancyImg= isset($fullImage[0]) ? $fullImage[0] : '';
+			$dataImage = (!empty($fullImage)) ? 'background: url('.esc_url($fullImage[0]).');' : '';
+		}else if(!empty($settings['SelectImg']['url'])){
+			$fancyImg = (isset($settings['SelectImg']['dynamic'])) ? Tpgbp_Pro_Blocks_Helper::tpgb_dynamic_repeat_url($settings['SelectImg']) : (!empty($settings['SelectImg']['url']) ? $settings['SelectImg']['url'] : '');
+			$fullImage = '<img src="'.esc_url($fancyImg).'" />';
+			$dataImage = (!empty($fancyImg)) ? 'background: url('.esc_url($fancyImg).');' : '';
+		} else {
+			$dataImage = tpgb_loading_image_grid('','background');
+		}
 	}
 	
 	$data_settings = '';
@@ -86,7 +87,7 @@ function tpgb_tp_creative_image_callback( $settings, $content) {
 		$data_settings .= ' data-id="'.esc_attr($block_id).'"';
 	}
 	
-	if ( ! empty( $settings['link']['url'] ) ) {
+	if ( !empty( $href ) ) {
 		$link_attr = Tpgbp_Pro_Blocks_Helper::add_link_attributes($settings['link']);
 		$ariaLabelT = (!empty($settings['ariaLabel'])) ? esc_attr($settings['ariaLabel']) : esc_attr__('Creative Image','tpgbp');
 		if(!empty($settings["ScrollRevelImg"])) {			
@@ -154,14 +155,13 @@ function tpgb_tp_creative_image_callback( $settings, $content) {
 				'.$ImageCaption.'
 			</div>';
 		$output .= '</div>';
+		$cssRule='';
+		if(!empty($cssData)){
+			$cssRule='<style>';
+			$cssRule .= $cssData;
+			$cssRule .= '</style>';
+		}
 	$output .= '</div>';
-	
-	$cssRule='';
-	if(!empty($cssData)){
-		$cssRule='<style>';
-		$cssRule .= $cssData;
-		$cssRule .= '</style>';
-	}
 	
 	$output = Tpgb_Blocks_Global_Options::block_Wrap_Render($settings, $output);
 	

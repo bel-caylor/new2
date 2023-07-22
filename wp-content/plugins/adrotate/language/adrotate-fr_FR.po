@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AdRotate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-15 17:49-0700\n"
-"PO-Revision-Date: 2023-04-15 18:04-0700\n"
+"POT-Creation-Date: 2023-05-25 00:28-0600\n"
+"PO-Revision-Date: 2023-05-25 00:28-0600\n"
 "Last-Translator: Arnan de Gans <support@ajdg.solutions>\n"
 "Language-Team: Arnan de Gans\n"
 "Language: fr\n"
@@ -448,20 +448,20 @@ msgid "Buy now"
 msgstr "Acheter maintenant"
 
 #: adrotate-output.php:928
-msgid "Two Site License"
-msgstr "Licence à deux sites"
+msgid "Duo License"
+msgstr "Licence Duo"
 
 #: adrotate-output.php:928
 msgid "Use on TWO WordPress installations."
 msgstr "Utilisation sur DEUX installations WordPress."
 
 #: adrotate-output.php:939
-msgid "Need help fast? Or do you have a question?"
-msgstr "Besoin d’aide rapidement ? Ou avez-vous une question?"
+msgid "Do you have a question?"
+msgstr "Vous avez des questions?"
 
 #: adrotate-output.php:940
-msgid "Help AdRotate Banner Manager Grow"
-msgstr "Aidez AdRotate Banner Manager à se développer"
+msgid "Support AdRotate Banner Manager"
+msgstr "Prise en charge du gestionnaire de bannières AdRotate"
 
 #: adrotate-output.php:947
 msgid ""
@@ -490,13 +490,12 @@ msgstr "Acheter un ticket d’assistance"
 msgid ""
 "Arnan needs your help. Please consider writing a review or sharing AdRotate "
 "in Social media if you find the plugin useful. Writing a review and sharing "
-"AdRotate on social media costs you nothing but doing so is super helpful to "
-"ensure future development."
+"AdRotate on social media costs you nothing but doing so is super helpful."
 msgstr ""
 "Arnan a besoin de votre aide. Veuillez envisager d’écrire un avis ou de "
 "partager AdRotate dans les médias sociaux si vous trouvez le plugin utile. "
 "Écrire un avis et partager AdRotate sur les médias sociaux ne vous coûte "
-"rien, mais cela est très utile pour assurer le développement futur."
+"rien, mais le faire est super utile."
 
 #: adrotate-output.php:955
 msgid "Post Tweet"
@@ -3498,6 +3497,9 @@ msgstr ""
 "balisage, de code ou de mise en page spéciaux peuvent être appliqués dans le "
 "wrapper de groupe lors de la modification du groupe."
 
+#~ msgid "Two Site License"
+#~ msgstr "Licence à deux sites"
+
 #~ msgid ""
 #~ "When posting on the forum, please include a brief description of the "
 #~ "problem, include any errors or symptoms. Often it helps if you try to "
@@ -3544,9 +3546,6 @@ msgstr ""
 #~ "annonce encore meilleure. Consultez l’onglet comparaison des "
 #~ "fonctionnalités sur l’une des pages de produits pour voir ce qu’AdRotate "
 #~ "Pro a à offrir pour vous!"
-
-#~ msgid "Multi License"
-#~ msgstr "Licence Multiple"
 
 #~ msgid "Use on up to FIVE WordPress installations."
 #~ msgstr "Utiliser sur jusqu’à CINQ installations WordPress."

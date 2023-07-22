@@ -6,6 +6,7 @@
         $(".tpgb-scroll-nav-item").mPageScroll2id({
             highlightSelector : ".tpgb-scroll-nav-item",
             highlightClass : "active",
+			scrollSpeed : 50,
         });
 
         $(".tpgb-scroll-nav-item").on('click',function(e){

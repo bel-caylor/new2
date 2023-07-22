@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: AdRotate\n"
-"POT-Creation-Date: 2023-04-15 17:49-0700\n"
+"POT-Creation-Date: 2023-05-25 00:25-0600\n"
 "PO-Revision-Date: 2019-09-20 12:05-0500\n"
 "Last-Translator: Arnan de Gans <support@ajdg.solutions>\n"
 "Language-Team: Arnan de Gans\n"
@@ -343,7 +343,7 @@ msgid "Buy now"
 msgstr ""
 
 #: adrotate-output.php:928
-msgid "Two Site License"
+msgid "Duo License"
 msgstr ""
 
 #: adrotate-output.php:928
@@ -351,11 +351,11 @@ msgid "Use on TWO WordPress installations."
 msgstr ""
 
 #: adrotate-output.php:939
-msgid "Need help fast? Or do you have a question?"
+msgid "Do you have a question?"
 msgstr ""
 
 #: adrotate-output.php:940
-msgid "Help AdRotate Banner Manager Grow"
+msgid "Support AdRotate Banner Manager"
 msgstr ""
 
 #: adrotate-output.php:947
@@ -375,7 +375,7 @@ msgid "Buy Support Ticket"
 msgstr ""
 
 #: adrotate-output.php:953
-msgid "Arnan needs your help. Please consider writing a review or sharing AdRotate in Social media if you find the plugin useful. Writing a review and sharing AdRotate on social media costs you nothing but doing so is super helpful to ensure future development."
+msgid "Arnan needs your help. Please consider writing a review or sharing AdRotate in Social media if you find the plugin useful. Writing a review and sharing AdRotate on social media costs you nothing but doing so is super helpful."
 msgstr ""
 
 #: adrotate-output.php:955

@@ -27,4 +27,7 @@
     visibility: visible;
     opacity: 1
 }
+.tpgb-container-row .tpgb-stylist-list {
+    position: initial;
+}
 /*Bg Hover Effect*/

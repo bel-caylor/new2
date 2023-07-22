@@ -293,3 +293,8 @@
     }
 }
 /* Col 8 Css */
+
+/* Twenty Twenty Three Theme Image Issue */
+.theme-twentytwentythree .tpgb-post-listing:not(.dynamic-style-4) .post-loop-inner .tpgb-post-img , .wp-site-blocks .tpgb-post-listing:not(.dynamic-style-4) .post-loop-inner .tpgb-post-img{
+    height: auto;
+}

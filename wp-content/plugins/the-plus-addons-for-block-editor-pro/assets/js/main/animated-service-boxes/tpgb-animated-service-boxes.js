@@ -69,9 +69,12 @@ window.addEventListener('DOMContentLoaded', (event) => {
                         var hover_sec_boc = lpi.getAttribute('data-hsboc');
                         if(index==0){
                             var total_hover_section = lpi.querySelector('.hover-section-content-wrapper').getAttribute('data-image'),
-                                sectionSelector = lpi.closest('.tpgb-section');
+                                sectionSelector = lpi.closest('.tpgb-section'),
+                                containerSelector = lpi.closest('.tpgb-container-row');
                             if(sectionSelector){
                                 sectionSelector.style.cssText = 'background: url('+ total_hover_section +') center/cover; transition: background 0.5s linear; box-shadow: '+hover_sec_boc + ' 0px 0px 0px 2000px inset';
+                            }else if(containerSelector){
+                                containerSelector.style.cssText = 'background: url('+ total_hover_section +') center/cover; transition: background 0.5s linear; box-shadow: '+hover_sec_boc + ' 0px 0px 0px 2000px inset';
                             }else{
                                 let hsecn= lpi.closest('.hover-section');
                                 hsecn.style.cssText = 'background: url('+ total_hover_section +') center/cover; transition: background 0.5s linear; box-shadow: '+hover_sec_boc + ' 0px 0px 0px 2000px inset';
@@ -80,11 +83,14 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
                         lpi.addEventListener('mouseenter',(ia)=>{
                             var image = ia.currentTarget.querySelector('.hover-section-content-wrapper').getAttribute('data-image'),
-                                sectionSelector = ia.currentTarget.closest('.tpgb-section');
+                                sectionSelector = ia.currentTarget.closest('.tpgb-section'),
+                                containerSelector = ia.currentTarget.closest('.tpgb-container-row');
                             ia.currentTarget.closest('.asb_wrap_list').querySelector(".service-item-loop").classList.remove("active-hover");
                             ia.currentTarget.classList.add("active-hover");
                             if(sectionSelector){
                                 sectionSelector.style.background = 'url('+ image +') center/cover';
+                            }else if(containerSelector){
+                                containerSelector.style.background = 'url('+ image +') center/cover';
                             }else{
                                 ia.currentTarget.closest('.hover-section').style.background = 'url('+ image +') center/cover';
                             }

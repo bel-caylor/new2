@@ -153,9 +153,10 @@
             var parent_attr=parent_class.data("id");
             if (changing_this && !Playing_this) onMouseMove(touch.pageX, touch.pageY,parent_attr)
         });
-        $(window).on('resize', function() {
-            size_Elements()
-        })
+    })
+
+    $(window).on('resize', function() {
+        size_Elements()
     })
 
 })(jQuery);
@@ -293,7 +294,6 @@ function onMouseMove(x, y,parent_attr) {
 function size_Elements() {
     jQuery(".tpgb-beforeafter-img > img").imgLoad(function() {
         img = jQuery(this);
-       
         container = img.closest(".tpgb-before-after");
 		container=container.data("id");
 		container=jQuery("."+container);
@@ -313,12 +313,12 @@ function size_Elements() {
                 img.css("max-width", parentWidth)
                 
             }else if(!img.css("max-width") || img.css("max-width") == "none"){
-				img.css("max-width", img.width())
+				img.css("max-width", ( img[0] && img[0].naturalWidth ? img[0].naturalWidth : 100 ) )
 			}
 			if(container.data("full_width") == "yes"){
 				img.css("width", parentWidth)
 			}else{
-				img.css("width", img.width())
+				img.css("width", ( img[0] && img[0].naturalWidth ? img[0].naturalWidth : 100 ))
 			}
         }
         if (container.data("width")) {

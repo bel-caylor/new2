@@ -97,7 +97,7 @@ class Tp_Generate_Blocks_Css {
 				$context['postType'] = $post->post_type;
 			}
 			
-			$context = apply_filters( 'render_block_context', $context, $block );
+			$context = apply_filters( 'render_block_context', $context, $block, null );
 			$wpblock = new WP_Block( $block, $context );
 			
 			$attributes = isset( $wpblock->parsed_block['attrs'] ) ? $wpblock->parsed_block['attrs'] : array();
@@ -342,7 +342,7 @@ class Tp_Generate_Blocks_Css {
 												if(gettype($values['sm']) == 'object' || gettype($values['sm']) == 'array'){
 													$dimension = $this->tp_objectField($values['sm'])['data'];
 												}else{
-													$dimension = (!empty($values['sm']) || $values['sm']==='0') ? $values['sm'] . (isset($values['unit']) ? $values['unit'] : '') : '';
+													$dimension = (!empty($values['sm']) || $values['sm']==='0') ? $values['sm'] . (isset($values['unitsm']) ? $values['unitsm'] : (isset($values['unit']) ? $values['unit'] : '')) : '';
 												}
 												if($dimension!=''){
 													$SelectorData = $this->singleField($cssSelecor, $blockID, $attr_key, $dimension,'tpgb');
@@ -357,7 +357,7 @@ class Tp_Generate_Blocks_Css {
 																	if( (isset($block_value[$newKey]['value']) && isset($block_value[$newKey]['value']['sm'])) && (gettype($block_value[$newKey]['value']['sm']) == 'object' || gettype($block_value[$newKey]['value']['sm']) == 'array')){
 																		$dimension = $this->tp_objectField($block_value[$newKey]['value']['sm'])['data'];
 																	}else if(isset($block_value[$newKey]['value']) && isset($block_value[$newKey]['value']['sm'])){
-																			$dimension = $block_value[$newKey]['value']['sm'] . (isset($block_value[$newKey]['value']['unit']) ? $block_value[$newKey]['value']['unit'] : '');
+																			$dimension = $block_value[$newKey]['value']['sm'] . (isset($block_value[$newKey]['value']['unitsm']) ? $block_value[$newKey]['value']['unitsm'] : (isset($block_value[$newKey]['value']['unit']) ? $block_value[$newKey]['value']['unit'] : ''));
 																	}
 																	$SelectorData = $this->singleField($SelectorData[0], $blockID, $newKey, $dimension,'tpgb');
 																}
@@ -374,7 +374,7 @@ class Tp_Generate_Blocks_Css {
 												if(gettype($values['xs']) == 'object' || gettype($values['xs']) == 'array'){
 													$dimension = $this->tp_objectField($values['xs'])['data'];
 												}else{
-													$dimension = (!empty($values['xs']) || $values['xs']==='0') ? $values['xs'] . (isset($values['unit']) ? $values['unit'] : '') : '';
+													$dimension = (!empty($values['xs']) || $values['xs']==='0') ? $values['xs'] . (isset($values['unitxs']) ? $values['unitxs'] : (isset($values['unit']) ? $values['unit'] : '')) : '';
 												}
 												if( $dimension!='' ){
 													$SelectorData = $this->singleField($cssSelecor, $blockID, $attr_key, $dimension,'tpgb');
@@ -389,7 +389,7 @@ class Tp_Generate_Blocks_Css {
 																	if(isset($block_value[$newKey]['value']) && isset($block_value[$newKey]['value']['xs']) && (gettype($block_value[$newKey]['value']['xs']) == 'object' || gettype($block_value[$newKey]['value']['xs']) == 'array')){
 																		$dimension = $this->tp_objectField($block_value[$newKey]['value']['xs'])['data'];
 																	}else if(isset($block_value[$newKey]['value']) && isset($block_value[$newKey]['value']['xs'])){
-																		$dimension = $block_value[$newKey]['value']['xs'] . (isset($block_value[$newKey]['value']['unit']) ? $block_value[$newKey]['value']['unit'] : '');
+																		$dimension = $block_value[$newKey]['value']['xs'] . (isset($block_value[$newKey]['value']['unitxs']) ? $block_value[$newKey]['value']['unitxs'] : (isset($block_value[$newKey]['value']['unit']) ? $block_value[$newKey]['value']['unit'] : ''));
 																	}
 																	$SelectorData = $this->singleField($SelectorData[0], $blockID, $newKey, $dimension,'tpgb');
 																}
@@ -515,7 +515,7 @@ class Tp_Generate_Blocks_Css {
 															if(gettype($values['sm']) == 'object' || gettype($values['sm']) == 'array'){
 																$dimension = $this->tp_objectField($values['sm'])['data'];
 															}else{
-																$dimension = (!empty($values['sm']) || $values['sm']==='0') ? $values['sm'] . (isset($values['unit']) ? $values['unit'] : '') : '';
+																$dimension = (!empty($values['sm']) || $values['sm']==='0') ? $values['sm'] . (isset($values['unitsm']) ? $values['unitsm'] : (isset($values['unit']) ? $values['unit'] : '')) : '';
 															}
 															if( $dimension!='' ){
 																$SelectorData = $this->singleField($cssSelecor, $blockID, $attrKey, $dimension, 'tpgb', $itemData['_key']['value']);
@@ -529,7 +529,7 @@ class Tp_Generate_Blocks_Css {
 															if(gettype($values['xs']) == 'object' || gettype($values['xs']) == 'array'){
 																$dimension = $this->tp_objectField($values['xs'])['data'];
 															}else{
-																$dimension = (!empty($values['xs']) || $values['xs']==='0') ? $values['xs'] . (isset($values['unit']) ? $values['unit'] : '') : '';
+																$dimension = (!empty($values['xs']) || $values['xs']==='0') ? $values['xs'] . (isset($values['unitxs']) ? $values['unitxs'] : (isset($values['unit']) ? $values['unit'] : '')) : '';
 															}
 															if( $dimension!='' ){
 																$SelectorData = $this->singleField($cssSelecor, $blockID, $attrKey, $dimension, 'tpgb', $itemData['_key']['value']);
@@ -659,7 +659,7 @@ class Tp_Generate_Blocks_Css {
 															if(gettype($values['sm']) == 'object' || gettype($values['sm']) == 'array'){
 																$dimension = $this->tp_objectField($values['sm'])['data'];
 															}else{
-																$dimension = (!empty($values['sm']) || $values['sm']==='0') ? $values['sm'] . (isset($values['unit']) ? $values['unit'] : '') : '';
+																$dimension = (!empty($values['sm']) || $values['sm']==='0') ? $values['sm'] . (isset($values['unitsm']) ? $values['unitsm'] : (isset($values['unit']) ? $values['unit'] : '')) : '';
 															}
 															if( $dimension!='' ){
 																$SelectorData = $this->singleField($cssSelecor, $blockID, $itemIndex, $dimension, 'tpgb');
@@ -673,7 +673,7 @@ class Tp_Generate_Blocks_Css {
 															if(gettype($values['xs']) == 'object' || gettype($values['xs']) == 'array'){
 																$dimension = $this->tp_objectField($values['xs'])['data'];
 															}else{
-																$dimension = (!empty($values['xs']) || $values['xs']==='0') ? $values['xs'] . (isset($values['unit']) ? $values['unit'] : '') : '';
+																$dimension = (!empty($values['xs']) || $values['xs']==='0') ? $values['xs'] . (isset($values['unitxs']) ? $values['unitxs'] : (isset($values['unit']) ? $values['unit'] : '')) : '';
 															}
 															if( $dimension!='' ){
 																$SelectorData = $this->singleField($cssSelecor, $blockID, $itemIndex, $dimension, 'tpgb');
@@ -1370,9 +1370,15 @@ class Tp_Generate_Blocks_Css {
 			$data['md'] =  str_replace('{{key}}', $val['md'] . $unit, $selector);
 		}
 		if ($val && isset($val['sm']) && $val['sm']!='') {
+			if(!empty($val) && isset($val['unitsm']) && !empty($val['unitsm']) && $val['unitsm']!='c'){
+				$unit = $val['unitsm'];
+			}
 			$data['sm'] = str_replace('{{key}}', $val['sm'] . $unit, $selector);
 		}
 		if ($val && isset($val['xs']) && $val['xs']!='') {
+			if(!empty($val) && isset($val['unitxs']) && !empty($val['unitxs']) && $val['unitxs']!='c'){
+				$unit = $val['unitxs'];
+			}
 			$data['xs'] = str_replace('{{key}}', $val['xs'] . $unit, $selector);
 		}
 		return $data;

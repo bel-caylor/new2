@@ -172,12 +172,19 @@ class Tpgb_Blocks_Global_Options {
 				'type' => 'string',
 				'default' => '',
 				'style' => [
-						(object) [
+					(object) [
 						'condition' => [
 							(object) [ 'key' => 'arrowsStyle', 'relation' => '==', 'value' => 'style-1' ],
 							(object) [ 'key' => 'showArrows', 'relation' => '==', 'value' => true ]
 						],
 						'selector' => '{{PLUS_WRAP}} .splide__arrows.style-1 .splide__arrow.style-1{background:{{arrowsBgColor}};}',
+					],
+					(object) [
+						'condition' => [
+							(object) [ 'key' => 'arrowsStyle', 'relation' => '==', 'value' => ['style-3','style-4','style-6'] ],
+							(object) [ 'key' => 'showArrows', 'relation' => '==', 'value' => true ]
+						],
+						'selector' => '{{PLUS_WRAP}} .splide__arrows.style-3 .splide__arrow.style-3 .icon-wrap, {{PLUS_WRAP}} .splide__arrows.style-6 .splide__arrow.style-6:before{background:{{arrowsBgColor}};} {{PLUS_WRAP}} .splide__arrows.style-4 .splide__arrow.style-4 .icon-wrap{border-color:{{arrowsBgColor}}}',
 					],
 				],
 				'scopy' => true,
@@ -186,11 +193,19 @@ class Tpgb_Blocks_Global_Options {
 				'type' => 'string',
 				'default' => '',
 				'style' => [
-						(object) [
+					(object) [
 						'condition' => [
+							(object) [ 'key' => 'arrowsStyle', 'relation' => '==', 'value' => 'style-1' ],
 							(object) [ 'key' => 'showArrows', 'relation' => '==', 'value' => true ]
 						],
 						'selector' => '{{PLUS_WRAP}} .splide__arrows.style-1 .splide__arrow.style-1:before{color:{{arrowsIconColor}};}',
+					],
+					(object) [
+						'condition' => [
+							(object) [ 'key' => 'arrowsStyle', 'relation' => '==', 'value' => ['style-2','style-3','style-4','style-5','style-6'] ],
+							(object) [ 'key' => 'showArrows', 'relation' => '==', 'value' => true ]
+						],
+						'selector' => '{{PLUS_WRAP}} .splide__arrows.style-3 .splide__arrow.style-3 .icon-wrap,{{PLUS_WRAP}} .splide__arrows.style-4 .splide__arrow.style-4 .icon-wrap,{{PLUS_WRAP}} .splide__arrows.style-6 .splide__arrow.style-6 .icon-wrap svg{color:{{arrowsIconColor}};}{{PLUS_WRAP}} .splide__arrows.style-2 .splide__arrow.style-2 .icon-wrap:before,{{PLUS_WRAP}} .splide__arrows.style-2 .splide__arrow.style-2 .icon-wrap:after,{{PLUS_WRAP}} .splide__arrows.style-5 .splide__arrow.style-5 .icon-wrap:before,{{PLUS_WRAP}} .splide__arrows.style-5 .splide__arrow.style-5 .icon-wrap:after{background:{{arrowsIconColor}};}',
 					],
 				],
 				'scopy' => true,
@@ -199,12 +214,19 @@ class Tpgb_Blocks_Global_Options {
 				'type' => 'string',
 				'default' => '',
 				'style' => [
-						(object) [
+					(object) [
 						'condition' => [
 							(object) [ 'key' => 'arrowsStyle', 'relation' => '==', 'value' => 'style-1' ],
 							(object) [ 'key' => 'showArrows', 'relation' => '==', 'value' => true ]
 						],
 						'selector' => '{{PLUS_WRAP}} .splide__arrows.style-1 .splide__arrow.style-1:hover{background:{{arrowsHoverBgColor}};}',
+					],
+					(object) [
+						'condition' => [
+							(object) [ 'key' => 'arrowsStyle', 'relation' => '==', 'value' => ['style-2','style-3','style-4'] ],
+							(object) [ 'key' => 'showArrows', 'relation' => '==', 'value' => true ]
+						],
+						'selector' => '{{PLUS_WRAP}} .splide__arrows.style-2 .splide__arrow.style-2:hover:before,{{PLUS_WRAP}} .splide__arrows.style-3 .splide__arrow.style-3:hover .icon-wrap{background:{{arrowsHoverBgColor}};}{{PLUS_WRAP}} .splide__arrows.style-4 .splide__arrow.style-4:hover:before,{{PLUS_WRAP}} .splide__arrows.style-4 .splide__arrow.style-4:hover .icon-wrap{border-color:{{arrowsHoverBgColor}};}',
 					],
 				],
 				'scopy' => true,
@@ -213,11 +235,19 @@ class Tpgb_Blocks_Global_Options {
 				'type' => 'string',
 				'default' => '',
 				'style' => [
-						(object) [
+					(object) [
 						'condition' => [
+							(object) [ 'key' => 'arrowsStyle', 'relation' => '==', 'value' => 'style-1' ],
 							(object) [ 'key' => 'showArrows', 'relation' => '==', 'value' => true ]
 						],
 						'selector' => '{{PLUS_WRAP}} .splide__arrows.style-1 .splide__arrow.style-1:hover:before{color:{{arrowsHoverIconColor}};}',
+					],
+					(object) [
+						'condition' => [
+							(object) [ 'key' => 'arrowsStyle', 'relation' => '==', 'value' => ['style-2','style-3','style-4','style-5','style-6'] ],
+							(object) [ 'key' => 'showArrows', 'relation' => '==', 'value' => true ]
+						],
+						'selector' => '{{PLUS_WRAP}} .splide__arrows.style-3 .splide__arrow.style-3:hover .icon-wrap,{{PLUS_WRAP}} .splide__arrows.style-4 .splide__arrow.style-4:hover .icon-wrap,{{PLUS_WRAP}} .splide__arrows.style-6 .splide__arrow.style-6:hover .icon-wrap svg{color:{{arrowsHoverIconColor}};}{{PLUS_WRAP}} .splide__arrows.style-2 .splide__arrow.style-2:hover .icon-wrap:before,{{PLUS_WRAP}} .splide__arrows.style-2 .splide__arrow.style-2:hover .icon-wrap:after,{{PLUS_WRAP}} .splide__arrows.style-5 .splide__arrow.style-5:hover .icon-wrap:before,{{PLUS_WRAP}} .splide__arrows.style-5 .splide__arrow.style-5:hover .icon-wrap:after{background:{{arrowsHoverIconColor}};}',
 					],
 				],
 				'scopy' => true,
@@ -475,7 +505,7 @@ class Tpgb_Blocks_Global_Options {
 				'default' => '',
 				'style' => [
 					(object) [
-						'selector' => '{{PLUS_WRAP}}{ position:relative;z-index: {{globalZindex}} !important; }',
+						'selector' => '{{PLUS_BLOCK}},{{PLUS_WRAP}}{ position:relative;z-index: {{globalZindex}} !important; }',
 					],
 				],
 				'scopy' => true,
@@ -506,7 +536,7 @@ class Tpgb_Blocks_Global_Options {
 				'default' => false,
 				'style' => [
 					(object) [
-						'selector' => '@media (min-width: 1201px){ .edit-post-visual-editor {{PLUS_WRAP}},.editor-styles-wrapper {{PLUS_WRAP}}{display: block;opacity: .5;} {{PLUS_WRAP}}{ display:none } }',
+						'selector' => '@media (min-width: 1201px){ .edit-post-visual-editor {{PLUS_WRAP}},.editor-styles-wrapper {{PLUS_WRAP}}{display: block;opacity: .5;} {{PLUS_WRAP}}{ display:none !important; } }',
 					],
 				],
 				'scopy' => true,
@@ -516,7 +546,7 @@ class Tpgb_Blocks_Global_Options {
 				'default' => false,
 				'style' => [
 					(object) [
-						'selector' => '@media (min-width: 768px) and (max-width: 1200px){ .edit-post-visual-editor {{PLUS_WRAP}},.editor-styles-wrapper {{PLUS_WRAP}}{display: block;opacity: .5;} {{PLUS_WRAP}}{ display:none } }',
+						'selector' => '@media (min-width: 768px) and (max-width: 1200px){ .edit-post-visual-editor {{PLUS_WRAP}},.editor-styles-wrapper {{PLUS_WRAP}}{display: block;opacity: .5;} {{PLUS_WRAP}}{ display:none !important; } }',
 					],
 				],
 				'scopy' => true,

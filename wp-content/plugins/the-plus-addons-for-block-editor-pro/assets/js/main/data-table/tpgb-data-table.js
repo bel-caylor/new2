@@ -7,9 +7,10 @@
 				, l = e.find("#tpgb-table-id-"+n)
 				, d = !1
 				, r = !1
-				, i = !1;
+				, i = !1
+                , thead = l.find('thead');
 			
-			if ( 0 != l.length) {    
+			if ( 0 != l.length ) {    
 				"yes" == l.data("searchable") && (d = !0),
 				"yes" ==l.data("show-entry") && (r = !0),
 				"yes" == l.data("sort-table") && (l.find("th").css({
@@ -17,7 +18,8 @@
 				}),i = !0);
 				
 				var o = l.data("searchable-label");
-				if (d || r || i)
+                    
+				if ( thead.children().length > 0 && (d || r || i) ){
 					l.DataTable({
 						paging: r,
 						searching: d,
@@ -32,6 +34,7 @@
 					e.find(".dataTables_length").addClass("tpgb-tbl-entry-wrapper tpgb-table-info"),
 					e.find(".dataTables_filter").addClass("tpgb-tbl-search-wrapper tpgb-table-info"),
 					e.find(".tpgb-table-info").wrapAll('<div class="tpgb-advance-heading"></div>');
+                }
 				window.addEventListener("load", s),
 				window.addEventListener("resize", s)
 			}

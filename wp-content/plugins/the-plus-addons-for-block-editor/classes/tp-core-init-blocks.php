@@ -85,6 +85,7 @@ class Tp_Core_Init_Blocks {
 		}
 
 		add_filter( 'tpgb_google_font_load', array( $this,'check_load_google_fonts') );
+		add_filter( 'tpgb_global_css_load', array( $this,'check_load_global_css') );
 	}
 	
 	/**
@@ -127,7 +128,7 @@ class Tp_Core_Init_Blocks {
 			array(
 				array(
 					'slug'  => TPGB_CATEGORY,
-					'title' => __( 'The Plus Addons Blocks', 'tpgb' ),
+					'title' => __( 'The Plus Blocks', 'tpgb' ),
 				),
 			),
 			$categories
@@ -245,6 +246,7 @@ class Tp_Core_Init_Blocks {
 		}
 		
 		$googleFonts = apply_filters( 'tpgb_google_font_load', true );
+		$globalCSS = apply_filters( 'tpgb_global_css_load', true );
 		
 		$googleFonts_list = apply_filters( 'tpgb_custom_fonts_list', [] );
 		if(empty($googleFonts_list)){
@@ -264,10 +266,10 @@ class Tp_Core_Init_Blocks {
 			'image_sizes' => Tp_Blocks_Helper::get_image_sizes(),
 			'googlemap_api' => $GoogleMap_Api,
 			'googlefont_load' => $googleFonts,
+			'globalcss_load' => $globalCSS,
 			'googlefont_list' => $googleFonts_list,
 			'fontawesome' => false,
 			'contactform_list' => Tp_Blocks_Helper::get_contact_form_post(),
-			'calderaform_list' => Tp_Blocks_Helper::get_caldera_forms_post(),
 			'everestform_list' => Tp_Blocks_Helper::get_everest_form_post(),
 			'gravityform_list' => Tp_Blocks_Helper::get_gravity_form_post(),
 			'ninjaform_list' => Tp_Blocks_Helper::get_ninja_form_post(),
@@ -626,6 +628,19 @@ class Tp_Core_Init_Blocks {
 					LiteSpeed_Cache_API::purge_all();
 				}
 
+				// Purge WP-Optimize
+				if (class_exists('WP_Optimize')) {
+					$wpop = new WP_Optimize();
+					if (is_callable(array($wpop, 'get_page_cache'))) {
+						WP_Optimize()->get_page_cache()->purge();
+					}
+				}
+				
+				// Site ground
+				if (class_exists('SG_CachePress_Supercacher') && method_exists('SG_CachePress_Supercacher ', 'purge_cache')) {
+					SG_CachePress_Supercacher::purge_cache(true);
+				}
+				
 				// W3 Total Cache.
 				if ( function_exists( 'w3tc_flush_all' ) ) {
 					w3tc_flush_all();
@@ -642,6 +657,52 @@ class Tp_Core_Init_Blocks {
 					wp_cache_clean_cache( $file_prefix, true );
 				}
 				
+				// Purge WP Engine
+				if (class_exists("WpeCommon")) {
+					if (method_exists('WpeCommon', 'purge_memcached')) {
+						WpeCommon::purge_memcached();
+					}
+					if (method_exists('WpeCommon', 'clear_maxcdn_cache')) {
+						WpeCommon::clear_maxcdn_cache();
+					}
+					if (method_exists('WpeCommon', 'purge_varnish_cache')) {
+						WpeCommon::purge_varnish_cache();
+					}
+				}
+
+				// Purge Pagely
+				if (class_exists('PagelyCachePurge')) {
+					$purge_pagely = new PagelyCachePurge();
+					if (is_callable(array($purge_pagely, 'purgeAll'))) {
+						$purge_pagely->purgeAll();
+					}
+				}
+
+				if ( function_exists( 'rocket_clean_post' ) ) {
+					rocket_clean_post( $post_id );
+				}
+				if ( function_exists( 'rocket_clean_minify' ) ) {
+					rocket_clean_minify();
+				}
+
+				$all_clear_cache = array(
+					'W3 Total Cache' => 'w3tc_pgcache_flush',
+					'WP Fastest Cache' => 'wpfc_clear_all_cache',
+					'WP Rocket' => 'rocket_clean_domain',
+					'Cachify' => 'cachify_flush_cache',
+					'Comet Cache' => array('comet_cache', 'clear'),
+					'SG Optimizer' => 'sg_cachepress_purge_cache',
+					'Pantheon' => 'pantheon_wp_clear_edge_all',
+					'Zen Cache' => array('zencache', 'clear'),
+					'Breeze' => array('Breeze_PurgeCache', 'breeze_cache_flush'),
+					'Swift Performance' => array('Swift_Performance_Cache', 'clear_all_cache'),
+				);
+				
+				foreach ($all_clear_cache as $plugin => $method) {
+					if (is_callable($method)) {
+						call_user_func($method);
+					}
+				}
 				return ['success' => true, 'message' => __('Plus block css updated.', 'tpgb')];
 			}else{
 				return ['success' => true, 'message' => __('Plus block preview css updated.', 'tpgb')];
@@ -707,11 +768,23 @@ class Tp_Core_Init_Blocks {
 	 * @since 2.0.0
 	 * */
 	public function check_load_google_fonts(){
-		$check_gfont_load = get_option( 'tpgb_connection_data' );
-		if( !empty($check_gfont_load) && isset($check_gfont_load['gfont_load']) && $check_gfont_load['gfont_load']=== 'disable' ){
+		$check_gfont_load = Tp_Blocks_Helper::get_extra_option('gfont_load');
+		if( !empty($check_gfont_load) && $check_gfont_load === 'disable' ){
 			return false;
 		}
 		return true;
+	}
+
+	/*
+	 * Check Global CSS In TPAG
+	 * @since 2.0.9
+	 * */
+	public function check_load_global_css( $data = true ){
+		$check_global_css = Tp_Blocks_Helper::get_extra_option('gbl_css');
+		if( !empty($check_global_css) && $check_global_css === 'disable' ){
+			$data = false;
+		}
+		return $data;
 	}
 
 	/*
@@ -830,6 +903,17 @@ class Tp_Core_Init_Blocks {
 			}
 		}
 		
+		//MemberPress Lesson Compatibility
+		if (class_exists('memberpress\courses\models\Course') && class_exists('memberpress\courses\models\Lesson')) {
+			global $post;
+			if($post instanceof \WP_Post && is_single() && in_array($post->post_type, \memberpress\courses\models\Lesson::lesson_cpts(), true)) {
+				$current_lesson = new \memberpress\courses\models\Lesson($post->ID);
+				if(!empty($current_lesson)){
+					$this->enqueue_post_css( $post->ID );
+				}
+			}
+		}
+
 		//Kadence Theme Pro
 		if ( is_admin() || is_singular( 'kadence_element' ) ) {
 			return;

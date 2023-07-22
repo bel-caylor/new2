@@ -19,12 +19,16 @@
 
             if(scrolldiv.data("scrolling-effect")=='yes'){
                 var bgColors = scrolldiv.data('bgcolors');
+                
                 if(bgColors){
                     var paraent_node=scrolldiv.closest(".site-content"),
                         i=0,
                         arry_len=bgColors.length,
                         pareDiv = ( $(".tpgb-section").length ) ? paraent_node.find(".tpgb-section") : paraent_node.find(".tpgb-container-row") ;
-                        
+                    
+                    $('.tpgb-row-scrollbg').animate({
+                        backgroundColor: bgColors[0]
+                    }, 0)
                     pareDiv.each(function(){
                         if(arry_len>i){
                             var FirstColor=i;
@@ -108,7 +112,7 @@
 function rowTransitionalColor($row, firstColor, secondColor) {
     "use strict";
     var $ = jQuery, scrollPos = 0, currentRow = $row, beginningColor = firstColor, endingColor = secondColor, percentScrolled, newRed, newGreen, newBlue, newColor;
-    
+   
     $(document).scroll(function() {
         var animationBeginPos = currentRow.offset().top
           , endPart = currentRow.outerHeight() < 800 ? currentRow.outerHeight() / 4 : $(window).height()

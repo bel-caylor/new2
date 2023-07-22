@@ -44,5 +44,5 @@ if(!empty($ShowFilter) && $ShowFilter == 'yes' ){
 }
 //grid item loop
 echo '<div class="grid-item tpgb-col '.esc_attr($column_class).' '.esc_attr($category_filter).' '.( $layout=='metro' ? ' tpgb-metro-'.esc_attr($col).' '.( !empty($tabCol) ? ' tpgb-tab-metro-'.esc_attr($tabCol).''  : '' ).' '.( !empty($moCol) ? ' tpgb-mobile-metro-'.esc_attr($moCol).''  : '' ).' ' : '' ).' ">';
-	include TPGBP_PATH ."includes/product-listing/product-{$style}.php";
+	include TPGBP_PATH ."includes/product-listing/".sanitize_file_name('product-'.$style.'.php');
 echo '</div>';

@@ -1,4 +1,17 @@
-/*post Masonry*/( function( $ ) {
+/*post Masonry*/
+document.addEventListener('DOMContentLoaded', (event) => {
+    var isoDiv = document.querySelectorAll('.tpgb-isotope,.tpgb-metro');
+    if(isoDiv){
+        isoDiv.forEach((el)=>{
+            let roDiv = el.querySelector('.post-loop-inner'),
+                griDiv = el.querySelector('.post-loop-inner > .grid-item'),
+                gidsty = griDiv.currentStyle || window.getComputedStyle(griDiv);
+            roDiv.style.marginLeft =  roDiv.style.marginRight = '-'+gidsty.padding ;
+        })
+    }
+});
+
+( function( $ ) {
 	"use strict";
 	if( $('.tpgb-isotope').length > 0 ){
 		var b = window.theplus || {};
@@ -88,8 +101,6 @@
 
 		tpgb_filter('tpgb-metro');
 	}
-
-
 
 })(jQuery);
 
@@ -343,3 +354,4 @@ function tpgb_filter(selector){
 		});
 	}
 }
+

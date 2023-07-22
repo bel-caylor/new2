@@ -39,6 +39,18 @@ mainDiv.forEach(function(item){
                 e.preventDefault();
                 
                 if(this.classList.contains('tpgb-form-click')){
+
+                    var windowWidth = window.innerWidth,
+                        div = jQuery(this).next(".tpgb-buform-layput")[0],
+                        divWidth = div.offsetWidth,
+                        padd = jQuery(this).closest('.tpgb-container-col') ? jQuery(this).closest('.tpgb-container-col').css('padding') : '' ,
+                        translateX = (windowWidth - divWidth) / 2;
+                    
+                    if(windowWidth <= 767){
+                        jQuery(this).next(".tpgb-buform-layput").find('.tpgb-form-wrap')[0].style.transform = 'translateX(-' + translateX + 'px)';
+                        jQuery(this).next(".tpgb-buform-layput").find('.tpgb-form-wrap')[0].style.left = ( padd && padd != undefined ? padd : '15px' );
+                    }
+
                     jQuery(this).next(".tpgb-buform-layput").find('.tpgb-form-wrap').slideToggle();
                 }else{
                     jQuery(this).next(".tpgb-model-wrap").addClass('model-open');
