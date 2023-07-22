@@ -77,14 +77,6 @@ if ( ! function_exists( 'new2_setup' ) ) :
 		 */
 		add_theme_support( 'post-thumbnails' );
 
-		// This theme uses wp_nav_menu() in two locations.
-		register_nav_menus(
-			array(
-				'menu-1' => __( 'Primary', 'new2' ),
-				'menu-2' => __( 'Footer Menu', 'new2' ),
-			)
-		);
-
 		/*
 		 * Switch default core markup for search form, comment form, and comments
 		 * to output valid HTML5.
@@ -115,60 +107,102 @@ if ( ! function_exists( 'new2_setup' ) ) :
 		add_theme_support( 'responsive-embeds' );
 
 		// Remove support for block templates.
-		remove_theme_support( 'block-templates' );
+		// remove_theme_support( 'block-templates' );
+
+		// Add support for custom templates.
+		// add_theme_support( 'custom-page-templates' );
 	}
 endif;
 add_action( 'after_setup_theme', 'new2_setup' );
+
+
+/**	
+ * Add Custom Template Functionality
+ */
+function add_custom_template_support( $post_templates ) {
+    $post_templates['template-custom.php'] = 'Custom Template';
+    return $post_templates;
+}
+add_filter( 'theme_page_templates', 'add_custom_template_support' );
+
+
 
 /**
  * Register widget area.
  *
  * @link https://developer.wordpress.org/themes/functionality/sidebars/#registering-a-sidebar
  */
-function new2_widgets_init() {
-	register_sidebar(
-		array(
-			'name'          => __( 'Footer', 'new2' ),
-			'id'            => 'sidebar-1',
-			'description'   => __( 'Add widgets here to appear in your footer.', 'new2' ),
-			'before_widget' => '<section id="%1$s" class="widget %2$s">',
-			'after_widget'  => '</section>',
-			'before_title'  => '<h2 class="widget-title">',
-			'after_title'   => '</h2>',
-		)
-	);
-}
-add_action( 'widgets_init', 'new2_widgets_init' );
+// function new2_widgets_init() {
+// register_sidebar(
+// array(
+// 'name'          => esc_html__( 'Sidebar', 'new2' ),
+// 'id'            => 'sidebar-1',
+// 'description'   => esc_html__( 'Add widgets here.', 'new2' ),
+// 'before_widget' => '<section id="%1$s">',
+// 'after_widget'  => '</section>',
+// 'before_title'  => '<h2>',
+// 'after_title'   => '</h2>',
+// )
+// );
+// }
+// add_action( 'widgets_init', 'new2_widgets_init' );
 
 /**
  * Enqueue scripts and styles.
  */
 function new2_scripts() {
 	wp_enqueue_style( 'new2-style', get_stylesheet_uri(), array(), NEW2_VERSION );
+	wp_enqueue_style( 'new2-style', get_stylesheet_uri(), array(), filemtime( get_template_directory() . '/style.css' ) ); // Main theme styles
+	wp_enqueue_style( 'dancing-script', 'https://fonts.googleapis.com/css2?family=Dancing+Script&family=Noto+Sans:wght@100;400;600;800&display=swap', array(), null, 'all' ); // Google Font.
+
+	wp_register_script( 'font-awesome', 'https://kit.fontawesome.com/a91e37762c.js', array(), null, false ); // Font Awesome.
+	wp_enqueue_script( 'font-awesome' );
+
 	wp_enqueue_script( 'new2-script', get_template_directory_uri() . '/js/script.min.js', array(), NEW2_VERSION, true );
 
-	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
-		wp_enqueue_script( 'comment-reply' );
-	}
+	// wp_register_script( 'themescripts', get_template_directory_uri() . '/dist/frontend.js', array( 'jquery' ), filemtime( get_stylesheet_directory() . '/dist/frontend.js' ), true ); // Custom scripts.
+	// wp_enqueue_script( 'themescripts' );
 }
 add_action( 'wp_enqueue_scripts', 'new2_scripts' );
+
 
 /**
  * Enqueue the block editor script.
  */
 function new2_enqueue_block_editor_script() {
-	wp_enqueue_script(
-		'new2-editor',
-		get_template_directory_uri() . '/js/block-editor.min.js',
-		array(
-			'wp-blocks',
-			'wp-edit-post',
-		),
-		NEW2_VERSION,
-		true
+	wp_enqueue_script(		'new2-editor', get_template_directory_uri() . '/js/block-editor.min.js', array(	'wp-blocks', 'wp-edit-post', ), NEW2_VERSION, true
 	);
-}
-add_action( 'enqueue_block_editor_assets', 'new2_enqueue_block_editor_script' );
+	wp_register_script( 'font-awesome', 'https://kit.fontawesome.com/a91e37762c.js', array(), null, false ); // Font Awesome.
+	wp_enqueue_script( 'font-awesome' );
+	
+	wp_register_script( 'new2-js', get_template_directory_uri() . '/dist/editor.js', array( 'wp-blocks', 'wp-dom-ready', 'wp-edit-post', 'wp-i18n', 'wp-element', 'wp-editor' ) );
+	wp_enqueue_style( 'typekit', 'https://use.typekit.net/tgx8twc.css', array(), null, 'all' ); // Typekit.
+	// wp_enqueue_style( 'new2-style', get_template_directory_uri() . '/style-editor.css', array(), filemtime( get_template_directory() . '/style-editor.css' ) ); // Main theme styles
+	// add_editor_style(get_template_directory_uri() . '/style-editor.css');
+
+	register_block_type(
+		'new2/business-loop', array(
+			'render_callback' => 'new2_render_business_loop',
+		)
+	);
+	register_block_type(
+		'new2/business-title-link', array(
+			'render_callback' => 'new2_render_business_title_link',
+		)
+	);
+	register_block_type(
+		'new2/church-title-link', array(
+			'render_callback' => 'new2_render_church_title_link',
+		)
+	);	
+	register_block_type(
+		'new2/church-title-link', array(
+			'render_callback' => 'new2_render_church_title_link',
+		)
+	);	
+};
+
+add_action( 'init', 'new2_enqueue_block_editor_script' );
 
 /**
  * Create a JavaScript array containing the Tailwind Typography classes from
@@ -184,6 +218,7 @@ function new2_admin_scripts() {
 }
 add_action( 'admin_print_scripts', 'new2_admin_scripts' );
 
+
 /**
  * Add the Tailwind Typography classes to TinyMCE.
  *
@@ -195,6 +230,33 @@ function new2_tinymce_add_class( $settings ) {
 	return $settings;
 }
 add_filter( 'tiny_mce_before_init', 'new2_tinymce_add_class' );
+
+/**
+ * Functions which enhance the theme by hooking into WordPress.
+ */
+// require get_template_directory() . '/inc/template-functions.php';
+
+
+/**
+ * Functions for custom blocks.
+ */
+// require get_template_directory() . '/inc/block-functions.php';
+
+
+/**
+ * Enqueue scripts and styles.
+ */
+// require get_template_directory() . '/inc/register-scripts-and-styles.php';
+
+
+/**
+ * Add Reuseable Blocks button to admin toolbar.
+ */
+function be_reusable_blocks_admin_menu() {
+    add_menu_page( 'Reusable Blocks', 'Reusable Blocks', 'edit_posts', 'edit.php?post_type=wp_block', '', 'dashicons-editor-table', 22 );
+}
+add_action( 'admin_menu', 'be_reusable_blocks_admin_menu' );
+
 
 /**
  * Custom template tags for this theme.
