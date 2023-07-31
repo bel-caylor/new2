@@ -1,26 +1,28 @@
-=== AdRotate Banner Manager - AdSense Ads & more ===
+=== AdRotate Banner Manager - The only ad manager you'll need ===
 Contributors: adegans
 Donate link: https://ajdg.solutions/go/donate/
 Tags: ads, advertising, banners, ad rotator, ad manager, adsense, ads.txt, ad rotations, affiliate, amazon, banner, google ad manager
 Requires at least: 4.9
 Requires PHP: 5.7.4
-Tested up to: 6.2.2
-Stable tag: 5.12.2
+Tested up to: 6.3
+Stable tag: 5.12.3
 License: GPLv3
 
-Advertising is easy with AdRotate Banner Manager. Manage, Schedule, Rotate and Track your ADs you make yourself or get from Amazon, Adsense, affiliates and many more.
+Advertising is easy with AdRotate Banner Manager. Manage, Schedule, Rotate or Track any kind of ad you make yourself or get from Amazon, Adsense, affiliates and many more.
 
 == Description ==
 
-Manage all your ads with **AdRotate Banner Manager**!
-Place Adsense Ads, Media.net Ads. Amazon Associate tags, banners you create yourself and any other kind of advert on your WordPress and ClassicPress website. AdRotate Banner Manager and AdRotate Pro are trusted by over 50,000 website owners!
+Easily manage all your ads with **AdRotate Banner Manager**!
+Place Adsense Ads, Media.net Ads. Amazon Associate tags, banners you create yourself or get from your local businesses and sponsors. Any kind of advert can be placed and managed on your WordPress and ClassicPress website with **AdRotate Banner Manager**. 
+AdRotate Banner Manager and AdRotate Professional are trusted by over 50,000 website owners!
 
-Are you looking for the easiest way to manage and run your AD Campaigns?
+Are you looking for the easiest way to manage and run your ad campaigns?
 Here are a few things **AdRotate Banner Manager** can do for you:
 
-* Works with every advert including; self made ads, Google Adsense, Amazon ads, any kind of affiliate advert and media.net ads.
+* Works with every ad including; self made ads, Google Adsense, Amazon ads, any kind of affiliate advert and media.net ads.
 * No limit on how many ads you make
-* Blocks for the WordPress block editor
+* An advert block and group block for the WordPress block editor
+* Widgets for use in traditional themes
 * Advanced error checking for adverts
 * Error checking for groups of adverts
 * Track clicks and impressions for many adverts
@@ -49,7 +51,7 @@ Here are a few things **AdRotate Banner Manager** can do for you:
 * Widgets and blocks for ads and groups
 * Use PHP snippets to place ads directly in your theme files
 
-= Extra features in AdRotate Pro =
+= Some of the extra features in AdRotate Pro =
 
 **AdRotate Professional** is the premium version of **AdRotate Banner Manager** offering even more features and functionality such as:
 
@@ -93,6 +95,10 @@ For more detailed instructions check out the [installation steps](https://ajdg.s
 == Changelog ==
 
 For the full changelog check out the [development page](https://ajdg.solutions/support/adrotate-development/?mtm_campaign=adrotate&mtm_kwd=readme).
+
+= AdRotate 5.12.3 =
+* Tested to work with WordPRess 6.3
+* [fix] Typo in DONOTCACHEOBJECT constant name
 
 = AdRotate 5.12.2 =
 * [change] Dashboard updates

@@ -461,7 +461,7 @@ function adrotate_count_impression($ad, $group = 0, $blog_id = 0) {
 function adrotate_impression_callback() {
 	if(!defined('DONOTCACHEPAGE')) define('DONOTCACHEPAGE', true);
 	if(!defined('DONOTCACHEDB')) define('DONOTCACHEDB', true);
-	if(!defined('DONOTCACHCEOBJECT')) define('DONOTCACHCEOBJECT', true);
+	if(!defined('DONOTCACHEOBJECT')) define('DONOTCACHEOBJECT', true);
 
 	$meta = $_POST['track'];
 	$meta = base64_decode($meta);
@@ -484,7 +484,7 @@ function adrotate_impression_callback() {
 function adrotate_click_callback() {
 	if(!defined('DONOTCACHEPAGE')) define('DONOTCACHEPAGE', true);
 	if(!defined('DONOTCACHEDB')) define('DONOTCACHEDB', true);
-	if(!defined('DONOTCACHCEOBJECT')) define('DONOTCACHCEOBJECT', true);
+	if(!defined('DONOTCACHEOBJECT')) define('DONOTCACHEOBJECT', true);
 
 	global $wpdb, $adrotate_config;
 

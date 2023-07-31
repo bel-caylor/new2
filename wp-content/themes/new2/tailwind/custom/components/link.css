@@ -1,0 +1,71 @@
+.wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+    @apply font-semibold font-serif text-blue
+}
+.wp-block-post-content a:not(a.wp-block-button__link.wp-element-button):hover {
+    @apply underline
+}
+.page-test {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+        @apply text-medical
+    }
+}
+.page-medical {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+        @apply text-medical
+    }
+}
+.page-attractions {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+        @apply text-events
+    }
+}
+.page-san-antonio-vehicle {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+        @apply text-vehicle
+    }
+}
+.page-pet-care {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+        @apply text-pet
+    }
+}
+.page-seniors {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+        @apply text-senior
+    }
+}
+.page-churches {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+        @apply text-worship
+    }
+}
+.page-childcare {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+        @apply text-preschool
+    }
+}
+.page-education {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+        @apply text-school
+    }
+}
+.page-education {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+        @apply text-school
+    }
+}
+.page-recreation {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+        @apply text-recreation
+    }
+}
+.page-athletics {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+        @apply text-athletics
+    }
+}
+.page-family-fun {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+        @apply text-activities
+    }
+}

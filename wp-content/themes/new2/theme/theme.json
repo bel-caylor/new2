@@ -11,7 +11,7 @@
 				},
 				{
 					"slug": "foreground",
-					"color": "#404040",
+					"color": "#484c55",
 					"name": "Foreground"
 				},
 				{
@@ -143,12 +143,7 @@
 			"lineHeight": true,
 			"fontFamilies": [
 				{
-				"fontFamily": "'Noto Sans Display', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
-				"slug": "sans",
-				"name": "Sans"
-				},
-				{
-				"fontFamily": "font-family: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif",
+				"fontFamily": "\"Open Sans\", sans-serif",
 				"slug": "serif",
 				"name": "Serif"
 				},
@@ -160,26 +155,60 @@
 			],
 			"fontSizes": [
 				{
+					"slug": "x-small",
+					"size": ".75rem",
+					"name": "Extra Small"
+				},
+				{
+					"slug": "small",
+					"size": "0.875rem",
+					"name": "Small"
+				},
+				{
+					"slug": "medium",
 					"size": "1rem",
-					"slug": "small"
+					"name": "Medium"
 				},
 				{
-					"size": "1.3rem",
-					"slug": "medium"
+					"slug": "large",
+					"size": "1.125rem",
+					"name": "Large"
 				},
 				{
-					"size": "2rem",
-					"slug": "large"
+					"slug": "x-large",
+					"size": "1.25rem",
+					"name": "Extra Large"
 				},
 				{
-					"size": "2.5rem",
-					"slug": "x-large"
+					"slug": "2-xl",
+					"size": "1.5rem",
+					"name": "2xl"
+				},
+				{
+					"slug": "3-xl",
+					"size": "1.875rem",
+					"name": "3xl"
+				},
+				{
+					"slug": "4-xl",
+					"size": "clamp(2rem, 1.8864rem + 0.3636vw, 2.25rem)",
+					"name": "4xl"
+				},
+				{
+					"slug": "5-xl",
+					"size": "clamp(3rem, 2.5455rem + 1.4545vw, 4rem)",
+					"name": "5xl"
+				},
+				{
+					"slug": "6-xl",
+					"size": "clamp(3rem, 2.3182rem + 2.1818vw, 4.5rem)",
+					"name": "6xl"
 				}
 			]
 		},
 		"layout": {
-			"contentSize": "800px",
-			"wideSize": "1200px"
+			"contentSize": "1024px",
+			"wideSize": "1600px"
 		}
 	},
 	"styles": {
@@ -243,65 +272,8 @@
 			"background": "var(--wp--preset--color--background)",
 			"text": "var(--wp--preset--color--foreground)"
 		},
-		"elements": {
-			"h1": {
-				"typography": {
-					"fontFamily": "var(--wp--preset--font-family--script)",
-					"fontWeight": "300",
-					"lineHeight": "var(--wp--custom--typography--line-height--tiny)",
-					"fontSize": "var(--wp--preset--font-size--x-large)"
-				}
-			},
-			"h2": {
-				"typography": {
-					"fontFamily": "var(--wp--preset--font-family--script)",
-					"fontWeight": "300",
-					"lineHeight": "var(--wp--custom--typography--line-height--small)",
-					"fontSize": "var(--wp--preset--font-size--x-large)"
-				}
-			},
-			"h3": {
-				"typography": {
-					"fontFamily": "var(--wp--preset--font-family--script)",
-					"fontWeight": "300",
-					"lineHeight": "var(--wp--custom--typography--line-height--tiny)",
-					"fontSize": "var(--wp--custom--typography--font-size--large)"
-				}
-			},
-			"h4": {
-				"typography": {
-					"fontFamily": "var(--wp--preset--font-family--serif)",
-					"fontWeight": "300",
-					"lineHeight": "var(--wp--custom--typography--line-height--tiny)",
-					"fontSize": "var(--wp--preset--font-size--medium)"
-				}
-			},
-			"h5": {
-				"typography": {
-					"fontFamily": "var(--wp--preset--font-family--sans)",
-					"fontWeight": "700",
-					"textTransform": "uppercase",
-					"lineHeight": "var(--wp--custom--typography--line-height--normal)",
-					"fontSize": "var(--wp--preset--font-size--small)"
-				}
-			},
-			"h6": {
-				"typography": {
-					"fontFamily": "var(--wp--preset--font-family--sans)",
-					"fontWeight": "400",
-					"textTransform": "uppercase",
-					"lineHeight": "var(--wp--custom--typography--line-height--normal)",
-					"fontSize": "var(--wp--preset--font-size--small)"
-				}
-			},
-			"link": {
-				"color": {
-					"text": "var(--wp--preset--color--green)"
-				}
-			}
-		},
 		"spacing": {
-			"blockGap": "0.5rem"
+			"blockGap": "1.5rem"
 		},
 		"typography": {
 			"fontFamily": "var(--wp--preset--font-family--sans)",

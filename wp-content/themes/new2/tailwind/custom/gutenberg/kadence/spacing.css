@@ -1,0 +1,11 @@
+body {
+    --global-kb-spacing-5xl: var(--wp--preset--spacing--80);
+    --global-kb-spacing-4xl: var(--wp--preset--spacing--70);
+    --global-kb-spacing-3xl: var(--wp--preset--spacing--60);
+    --global-kb-spacing-lg: var(--wp--preset--spacing--50);
+    --global-kb-spacing-md: var(--wp--preset--spacing--40);
+
+    --global-kb-gap-lg: var(--wp--preset--spacing--50);
+    --global-kb-gap-md: clamp(1.5rem, 0.3843rem + 3.3058vw, 2.5rem);
+    --global-row-gutter-md: clamp(1.5rem, 0.3843rem + 3.3058vw, 2.5rem);
+}

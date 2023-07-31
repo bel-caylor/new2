@@ -1,0 +1,26 @@
+/* ACF Color Picker style overrides. */
+.iris-picker {
+    padding: 0.625rem !important;
+    height: auto !important;
+    .iris-palette-container {
+        left: auto !important;
+        bottom: auto !important;
+        position: relative;
+        width: 100%;
+    }
+    .iris-picker-inner {
+        position: relative !important;
+        top: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        left: auto !important;
+        overflow: auto !important;
+        padding-bottom: 0.625rem !important;
+    }
+    .iris-palette {
+        width: 1rem !important;
+        height: 1rem !important;
+        float: none !important;
+        display: inline-block;
+    }
+}

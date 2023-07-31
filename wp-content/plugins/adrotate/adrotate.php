@@ -6,7 +6,7 @@ Author: Arnan de Gans
 Author URI: https://www.arnan.me/?mtm_campaign=adrotate&mtm_keyword=plugin_info
 Description: Monetize your website with adverts while keeping things simple. Start making money today!
 Text Domain: adrotate
-Version: 5.12.2
+Version: 5.12.3
 License: GPLv3
 */
 

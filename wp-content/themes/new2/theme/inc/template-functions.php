@@ -204,3 +204,38 @@ function new2_html5_comment( $comment, $args, $depth ) {
 		</article><!-- .comment-body -->
 	<?php
 }
+
+
+/**
+ * Set up the ACF blocks
+ */
+function new2_acf_register_blocks() {
+	// Check function exists.
+	if ( function_exists( 'acf_register_block' ) ) {
+		acf_register_block_type(
+			array(
+				'name'            => 'column3-ads2',
+				'title'           => __( '3 Column w/ 2 Ads', 'new2' ),
+				'description'     => __( 'Row Layout with outside column ads and 1 interblock columns', 'new2' ),
+				'render_template' => '/blocks-acf/block-3col-2ads.php',
+				'category'        => 'new2',
+				'icon'            => array(
+					'background' => '#153F97',
+					'foreground' => '#FFFFFF',
+					'src'        => 'slides',
+				),
+				'keywords'        => array(
+					'row',
+					'ads',
+				),
+				'supports'		=> [
+					'align'			=> false,
+					'anchor'		=> true,
+					'customClassName'	=> true,
+					'jsx' 			=> true,
+				]
+			)
+		);
+	}
+}
+add_action( 'acf/init', 'new2_acf_register_blocks' );

@@ -6,3 +6,8 @@
  *
  * https://tailwindcss.com/docs/plugins#adding-utilities
  */
+
+ .directory-columns ul {
+    columns: 270px 4;
+    column-gap: 50px
+}

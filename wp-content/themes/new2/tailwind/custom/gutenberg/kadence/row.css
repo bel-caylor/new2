@@ -1,0 +1,43 @@
+.wp-block-kadence-rowlayout {
+    &.alignfull {
+        & > .kt-row-column-wrap {
+            @apply px-0;
+        }
+    }
+    &:not(.alignfull) {
+        & > .kt-row-column-wrap {
+            @apply wrapper;
+        }
+    }
+    &.alignwide {
+        & > .kt-row-column-wrap {
+            @apply wrapper;
+            @apply wrapper--wide;
+        }
+    }
+    &.aligncenter {
+        & > .kt-row-column-wrap {
+            @apply items-center;
+        }
+    }
+    &.no-center {
+        & > .kt-row-column-wrap {
+            @apply !mx-[initial];
+        }
+    }
+}
+.wp-block[data-type="kadence/rowlayout"] {
+    & > .innerblocks-wrap {
+        @apply wrapper;
+    }
+}
+.wp-block[data-align="wide"] {
+    & > .innerblocks-wrap {
+        @apply wrapper--wide;
+    }
+}
+.wp-block[data-align="full"] {
+    & > .innerblocks-wrap {
+        @apply max-w-full px-0;
+    }
+}

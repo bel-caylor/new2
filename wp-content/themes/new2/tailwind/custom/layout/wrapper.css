@@ -1,0 +1,18 @@
+.wrapper {
+    max-width: var(--wp--style--global--content-size);
+    padding-left: var(--global-content-edge-padding);
+    padding-right: var(--global-content-edge-padding);
+    @apply w-full mx-auto relative;
+
+    &--wide {
+        max-width: var(--wp--style--global--wide-size);
+    }
+}
+
+.wp-block-group.is-layout-constrained {
+    padding-block: var(--wp--preset--spacing--70);
+}
+
+.entry-content.wp-block-post-content.is-layout-flow {
+    padding-inline: var(--global-content-edge-padding);
+}

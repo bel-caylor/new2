@@ -15,7 +15,7 @@ if ( ! defined( 'NEW2_VERSION' ) ) {
 	 * to create your production build, the value below will be replaced in the
 	 * generated zip file with a timestamp, converted to base 36.
 	 */
-	define( 'NEW2_VERSION', '0.1.0' );
+	define( 'NEW2_VERSION', '0.1.1' );
 }
 
 if ( ! defined( 'NEW2_TYPOGRAPHY_CLASSES' ) ) {
@@ -153,6 +153,8 @@ add_filter( 'theme_page_templates', 'add_custom_template_support' );
 function new2_scripts() {
 	wp_enqueue_style( 'new2-style', get_stylesheet_uri(), array(), NEW2_VERSION );
 	wp_enqueue_style( 'new2-style', get_stylesheet_uri(), array(), filemtime( get_template_directory() . '/style.css' ) ); // Main theme styles
+
+	wp_enqueue_style( 'open-sans', 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;800&display=swap', array(), null, 'all' ); // Google Font.
 	wp_enqueue_style( 'dancing-script', 'https://fonts.googleapis.com/css2?family=Dancing+Script&family=Noto+Sans:wght@100;400;600;800&display=swap', array(), null, 'all' ); // Google Font.
 
 	wp_register_script( 'font-awesome', 'https://kit.fontawesome.com/a91e37762c.js', array(), null, false ); // Font Awesome.
@@ -170,12 +172,11 @@ add_action( 'wp_enqueue_scripts', 'new2_scripts' );
  * Enqueue the block editor script.
  */
 function new2_enqueue_block_editor_script() {
-	wp_enqueue_script(		'new2-editor', get_template_directory_uri() . '/js/block-editor.min.js', array(	'wp-blocks', 'wp-edit-post', ), NEW2_VERSION, true
-	);
+	wp_enqueue_script('new2-editor', get_template_directory_uri() . '/js/block-editor.min.js', array(	'wp-blocks', 'wp-edit-post', ), NEW2_VERSION, true);
 	wp_register_script( 'font-awesome', 'https://kit.fontawesome.com/a91e37762c.js', array(), null, false ); // Font Awesome.
 	wp_enqueue_script( 'font-awesome' );
 	
-	wp_register_script( 'new2-js', get_template_directory_uri() . '/dist/editor.js', array( 'wp-blocks', 'wp-dom-ready', 'wp-edit-post', 'wp-i18n', 'wp-element', 'wp-editor' ) );
+	wp_enqueue_script( 'new2-js', get_template_directory_uri() . '/dist/editor.js', array( 'wp-blocks', 'wp-dom-ready', 'wp-edit-post', 'wp-i18n', 'wp-element', 'wp-editor' ), NEW2_VERSION, true );
 	wp_enqueue_style( 'typekit', 'https://use.typekit.net/tgx8twc.css', array(), null, 'all' ); // Typekit.
 	// wp_enqueue_style( 'new2-style', get_template_directory_uri() . '/style-editor.css', array(), filemtime( get_template_directory() . '/style-editor.css' ) ); // Main theme styles
 	// add_editor_style(get_template_directory_uri() . '/style-editor.css');
@@ -240,7 +241,7 @@ add_filter( 'tiny_mce_before_init', 'new2_tinymce_add_class' );
 /**
  * Functions for custom blocks.
  */
-// require get_template_directory() . '/inc/block-functions.php';
+require get_template_directory() . '/inc/block-functions.php';
 
 
 /**
@@ -256,6 +257,18 @@ function be_reusable_blocks_admin_menu() {
     add_menu_page( 'Reusable Blocks', 'Reusable Blocks', 'edit_posts', 'edit.php?post_type=wp_block', '', 'dashicons-editor-table', 22 );
 }
 add_action( 'admin_menu', 'be_reusable_blocks_admin_menu' );
+
+/**
+ * Add Page Slug as body class.
+ */
+function add_page_slug_to_body_class( $classes ) {
+    global $post;
+    if ( isset( $post ) ) {
+        $classes[] = 'page-' . $post->post_name;
+    }
+    return $classes;
+}
+add_filter( 'body_class', 'add_page_slug_to_body_class' );
 
 
 /**

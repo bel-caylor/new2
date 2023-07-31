@@ -11,6 +11,84 @@
  * `theme.json` file and is applied both to the frontend and in the block
  * editor.
 */
+
+::selection {
+    background: theme('colors.black')33;
+    color: inherit;
+    text-shadow: none;
+}
+
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-feature-settings: "liga" on;
+    -moz-font-feature-settings: "liga" on;
+    text-rendering: optimizeLegibility;
+}
+
+html {
+    font-size: 1em;
+    scroll-behavior: smooth;
+}
+
+
 body {
+    @apply bg-white text-foreground font-sans text-base leading-[var(--line-height--medium)];
+}
+
+.entry-content {
+    position: relative;
+    z-index: 0;
+}
+
+body {
+	--global-content-edge-padding: 2rem;
+    @media (max-width: theme('screens.md')) {
+        --global-content-edge-padding: 1rem;
+    }
+
+	@each $name, $size in (x-small, small, medium, large, x-large, 2-xl, 3-xl, 4-xl, 5-xl, 6-xl, 7-xl, 8-xl, 9-xl), 
+							(1.333, 1.429, 1.5, 1.555, 1.4, 1.333, 1.2, 1.111, 1, 1, 1, 1, 1) {
+		--line-height--$(name): $size;
+	}
+	/* .is-layout-constrained > *:where(h1, h2, h3, h4, h5, h6) {
+		margin-block-start: revert;
+		margin-block-end: revert;
+	} */
+
+	.wp-site-blocks > * + * {
+		margin-block-start: 0;
+	}
+
+	/* Set script headings */
+	.prose, * {
+		h1, h2, h3, h4, h5, h6 {
+			margin-block-start: unset !important;
+			@apply mt-0
+		}
+		h1 {
+			@apply font-script font-bold text-6xl pb-12
+		}
+		h2 {
+			@apply font-script text-xl text-5xl pb-8
+		}
+		h3 {
+			@apply font-serif font-extrabold text-4xl pb-4
+		}
+		h4 {
+			@apply font-serif text-2xl pb-2
+		}		
+		h5 {
+			@apply font-serif text-xl pb-2
+		}
+		h6 {
+			@apply font-serif text-lg pb-2
+		}
+	}
+
+	span {
+		@apply whitespace-nowrap
+	}
+
 	@apply bg-background text-foreground font-sans;
 }
