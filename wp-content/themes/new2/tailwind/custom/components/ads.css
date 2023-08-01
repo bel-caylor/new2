@@ -1,0 +1,11 @@
+.ad {
+    &160_300 {
+        @apply w-[160px] h-[300px] overflow-hidden
+    }
+    &768_90 {
+        @apply w-[768px] h-[90px] overflow-hidden
+    }
+    & > .kt-row-column-wrap {
+        @apply !p-0
+    }
+}

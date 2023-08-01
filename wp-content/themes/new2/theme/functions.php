@@ -15,7 +15,7 @@ if ( ! defined( 'NEW2_VERSION' ) ) {
 	 * to create your production build, the value below will be replaced in the
 	 * generated zip file with a timestamp, converted to base 36.
 	 */
-	define( 'NEW2_VERSION', '0.1.1' );
+	define( 'NEW2_VERSION', '0.1.2' );
 }
 
 if ( ! defined( 'NEW2_TYPOGRAPHY_CLASSES' ) ) {
@@ -269,6 +269,30 @@ function add_page_slug_to_body_class( $classes ) {
     return $classes;
 }
 add_filter( 'body_class', 'add_page_slug_to_body_class' );
+
+/**
+ * Add Shortcode with Reusable Block ID
+ */
+function custom_reusable_block_shortcode($atts) {
+    // Extract attributes
+    $atts = shortcode_atts(array(
+        'id' => 0, // Default ID value if not provided in the shortcode
+    ), $atts);
+
+    // Get the reusable block content by its ID
+    $block_content = '';
+
+    if ($atts['id'] > 0) {
+        $block = get_post($atts['id']);
+
+        if ($block && $block->post_type === 'wp_block') {
+            $block_content = apply_filters('the_content', $block->post_content);
+        }
+    }
+
+    return $block_content;
+}
+add_shortcode('custom_reusable_block', 'custom_reusable_block_shortcode');
 
 
 /**

@@ -9,18 +9,56 @@
  * @package new2
  */
 
+$col1_type = get_field( 'ad1_individual_or_group' );
 $img_ad1_mobile = get_field( 'col1_image_mobile' );
-$img_ad1_mobile = $img_ad1_mobile ? $img_ad1_mobile['id'] : 3213;
+// $img_ad1_mobile = $img_ad1_mobile ? $img_ad1_mobile['id'] : 3213;
+$col2_type = get_field( 'ad2_individual_or_group' );
 $img_ad2_mobile = get_field( 'col2_image_mobile' );
-$img_ad2_mobile = $img_ad2_mobile ? $img_ad2_mobile['id'] : 3213;
+// $img_ad2_mobile = $img_ad2_mobile ? $img_ad2_mobile['id'] : 3213;
 ?>
 
-<section class="ad-layout-3 flex flex-col md:grid alignfull gap-6 grid-cols-5 lg:grid-cols-6 grid-rows-2 lg:grid-rows-1 w-full">
-    <div class="grid-ad1"><?php echo adrotate_group(3) ?></div>
-    <div class="grid-ad1-mobile"><?php echo adrotate_group(2) ?></div>
+<section class="ad-layout-3 flex flex-col md:grid alignfull gap-6 grid-cols-5 lg:grid-cols-6 grid-rows-2 lg:grid-rows-1 w-full max-w-[1456px] mx-auto">
+    <div class="grid-ad1">
+        <?php 
+        $ad_id = get_field( 'col1_desktop_ad_id' );
+        if ( $col1_type == 'group') {
+            echo adrotate_group($ad_id);
+        } else {
+            echo adrotate_ad($ad_id);
+        }
+         ?>
+    </div>
+    <div class="grid-ad1-mobile">
+        <?php 
+        $ad_id = get_field( 'col1_mobile_ad_id' );
+        if ( $col1_type == 'group') {
+            echo adrotate_group($ad_id);
+        } else {
+            echo adrotate_ad($ad_id);
+        } 
+        ?>
+    </div>
     <div class="grid-cont"><InnerBlocks /></div>
-    <div class="grid-ad2"><?php echo adrotate_group(1) ?></div>
-    <div class="grid-ad2-mobile"><?php echo adrotate_group(2) ?></div>
+    <div class="grid-ad2">
+        <?php 
+        $ad_id = get_field( 'col2_desktop_ad_id' );
+        if ( $col2_type == 'group') {
+            echo adrotate_group($ad_id);
+        } else {
+            echo adrotate_ad($ad_id);
+        } 
+        ?>
+    </div>
+    <div class="grid-ad2-mobile">
+        <?php 
+        $ad_id = get_field( 'col2_mobile_ad_id' );
+        if ( $col2_type == 'group') {
+            echo adrotate_group($ad_id);
+        } else {
+            echo adrotate_ad($ad_id);
+        }
+        ?>
+    </div>
 </section>
 
 <style>
