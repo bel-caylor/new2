@@ -8,4 +8,17 @@
     & > .kt-row-column-wrap {
         @apply !p-0
     }
+    @apply h-full
+}
+.g {
+    overflow: visible;
+    height: 100%;
+}
+.g-1 {
+    height: 100% !important;
+    overflow: visible !important;
+}
+.g-dyn, .g-single, .a-single {
+    position: sticky;
+    top: 40px;
 }

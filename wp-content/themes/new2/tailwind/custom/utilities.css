@@ -11,3 +11,7 @@
     columns: 270px 4;
     column-gap: 50px
 }
+
+.wp-block-image.aligncenter {
+    margin-inline: auto;
+}

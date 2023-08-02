@@ -6,6 +6,6 @@ body {
     --global-kb-spacing-md: var(--wp--preset--spacing--40);
 
     --global-kb-gap-lg: var(--wp--preset--spacing--50);
-    --global-kb-gap-md: clamp(1.5rem, 0.3843rem + 3.3058vw, 2.5rem);
+    --global-kb-gap-md: clamp(1rem, 0.7727rem + 0.7273vw, 1.5rem);
     --global-row-gutter-md: clamp(1.5rem, 0.3843rem + 3.3058vw, 2.5rem);
 }

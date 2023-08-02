@@ -5,67 +5,86 @@
     @apply underline
 }
 .page-test {
-    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button),
+    .directory-link span.wp-block-navigation-item__label {
         @apply text-medical
     }
 }
 .page-medical {
-    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button),
+    .directory-link span.wp-block-navigation-item__label {
         @apply text-medical
     }
 }
 .page-attractions {
-    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button),
+    .directory-link span.wp-block-navigation-item__label {
         @apply text-events
     }
 }
 .page-san-antonio-vehicle {
-    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button),
+    .directory-link span.wp-block-navigation-item__label {
         @apply text-vehicle
     }
 }
 .page-pet-care {
-    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button),
+    .directory-link span.wp-block-navigation-item__label {
         @apply text-pet
     }
 }
 .page-seniors {
-    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button),
+    .directory-link span.wp-block-navigation-item__label {
         @apply text-senior
     }
 }
 .page-churches {
-    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button),
+    .directory-link span.wp-block-navigation-item__label {
         @apply text-worship
     }
 }
 .page-childcare {
-    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button),
+    .directory-link span.wp-block-navigation-item__label {
         @apply text-preschool
     }
 }
 .page-education {
-    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button),
+    .directory-link span.wp-block-navigation-item__label {
         @apply text-school
     }
 }
 .page-education {
-    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button),
+    .directory-link span.wp-block-navigation-item__label {
         @apply text-school
     }
 }
 .page-recreation {
-    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button),
+    .directory-link span.wp-block-navigation-item__label {
         @apply text-recreation
     }
 }
 .page-athletics {
-    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button),
+    .directory-link span.wp-block-navigation-item__label {
         @apply text-athletics
     }
 }
 .page-family-fun {
-    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button) {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button),
+    .directory-link span.wp-block-navigation-item__label {
         @apply text-activities
+    }
+}
+.page-utilities {
+    .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button),
+    .directory-link span.wp-block-navigation-item__label {
+        @apply text-utilities
     }
 }

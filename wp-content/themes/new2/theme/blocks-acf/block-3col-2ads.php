@@ -17,7 +17,7 @@ $img_ad2_mobile = get_field( 'col2_image_mobile' );
 // $img_ad2_mobile = $img_ad2_mobile ? $img_ad2_mobile['id'] : 3213;
 ?>
 
-<section class="ad-layout-3 flex flex-col md:grid alignfull gap-6 grid-cols-5 lg:grid-cols-6 grid-rows-2 lg:grid-rows-1 w-full max-w-[1456px] mx-auto">
+<section class="ad-layout-3 flex flex-col md:grid grid-rows-2 lg:grid-rows-1 w-full max-w-[1456px] mx-auto alignfull gap-6">
     <div class="grid-ad1">
         <?php 
         $ad_id = get_field( 'col1_desktop_ad_id' );
@@ -64,12 +64,14 @@ $img_ad2_mobile = get_field( 'col2_image_mobile' );
 <style>
     .grid-ad1 {
         grid-area: ad1;
+        width: 160px;
     }
     .grid-ad1-mobile {
         grid-area: ad1-mobile;
     }
     .grid-ad2 {
         grid-area: ad2;
+        width: 160px;
     }
     .grid-cont {
         grid-area: cont;
@@ -85,14 +87,6 @@ $img_ad2_mobile = get_field( 'col2_image_mobile' );
         object-fit: contain;
         /* opacity: 0; */
     }
-    /* .grid-ad1-mobile {
-        background-image: url(<?php echo $img_ad1_mobile['url'] ?>);
-    }
-    .grid-ad1-mobile, .grid-ad2-mobile {
-        background-attachment: fixed;
-        background-size: contain;
-        background-repeat: no-repeat;
-    } */
     @media (min-width: 768px) {
         .grid-ad1, .grid-ad2 {
             display: block;
@@ -103,27 +97,22 @@ $img_ad2_mobile = get_field( 'col2_image_mobile' );
     }
     @media (min-width: 768px) and (max-width: 1023px) {
         .ad-layout-3 {
+            grid-template-columns: minmax(300px, 1fr) 160px
+        }
+        .ad-layout-3 {
             grid-template-areas:
-                'cont cont cont cont ad1'
-                'cont cont cont cont ad2'
+            'cont ad1'
+            'cont ad2'
         }
     }
     @media (min-width: 1024px) {
         .ad-layout-3 {
+            grid-template-columns: 160px minmax(300px, 1fr) 160px
+        }
+        .ad-layout-3 {
             grid-template-areas:
-                'ad1 cont cont cont cont ad2'
+                'ad1 cont ad2'
         }
     }
-    .grid-ad1 img, .grid-ad2 img {
-        position: sticky;
-        top: 40px;
-    }
-    .g {
-        overflow: visible;
-        height: 100%;
-    }
-    .g-dyn, .g-single {
-        position: sticky;
-        top: 0;
-    }
+
 </style>
