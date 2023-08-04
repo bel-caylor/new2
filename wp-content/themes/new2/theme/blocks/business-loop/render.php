@@ -14,9 +14,6 @@ function new2_render_business_loop($attributes) {
     $businesses = new WP_Query( $args );
     // Render Business Loop
     ob_start();
-    echo '<pre>';
-    var_dump($businesses->posts);
-    echo '</pre>';
     echo '<div>';
     echo $attributes['pageType'];
     echo '<ul>';
