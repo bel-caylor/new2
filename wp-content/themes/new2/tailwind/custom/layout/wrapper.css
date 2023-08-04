@@ -13,6 +13,6 @@
     padding-block: var(--wp--preset--spacing--70);
 }
 
-.entry-content.wp-block-post-content.is-layout-flow {
+/* .entry-content.wp-block-post-content.is-layout-flow {
     padding-inline: var(--global-content-edge-padding);
-}
+} */

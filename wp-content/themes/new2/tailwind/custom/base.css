@@ -84,6 +84,9 @@ body {
 		h6 {
 			@apply font-serif text-lg pb-2
 		}
+		p {
+			@apply font-serif
+		}
 	}
 
 	span {
