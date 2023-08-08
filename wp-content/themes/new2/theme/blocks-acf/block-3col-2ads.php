@@ -17,7 +17,7 @@ $img_ad2_mobile = get_field( 'col2_image_mobile' );
 // $img_ad2_mobile = $img_ad2_mobile ? $img_ad2_mobile['id'] : 3213;
 ?>
 
-<section class="ad-layout-3 flex flex-col md:grid grid-rows-2 lg:grid-rows-1 w-full max-w-[1456px] mx-auto alignfull gap-6">
+<section class="ad-layout-3 flex flex-col md:grid grid-rows-2 lg:grid-rows-1 w-full lg:max-w-[1520px] mx-auto alignfull gap-6 md:px-[30px]">
     <div class="grid-ad1">
         <?php 
         $ad_id = get_field( 'col1_desktop_ad_id' );
@@ -38,7 +38,7 @@ $img_ad2_mobile = get_field( 'col2_image_mobile' );
         } 
         ?>
     </div>
-    <div class="grid-cont"><InnerBlocks /></div>
+    <div class="grid-cont px-4 md:px-0"><InnerBlocks /></div>
     <div class="grid-ad2">
         <?php 
         $ad_id = get_field( 'col2_desktop_ad_id' );
@@ -64,14 +64,14 @@ $img_ad2_mobile = get_field( 'col2_image_mobile' );
 <style>
     .grid-ad1 {
         grid-area: ad1;
-        width: 160px;
+        width: 200px;
     }
     .grid-ad1-mobile {
         grid-area: ad1-mobile;
     }
     .grid-ad2 {
         grid-area: ad2;
-        width: 160px;
+        width: 200px;
     }
     .grid-cont {
         grid-area: cont;
@@ -97,7 +97,7 @@ $img_ad2_mobile = get_field( 'col2_image_mobile' );
     }
     @media (min-width: 768px) and (max-width: 1023px) {
         .ad-layout-3 {
-            grid-template-columns: minmax(300px, 1fr) 160px
+            grid-template-columns: minmax(300px, 1fr) 200px
         }
         .ad-layout-3 {
             grid-template-areas:
@@ -107,7 +107,7 @@ $img_ad2_mobile = get_field( 'col2_image_mobile' );
     }
     @media (min-width: 1024px) {
         .ad-layout-3 {
-            grid-template-columns: 160px minmax(300px, 1fr) 160px
+            grid-template-columns: 200px minmax(300px, 1fr) 200px
         }
         .ad-layout-3 {
             grid-template-areas:

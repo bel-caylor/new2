@@ -54,7 +54,7 @@ function new2_render_church_title_link($attributes) {
     // var_dump($denom);
     // echo '</pre>';
 	echo '<div class="inline align-middle">';
-	echo '	<h3 class="text-lg inline-block font-sans pr-1 pb-0">';
+	echo '	<h3 class="text-lg inline-block font-serif pr-1 pb-0">';
     echo '	<a href="http://' . $link . '"  class="denom-' . $denom_code . '" target="_blank">' . $title . '</a></h3>';
 	echo '	<span class="font-serif inline text-xs whitespace-nowrap">' . $denom . '</span>';
 	echo '</div>';

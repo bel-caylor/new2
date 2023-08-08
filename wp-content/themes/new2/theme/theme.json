@@ -105,7 +105,7 @@
                 },
                 {
                     "name": "2rem clamp 0.75rem",
-                    "size": "clamp(1.5rem, 0.9421rem + 1.6529vw, 2rem)",
+                    "size": "clamp(1.5rem, 0.4286rem + 5.3571vw, 3rem)",
                     "slug": "40"
                 },
                 {

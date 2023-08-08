@@ -15,7 +15,6 @@ span.wp-block-navigation-item__label {
 .wp-block-post-content a:not(a.wp-block-button__link.wp-element-button):hover {
     @apply underline
 }
-.wp-block-navigation-item__content:hover,
 a.wp-block-button__link.wp-element-button:hover {
     text-underline-offset: 7px;
     @apply !underline
