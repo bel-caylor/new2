@@ -16,4 +16,11 @@ body {
     --global-row-gutter-lg: var(--wp--preset--spacing--40);
     --global-row-gutter-md: var(--wp--preset--spacing--32);
     --global-row-gutter-sm: var(--wp--preset--spacing--16);
+
+    --global-kb-font-size-sm: var(--wp--preset--font-size--x-small);
+    --global-kb-font-size-md: var(--wp--preset--font-size--small);
+    --global-kb-font-size-lg: var(--wp--preset--font-size--medium);
+    --global-kb-font-size-xl: var(--wp--preset--font-size--large);
+    --global-kb-font-size-xxl: var(--wp--preset--font-size--x-large);
+    --global-kb-font-size-xxxl: var(--wp--preset--font-size--2-xl);
 }
