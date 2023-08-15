@@ -1,14 +1,19 @@
 body {
     --global-kb-spacing-5xl: var(--wp--preset--spacing--80);
-    --global-kb-spacing-4xl: var(--wp--preset--spacing--70);
-    --global-kb-spacing-3xl: var(--wp--preset--spacing--60);
-    --global-kb-spacing-lg: var(--wp--preset--spacing--50);
-    --global-kb-spacing-md: var(--wp--preset--spacing--40);
+    --global-kb-spacing-4xl: var(--wp--preset--spacing--64);
+    --global-kb-spacing-3xl: var(--wp--preset--spacing--48);
+    --global-kb-spacing-xxl: var(--wp--preset--spacing--40);
+    --global-kb-spacing-xl: var(--wp--preset--spacing--32);
+    --global-kb-spacing-lg: var(--wp--preset--spacing--24);
+    --global-kb-spacing-md: var(--wp--preset--spacing--20);
+    --global-kb-spacing-sm: var(--wp--preset--spacing--16);
+    --global-kb-spacing-xs: var(--wp--preset--spacing--12);
+    --global-kb-spacing-xxs: var(--wp--preset--spacing--8);
 
-    --global-kb-gap-lg: var(--wp--preset--spacing--50);
-    --global-kb-gap-md: clamp(1rem, 0.7727rem + 0.7273vw, 1.5rem);
-    --global-row-gutter-md: clamp(1.5rem, 0.3843rem + 3.3058vw, 2.5rem);
-
-    
-    --global-kb-font-size-md: clamp(0.7rem, 0.3071rem + 1.9643vw, 1.25rem);
+    --global-kb-gap-lg: var(--wp--preset--spacing--112);
+    --global-kb-gap-md: var(--wp--preset--spacing--40);
+    --global-kb-gap-xs: var(--wp--preset--spacing--16);
+    --global-row-gutter-lg: var(--wp--preset--spacing--40);
+    --global-row-gutter-md: var(--wp--preset--spacing--32);
+    --global-row-gutter-sm: var(--wp--preset--spacing--16);
 }

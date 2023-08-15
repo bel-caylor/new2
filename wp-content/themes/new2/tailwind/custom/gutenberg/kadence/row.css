@@ -44,12 +44,12 @@
         @apply wrapper;
     }
 }
-.wp-block[data-align="wide"] {
+.wp-block.alignwide {
     & > .innerblocks-wrap {
         @apply wrapper--wide;
     }
 }
-.wp-block[data-align="full"] {
+.wp-block.alignfull {
     & > .innerblocks-wrap {
         @apply max-w-full px-0;
     }

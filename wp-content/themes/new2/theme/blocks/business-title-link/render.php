@@ -5,6 +5,6 @@ function new2_render_business_title_link($attributes) {
 	// $title = '<h3 class="font-sans">' . $title . '</h3>';
 	$link = get_field('website', $id);
 
-    return '<a href="http://' . $link . '" class="font-serif text-lg" target="_blank">' . $title . '</a>';
+    return '<a href="http://' . $link . '" class="font-serif text-xl" target="_blank">' . $title . '</a>';
     // return $link;
 }

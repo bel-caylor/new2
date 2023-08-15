@@ -20,7 +20,9 @@ module.exports = {
 		'./theme/theme.json',
 	],
 	safelist: [
-
+		'sticky',
+		'top-0',
+		'top-20'
     ],
 	theme: {
 		// Extend the default Tailwind theme.

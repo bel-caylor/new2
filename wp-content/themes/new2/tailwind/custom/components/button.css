@@ -33,3 +33,14 @@
         @apply underline text-inherit
     }
 }
+.wp-block-buttons {
+    .wp-block-button {
+        a.wp-block-button__link {
+            &:hover {
+                @apply bg-green text-foreground !no-underline
+            }
+            border-radius: 0 15px 15px 15px;
+            @apply font-serif font-bold text-xl bg-blue
+        }
+    }
+}

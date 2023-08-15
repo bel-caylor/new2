@@ -91,42 +91,62 @@
                 {
                     "name": "0.25rem",
                     "size": "0.25rem",
-                    "slug": "10"
+                    "slug": "4"
                 },
                 {
                     "name": "0.5rem",
-                    "size": "0.5rem",
-                    "slug": "20"
+                    "size": "clamp(0.25rem, 0.1383rem + 0.4255vw, 0.5rem)",
+                    "slug": "8"
                 },
                 {
                     "name": "0.75rem",
-                    "size": "0.75rem",
-                    "slug": "30"
+                    "size": "clamp(0.5rem, 0.3883rem + 0.4255vw, 0.75rem)",
+                    "slug": "12"
                 },
                 {
-                    "name": "2rem clamp 0.75rem",
-                    "size": "clamp(1.5rem, 0.4286rem + 5.3571vw, 3rem)",
+                    "name": "1rem",
+                    "size": "clamp(0.75rem, 0.6383rem + 0.4255vw, 1rem)",
+                    "slug": "16"
+                },
+				{
+                    "name": "1.25rem",
+                    "size": "clamp(1rem, 0.8883rem + 0.4255vw, 1.25rem)",
+                    "slug": "20"
+                },
+				{
+					"name": "1.5rem",
+					"size": "clamp(1.25rem, 1.1383rem + 0.4255vw, 1.5rem)",
+					"slug": "24"
+				},				
+                {
+                    "name": "2rem",
+                    "size": "clamp(1.5rem, 1.2766rem + 0.8511vw, 2rem)",
+                    "slug": "32"
+                },
+                {
+                    "name": "2.5rem",
+                    "size": "clamp(2rem, 1.7766rem + 0.8511vw, 2.5rem)",
                     "slug": "40"
                 },
                 {
-                    "name": "5rem clamp 3rem",
-                    "size": "clamp(3rem, 2.0909rem + 2.9091vw, 5rem)",
-                    "slug": "50"
+                    "name": "3rem",
+                    "size": "clamp(2.5rem, 2.2766rem + 0.8511vw, 3rem)",
+                    "slug": "48"
                 },
                 {
-                    "name": "6rem",
-                    "size": "6rem",
-                    "slug": "60"
+                    "name": "4rem",
+                    "size": "clamp(3rem, 2.5532rem + 1.7021vw, 4rem)",
+                    "slug": "64"
                 },
                 {
-                    "name": "8rem clamp 1.5rem",
-                    "size": "clamp(1.5rem, -0.8136rem + 8.8136vw, 8rem)",
-                    "slug": "70"
-                },
-                {
-                    "name": "14rem",
-                    "size": "14rem",
+                    "name": "5rem",
+                    "size": "clamp(4rem, 3.5532rem + 1.7021vw, 5rem)",
                     "slug": "80"
+                },
+                {
+                    "name": "5rem",
+                    "size": "clamp(5rem, 4.0909rem + 2.9091vw, 7rem)",
+                    "slug": "112"
                 }
             ],
 			"units": [
@@ -156,52 +176,52 @@
 			"fontSizes": [
 				{
 					"slug": "x-small",
-					"size": "clamp(0.5rem, 0.43rem + 0.32vw, 0.75rem)",
+					"size": "clamp(0.55rem, 0.4606rem + 0.3404vw, 0.75rem)",
 					"name": "Extra Small"
 				},
 				{
 					"slug": "small",
-					"size": "clamp(0.75rem, 0.715rem + 0.16vw, 0.875rem)",
+					"size": "clamp(0.75rem, 0.6941rem + 0.2128vw, 0.875rem)",
 					"name": "Small"
 				},
 				{
 					"slug": "medium",
-					"size": "clamp(0.875rem, 0.84rem + 0.16vw, 1rem)",
+					"size": "clamp(0.875rem, 0.8191rem + 0.2128vw, 1rem)",
 					"name": "Medium"
 				},
 				{
 					"slug": "large",
-					"size": "clamp(1rem, 0.9432rem + 0.1818vw, 1.125rem)",
+					"size": "clamp(1rem, 0.9441rem + 0.2128vw, 1.125rem)",
 					"name": "Large"
 				},
 				{
 					"slug": "x-large",
-					"size": "clamp(1.125rem, 1.0682rem + 0.1818vw, 1.25rem)",
+					"size": "clamp(1.125rem, 1.0691rem + 0.2128vw, 1.25rem)",
 					"name": "Extra Large"
 				},
 				{
 					"slug": "2-xl",
-					"size": "clamp(1.25rem, 1.1364rem + 0.3636vw, 1.5rem)",
+					"size": "clamp(1.25rem, 1.1383rem + 0.4255vw, 1.5rem)",
 					"name": "2xl"
 				},
 				{
 					"slug": "3-xl",
-					"size": "clamp(1.5rem, 1.3295rem + 0.5455vw, 1.875rem)",
+					"size": "clamp(1.5rem, 1.3324rem + 0.6383vw, 1.875rem)",
 					"name": "3xl"
 				},
 				{
 					"slug": "4-xl",
-					"size": "clamp(2rem, 1.8864rem + 0.3636vw, 2.25rem)",
+					"size": "clamp(1.875rem, 1.7074rem + 0.6383vw, 2.25rem)",
 					"name": "4xl"
 				},
 				{
 					"slug": "5-xl",
-					"size": "clamp(3rem, 2.5455rem + 1.4545vw, 4rem)",
+					"size": "clamp(2.25rem, 1.9149rem + 1.2766vw, 3rem)",
 					"name": "5xl"
 				},
 				{
 					"slug": "6-xl",
-					"size": "clamp(3rem, 2.3182rem + 2.1818vw, 4.5rem)",
+					"size": "clamp(3rem, 2.6649rem + 1.2766vw, 3.75rem)",
 					"name": "6xl"
 				}
 			]

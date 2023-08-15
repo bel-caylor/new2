@@ -236,6 +236,30 @@ function new2_acf_register_blocks() {
 				]
 			)
 		);
+		acf_register_block_type(
+			array(
+				'name'            => 'Ad Group',
+				'title'           => __( 'Ad Group' ),
+				'description'     => __( 'Desktop/Mobile Ad', 'new2' ),
+				'render_template' => '/blocks-acf/block-ad-group.php',
+				'category'        => 'new2',
+				'icon'            => array(
+					'background' => '#153F97',
+					'foreground' => '#FFFFFF',
+					'src'        => 'slides',
+				),
+				'keywords'        => array(
+					'row',
+					'ads',
+				),
+				'supports'		=> [
+					'align'			=> false,
+					'anchor'		=> true,
+					'customClassName'	=> true,
+					'jsx' 			=> true,
+				]
+			)
+		);
 	}
 }
 add_action( 'acf/init', 'new2_acf_register_blocks' );
