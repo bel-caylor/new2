@@ -83,8 +83,9 @@ $img_ad2_mobile = get_field( 'col2_image_mobile' );
         max-height: 70vh;
     }
     .grid-ad1-mobile img, .grid-ad2-mobile img {
-        max-height:  50vh;
+        max-height:  100%;
         object-fit: contain;
+        margin-inline: auto;
         /* opacity: 0; */
     }
     @media (min-width: 768px) {
