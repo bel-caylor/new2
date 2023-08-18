@@ -13,19 +13,10 @@
     }
     &768_180 {
         & > .kt-row-column-wrap {
-            /* grid-template-rows: calc(100% * 768 / 180); */
             aspect-ratio: 768 / 160;
             @apply w-full
         }
-        /* .innerblocks-wrap.block-editor-block-list__layout {
-            height: 180px;
-        }
-        @apply max-w-[768px] h-[180px] */
     }
-    & > .kt-row-column-wrap {
-        @apply !p-0
-    }
-    /* @apply h-full */
 }
 .entry-content .ad {
     @apply overflow-hidden

@@ -79,9 +79,9 @@ $img_ad2_mobile = get_field( 'col2_image_mobile' );
     .grid-ad1, .grid-ad2 {
         display: none;
     }
-    .grid-ad1-mobile, .grid-ad2-mobile {
+    /* .grid-ad1-mobile, .grid-ad2-mobile {
         max-height: 70vh;
-    }
+    } */
     .grid-ad1-mobile img, .grid-ad2-mobile img {
         max-height:  100%;
         object-fit: contain;
