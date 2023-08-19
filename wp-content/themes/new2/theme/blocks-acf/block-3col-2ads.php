@@ -17,7 +17,7 @@ $img_ad2_mobile = get_field( 'col2_image_mobile' );
 // $img_ad2_mobile = $img_ad2_mobile ? $img_ad2_mobile['id'] : 3213;
 ?>
 
-<section class="ad-layout-3 flex flex-col md:grid grid-rows-2 lg:grid-rows-1 w-full lg:max-w-[1520px] mx-auto alignfull gap-6 md:px-[30px]">
+<section class="ad-layout-3 flex flex-col md:grid grid-rows-2 lg:grid-rows-1 w-full lg:max-w-[1600px] mx-auto alignwide gap-6 md:px-[30px]">
     <div class="grid-ad1">
         <?php 
         $ad_id = get_field( 'col1_desktop_ad_id' );

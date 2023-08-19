@@ -17,10 +17,18 @@ body {
     --global-row-gutter-md: var(--wp--preset--spacing--32);
     --global-row-gutter-sm: var(--wp--preset--spacing--16);
 
-    --global-kb-font-size-sm: clamp(0.65rem, 0.3569rem + 1.3397vw, 1rem);
-    --global-kb-font-size-md: clamp(0.75rem, 0.3313rem + 1.9139vw, 1.25rem);
-    --global-kb-font-size-lg: var(--wp--preset--font-size--medium);
-    --global-kb-font-size-xl: var(--wp--preset--font-size--large);
-    --global-kb-font-size-xxl: var(--wp--preset--font-size--x-large);
-    --global-kb-font-size-xxxl: var(--wp--preset--font-size--2-xl);
+    --global-kb-font-size-sm: clamp(0.5rem, 0.2591rem + 1.2848vw, 0.875rem);
+    --global-kb-font-size-md: clamp(0.75rem, 0.5894rem + 0.8565vw, 1rem);
+    --global-kb-font-size-lg: clamp(0.875rem, 0.6341rem + 1.2848vw, 1.25rem);
+    --global-kb-font-size-xl: clamp(1rem, 0.6788rem + 1.7131vw, 1.5rem);
+    --global-kb-font-size-xxl: clamp(1.25rem, 0.7682rem + 2.5696vw, 2rem);
+    --global-kb-font-size-xxxl: clamp(1.5rem, 0.8576rem + 3.4261vw, 2.5rem);
+    @media (min-width: 768px) {
+        --global-kb-font-size-sm: var(--wp--preset--font-size--x-small);
+        --global-kb-font-size-md: var(--wp--preset--font-size--small);
+        --global-kb-font-size-lg: var(--wp--preset--font-size--medium);
+        --global-kb-font-size-xl: var(--wp--preset--font-size--large);
+        --global-kb-font-size-xxl: var(--wp--preset--font-size--x-large);
+        --global-kb-font-size-xxxl: var(--wp--preset--font-size--2-xl);
+    }
 }

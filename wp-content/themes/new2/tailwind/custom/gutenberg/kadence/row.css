@@ -33,9 +33,10 @@
     &.alignfull {
         & > .kt-row-column-wrap {
             & > .wp-block-kadence-column {
-                padding-inline: var(--global-content-edge-padding)
+                /* padding-inline: var(--global-content-edge-padding) */
             }
-            @apply px-0;
+            padding-inline: var(--global-content-edge-padding)
+            /* @apply px-0; */
         }
     }
 }
