@@ -9,9 +9,13 @@
 
  .directory-columns ul {
     columns: 270px 4;
-    column-gap: 50px
+    column-gap: 10px
 }
 
 .wp-block-image.aligncenter {
     margin-inline: auto;
+}
+
+.directory-article img {
+    border-radius: 24px 24px 0 0;
 }

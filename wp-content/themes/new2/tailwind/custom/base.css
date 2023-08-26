@@ -88,9 +88,45 @@ body {
 			@apply font-serif
 		}
 	}
+	ol, ul {
+		padding-inline: 30px;
+	}
+	ol {
+		list-style-type: decimal;
+	}
+	ul {
+		list-style-type: disc;
+	}
+	li {
+		@apply pb-2 text-lg font-serif
+	}
 
 	span {
 		@apply whitespace-nowrap
+	}
+	blockquote {
+		p::before,
+		p::after {
+			content: '"';
+			display: inline;
+			line-height: 0.5 !important;
+			@apply text-5xl font-script absolute;
+		}
+		p::before {
+			margin-left: -23px;
+			top: 11px;
+		}
+		p::after {
+			bottom: -5px;
+			margin-left: -2px;
+		}
+		p {
+			@apply text-lg relative italic
+		}
+		cite {
+			@apply font-script float-right text-2xl
+		}
+		@apply py-4 px-6
 	}
 
 	@apply bg-background text-foreground font-sans;

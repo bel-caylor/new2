@@ -1,19 +1,25 @@
 .ad {
     &160_300 {
-        .wp-block-kadence-column .kt-inside-inner-col {
-            height: 300px;
+        > .kt-row-column-wrap >.wp-block-kadence-column > .kt-inside-inner-col {
+            @media (min-width: 768px) {
+                height: 300px;
+            }
         }
         @apply w-[160px] h-[300px]
     }
     &200_300 {
-        .wp-block-kadence-column .kt-inside-inner-col {
-            height: 300px;
+        > .kt-row-column-wrap >.wp-block-kadence-column > .kt-inside-inner-col {
+            @media (min-width: 768px) {
+                height: 300px;
+            }
         }
         @apply w-[200px] h-[300px]
     }
     &200_350 {
-        .wp-block-kadence-column .kt-inside-inner-col {
-            height: 350px;
+        > .kt-row-column-wrap >.wp-block-kadence-column > .kt-inside-inner-col {
+            @media (min-width: 768px) {
+                height: 350px;
+            }
         }
         @apply w-[200px] h-[350px]
     }
@@ -33,17 +39,33 @@
     }
     &-middle {
         > .kt-row-column-wrap {
-            grid-template-columns: minmax(0, 1fr) 200px minmax(0, 1fr) !important;
+            @media (min-width: 768px) {
+                grid-template-columns: minmax(0, 1fr) 200px minmax(0, 1fr) !important;
+            }
         }
     }
     &-left {
         > .kt-row-column-wrap {
-            grid-template-columns: 200px minmax(0, 1fr) minmax(0, 1fr) !important;
+            @media (min-width: 768px) {
+                grid-template-columns: 200px minmax(0, 1fr) minmax(0, 1fr) !important;
+            }
         }
     }
     &-right {
         > .kt-row-column-wrap {
-            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 200px !important;
+            @media (min-width: 768px) {
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 200px !important;
+            }
+        }
+    }
+    &-col2-left {
+        > .kt-row-column-wrap {
+            grid-template-columns: 200px minmax(0, 1fr) !important;        
+        }
+    }
+    &-col2-right {
+        > .kt-row-column-wrap {
+            grid-template-columns: minmax(0, 1fr) 200px !important;        
         }
     }
 }
