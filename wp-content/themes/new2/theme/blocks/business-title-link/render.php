@@ -5,6 +5,11 @@ function new2_render_business_title_link($attributes) {
 	// $title = '<h3 class="font-sans">' . $title . '</h3>';
 	$link = get_field('website', $id);
 
-    return '<a href="http://' . $link . '" class="font-serif text-xl" target="_blank">' . $title . '</a>';
+	if (strncmp($link, 'http', 4) !== 0) {
+		// The string doesn't start with 'http'
+		$link = 'http://' . $link;
+	}
+
+    return '<a href="' . $link . '" class="font-serif text-xl" target="_blank">' . $title . '</a>';
     // return $link;
 }

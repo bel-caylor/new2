@@ -6,6 +6,10 @@ function new2_render_church_title_link($attributes) {
 		$title = strstr($title, "-", true);
 	}
 	$link = get_field('website', $id);
+	if (strncmp($link, 'http', 4) !== 0) {
+		// The string doesn't start with 'http'
+		$link = 'http://' . $link;
+	}
 	$terms = wp_get_post_terms($id, 'sub_cat');
 	$denom_code = $terms[0]->name;
 	switch ($denom_code) {
@@ -55,7 +59,7 @@ function new2_render_church_title_link($attributes) {
     // echo '</pre>';
 	echo '<div class="inline align-middle">';
 	echo '	<h3 class="text-lg inline-block font-normal font-serif pr-1 pb-0">';
-    echo '	<a href="http://' . $link . '"  class="denom-' . $denom_code . '" target="_blank">' . $title . '</a></h3>';
+    echo '	<a href="' . $link . '"  class="denom-' . $denom_code . '" target="_blank">' . $title . '</a></h3>';
 	echo '	<span class="font-serif inline text-xs whitespace-nowrap">' . $denom . '</span>';
 	echo '</div>';
     return ob_get_clean();
