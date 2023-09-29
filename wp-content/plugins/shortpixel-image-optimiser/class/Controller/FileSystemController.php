@@ -251,18 +251,24 @@ Class FileSystemController extends \ShortPixel\Controller
 
     /** This function returns the Absolute Path of the WordPress installation where the **CONTENT** directory is located.
     * Normally this would be the same as ABSPATH, but there are installations out there with -cough- alternative approaches
+		* The Abspath is uses to replace against the domain URL ( home_url ).
     * @returns DirectoryModel  Either the ABSPATH or where the WP_CONTENT_DIR is located
     */
     public function getWPAbsPath()
     {
-        $wpContentAbs = str_replace( 'wp-content', '', WP_CONTENT_DIR);
+				$wpContentPos = strpos(WP_CONTENT_DIR, 'wp-content');
+        $wpContentAbs = substr(WP_CONTENT_DIR, 0, $wpContentPos); //str_replace( 'wp-content', '', WP_CONTENT_DIR);
         if (ABSPATH == $wpContentAbs)
           $abspath = ABSPATH;
         else
           $abspath = $wpContentAbs;
 
-				if (defined('UPLOADS')) // if this is set, lead.
-					$abspath = trailingslashit(ABSPATH) . UPLOADS;
+				// If constants UPLOADS is defined -AND- there is a blogs.dir in it, add it like this. UPLOAD constant alone is not enough since it can cause ugly doublures in the path if there is another style config.
+				if (defined('UPLOADS') && strpos(UPLOADS, 'blogs.dir') !== false) // if this is set, lead.
+        {
+          $abspath = trailingslashit(ABSPATH) . UPLOADS;
+        }
+
 
 //	$abspath = wp_normalize_path($abspath);
         $abspath = apply_filters('shortpixel/filesystem/abspath', $abspath );
@@ -432,8 +438,10 @@ Class FileSystemController extends \ShortPixel\Controller
     }
 
 		// @todo Deprecate this, move some functs perhaps to DownloadHelper.
+    // @todo Should not be in use anymore. Remove on next update / annoyance
     public function downloadFile($url, $destinationPath)
     {
+      Log::addWarn('Deprecated DownloadFile function invoked (FileSystemController)');
       $downloadTimeout = max(SHORTPIXEL_MAX_EXECUTION_TIME - 10, 15);
       $fs = \wpSPIO()->filesystem(); // @todo change this all to $this
     //  $fs = \wpSPIO()->fileSystem();

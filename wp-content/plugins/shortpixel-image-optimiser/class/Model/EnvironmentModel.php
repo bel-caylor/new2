@@ -182,10 +182,9 @@ class EnvironmentModel extends \ShortPixel\Model
   private function setWordPress()
   {
     $this->is_multisite = (function_exists("is_multisite") && is_multisite()) ? true : false;
-    $this->is_mainsite = is_main_site();
+    $this->is_mainsite = (function_exists('is_main_site') && true === is_main_site()) ? true : false; 
 
     $this->determineFrontBack();
-
 
     if (wp_doing_ajax())
     {
@@ -222,6 +221,7 @@ class EnvironmentModel extends \ShortPixel\Model
         'edit-post', // edit post
         'new-post',  // new post
         'edit-page', // all pages
+        'media', // add new item screen
     );
     $use_screens = apply_filters('shortpixel/init/optimize_on_screens', $use_screens);
 

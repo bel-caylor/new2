@@ -18,14 +18,13 @@ class ShortPixelScreenBase
 	// Function for subclasses to add more init. Seperated because of screens that need to call Process functions when starting.
 	Init()
 	{
-
 	}
 
 //	var message = {status: false, http_status: response.status, http_text: text, status_text: response.statusText };
 	HandleError(data)
 	{
-		//if (this.processor.debugIsActive == 'false')
-		//	return; // stay silent when debug is not active.
+		if (this.processor.debugIsActive == 'false')
+			return; // stay silent when debug is not active.
 
 		var text = String(data.http_text);
 		var title = this.strings.fatalError;
@@ -41,8 +40,17 @@ class ShortPixelScreenBase
 
 	}
 
+	// No actions at the base.
+	HandleItemError(result)
+	{
+
+	}
+
 	HandleErrorStop()
 	{
+		if (this.processor.debugIsActive == 'false')
+			return; // stay silent when debug is not active.
+			
 		  var title = this.strings.fatalErrorStop;
 			var text = this.strings.fatalErrorStopText;
 
@@ -104,10 +112,6 @@ class ShortPixelScreenBase
 		return null;
 	}
 
-	Init()
-	{
-
-	}
 	HandleImage(result, type)
 	{
 			return true;
@@ -130,5 +134,7 @@ class ShortPixelScreenBase
 		 str = str.replace(',','', str).replace('.','',str);
 		 return parseInt(str);
 	}
+
+
 
 }

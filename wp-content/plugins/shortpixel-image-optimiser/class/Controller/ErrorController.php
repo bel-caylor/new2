@@ -37,10 +37,9 @@ class ErrorController
 					  return;
 				 }
 				 else {
-					 	echo json_encode();exit();
 					  ob_clean(); // try to scrub other stuff
 				 		echo '<PRE>' . $error['message'] .  ' in ' . $error['file']  . ' on line ' . $error['line'] . '<br> Last Item ID: ' . OptimizeController::getLastId() . '</PRE>';
-						exit(' <small><br> -Shortpixel Error Handler- </small>');
+						exit(' <small><br> -ShortPixel Error Handler- </small>');
 				 }
 			}
 }
