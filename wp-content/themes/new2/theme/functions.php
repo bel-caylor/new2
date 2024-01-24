@@ -177,7 +177,8 @@ function new2_enqueue_block_editor_script() {
 	wp_enqueue_script( 'font-awesome' );
 	
 	wp_enqueue_script( 'new2-js', get_template_directory_uri() . '/dist/editor.js', array( 'wp-blocks', 'wp-dom-ready', 'wp-edit-post', 'wp-i18n', 'wp-element', 'wp-editor' ), NEW2_VERSION, true );
-	wp_enqueue_style( 'typekit', 'https://use.typekit.net/tgx8twc.css', array(), null, 'all' ); // Typekit.
+	wp_enqueue_style( 'open-sans', 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;800&display=swap', array(), null, 'all' ); // Google Font.
+	wp_enqueue_style( 'dancing-script', 'https://fonts.googleapis.com/css2?family=Dancing+Script&family=Noto+Sans:wght@100;400;600;800&display=swap', array(), null, 'all' ); // Google Font.
 	// wp_enqueue_style( 'new2-style', get_template_directory_uri() . '/style-editor.css', array(), filemtime( get_template_directory() . '/style-editor.css' ) ); // Main theme styles
 	// add_editor_style(get_template_directory_uri() . '/style-editor.css');
 

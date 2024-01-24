@@ -15,18 +15,83 @@
 					"name": "Foreground"
 				},
 				{
+					"slug": "blue-lt",
+					"color": "#F0F8FC",
+					"name": "Blue Light"
+				},
+				{
 					"slug": "blue",
-					"color": "#007cba",
+					"color": "#268ebf",
 					"name": "Blue"
 				},
 				{
+					"slug": "blue-dk",
+					"color": "#216a91",
+					"name": "Blue Dark"
+				},
+				{
 					"slug": "green",
-					"color": "#6eaa3e",
+					"color": "#eff6ea",
 					"name": "Green"
 				},
 				{
+					"slug": "green",
+					"color": "#67b445",
+					"name": "Green"
+				},
+				{
+					"slug": "green-dk",
+					"color": "#45823d",
+					"name": "Green Dark"
+				},
+				{
+					"slug": "teal",
+					"color": "#00a6a6",
+					"name": "Teal"
+				},
+				{
+					"slug": "teal-dk",
+					"color": "#007d7c",
+					"name": "Teal Dark"
+				},
+				{
+					"slug": "orange",
+					"color": "#f5822d",
+					"name": "Orange"
+				},
+				{
+					"slug": "orange-dk",
+					"color": "#b46322",
+					"name": "Orange Dark"
+				},
+				{
+					"slug": "purple-lt",
+					"color": "#FCF0FC",
+					"name": "Purple Light"
+				},
+				{
+					"slug": "purple",
+					"color": "#c657a0",
+					"name": "Purple"
+				},
+				{
+					"slug": "purple-dk",
+					"color": "#9e4482",
+					"name": "Purple Dark"
+				},
+				{
+					"slug": "yellow",
+					"color": "#fbad18",
+					"name": "Yellow"
+				},
+				{
+					"slug": "yellow-lt",
+					"color": "#FCF8E0",
+					"name": "Yellow Light"
+				},
+				{
 					"slug": "events",
-					"color": "#02a4a4",
+					"color": "#00a6a6",
 					"name": "Events"
 				},
 				{
@@ -36,12 +101,12 @@
 				},
 				{
 					"slug": "utilities",
-					"color": "#208bc5",
+					"color": "#268ebf",
 					"name": "Utilities"
 				},
 				{
 					"slug": "pet",
-					"color": "#e57b31",
+					"color": "#f5822d",
 					"name": "Pet"
 				},
 				{
@@ -61,7 +126,7 @@
 				},
 				{
 					"slug": "preschool",
-					"color": "#68b142",
+					"color": "#67b445",
 					"name": "Preschool"
 				},
 				{
@@ -81,7 +146,7 @@
 				},
 				{
 					"slug": "activities",
-					"color": "#c3569e",
+					"color": "#c657a0",
 					"name": "Activities"
 				}
 			]

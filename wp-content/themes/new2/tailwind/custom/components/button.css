@@ -2,26 +2,6 @@
     @apply rounded-none
 }
 
-.header {
-    .wp-block-navigation-item__content,
-    a.wp-block-button__link.wp-element-button {
-        border-radius: 0 15px 15px 15px;
-        @apply font-bold tracking-widest px-5 py-1 md:py-2 lg:py-3;
-        @apply font-serif font-semibold text-lg tracking-wide bg-blue text-background;
-    }
-    span.wp-block-navigation-item__label {
-        @apply text-background
-    }
-    .wp-block-navigation-item__content:hover,
-    a.wp-block-button__link.wp-element-button:hover {
-        @apply bg-green text-foreground
-    }
-    .wp-block-navigation-item__content:hover .wp-block-navigation-item__label,
-    .wp-block-button:hover {
-        @apply text-background
-    }
-}
-
 .directory-link {
     .wp-block-navigation-item__content,
     a.wp-block-button__link.wp-element-button {
