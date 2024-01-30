@@ -5,7 +5,7 @@
  * @package KadenceWP\KadenceBlocks\lucatume\DI52\Builders
  *
  * @license GPL-3.0
- * Modified by kadencewp on 22-February-2023 using Strauss.
+ * Modified by kadencewp on 23-January-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -179,15 +179,19 @@ class Parameter
      */
     public function getDefaultValueOrFail()
     {
-        if (!$this->isOptional) {
-            throw new ContainerException(
-                sprintf(
-                    'Parameter $%s is not optional and is not type-hinted: auto-wiring is not magic.',
-                    $this->name
-                )
-            );
+        if ($this->isOptional) {
+            return $this->defaultValue;
         }
-        return $this->defaultValue;
+
+        if (!$this->isClass) {
+            $format = 'Parameter $%s is not optional and is not type-hinted: auto-wiring is not magic.';
+            $message = sprintf($format, $this->name);
+        } else {
+            $format = 'Parameter $%s is not optional and its type (%s) cannot be resolved to a concrete class.';
+            $message = sprintf($format, $this->name, $this->getClass());
+        }
+
+        throw new ContainerException($message);
     }
 
     /**
@@ -206,7 +210,7 @@ class Parameter
         }
 
         try {
-            if (function_exists('enum_exists') && enum_exists($this->type)) {
+            if (function_exists('enum_exists') && enum_exists((string) $this->type)) {
                 return false;
             }
         } catch (ParseError $e) {

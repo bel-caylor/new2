@@ -404,7 +404,7 @@ if ( ! class_exists( 'Kadence_Plugin_API_Manager' ) ) {
 						<?php echo __( 'Kadence Plugin Activation.', 'kadence-plugin-api-manager' ); ?>
 					</h1>
 					<h5>
-					<?php printf( __( 'Activating your license allows for plugin updates. If you need your api key you will find it by logging in to your %s Kadence WP account%s.', 'kadence-plugin-api-manager' ), '<a href="https://www.kadencewp.com/my-account/" target="_blank">', '</a>' );
+					<?php printf( __( 'Activating your license allows for plugin updates. If you need your API license key you will find it by logging in to your %s Kadence WP account%s.', 'kadence-plugin-api-manager' ), '<a href="https://www.kadencewp.com/my-account/" target="_blank">', '</a>' );
 					?>
 					</h5>
 				</div>
@@ -1186,13 +1186,16 @@ if ( ! class_exists( 'Kadence_Plugin_API_Manager' ) ) {
 				// Lets try api address for some server types.
 				$new_target_url = esc_url_raw( add_query_arg( $args, $this->fallback_api_url ) );
 
-				$request = wp_safe_remote_get( $new_target_url, array( 'timeout' => 45, 'sslverify' => false ) );
+				$new_request = wp_safe_remote_get( $new_target_url, array( 'timeout' => 45, 'sslverify' => false ) );
 
-				if ( is_wp_error( $request ) || wp_remote_retrieve_response_code( $request ) != 200 ) {
+				if ( is_wp_error( $new_request ) || wp_remote_retrieve_response_code( $new_request ) != 200 ) {
+					add_settings_error( 'api_key_check_text', 'api_key_check_error', print_r( $request, true ), 'error' );
 					return false;
 				}
+				$request = $new_request;
 
 			} else if ( wp_remote_retrieve_response_code( $request ) != 200 ) {
+				add_settings_error( 'api_key_check_text', 'api_key_check_error', print_r( $request, true ), 'error' );
 				return false;
 			}
 

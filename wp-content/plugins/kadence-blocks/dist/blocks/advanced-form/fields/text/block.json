@@ -1,15 +1,20 @@
 {
+  "apiVersion": 3,
   "name": "kadence/advanced-form-text",
   "category": "kadence-blocks",
   "textdomain": "kadence-blocks",
   "attributes": {
+    "uniqueID": {
+      "type": "string"
+    },
+    "formID": {
+      "type": "string"
+    },
     "label": {
-      "type": "string",
-      "default": ""
+      "type": "string"
     },
     "placeholder": {
-      "type": "string",
-      "default": ""
+      "type": "string"
     },
     "showLabel": {
       "type": "boolean",
@@ -19,33 +24,72 @@
       "type": "boolean",
       "default": false
     },
-    "value": {
-      "type": "string",
-      "default": ""
+    "defaultValue": {
+      "type": "string"
+    },
+    "defaultParameter": {
+      "type": "string"
     },
     "ariaDescription": {
-      "type": "string",
-      "default": ""
+      "type": "string"
     },
-    "width": {
+    "maxWidth": {
       "type": "array",
       "default": [
-        "100",
+        "",
         "",
         ""
       ]
     },
-    "helpText": {
+    "maxWidthUnit": {
       "type": "string",
-      "default": ""
+      "default": "%"
     },
-    "name": {
+    "minWidth": {
+      "type": "array",
+      "default": [
+        "",
+        "",
+        ""
+      ]
+    },
+    "minWidthUnit": {
       "type": "string",
-      "default": ""
+      "default": "px"
+    },
+    "helpText": {
+      "type": "string"
+    },
+    "inputName": {
+      "type": "string"
+    },
+    "auto": {
+      "type": "string"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "requiredMessage": {
+      "type": "string"
+    },
+    "anchor": {
+      "type": "string"
     }
   },
-  "editorScript": "file:editor.js",
-  "parent": [
+  "supports": {
+    "anchor": true,
+    "html": false,
+    "ktdynamic": true,
+    "ktfieldconditional": true,
+    "reusable": false,
+    "kbMetadata": true,
+    "kbContentLabel": "label"
+  },
+  "ancestor": [
     "kadence/advanced-form"
+  ],
+  "parent": [
+    "kadence/advanced-form",
+    "kadence/column"
   ]
 }

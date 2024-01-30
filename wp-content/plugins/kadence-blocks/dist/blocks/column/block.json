@@ -5,7 +5,10 @@
   "category": "kadence-blocks",
   "usesContext": [
     "postId",
-    "queryId"
+    "queryId",
+    "kadence/dynamicSource",
+    "kadence/repeaterRowData",
+    "kadence/repeaterRow"
   ],
   "textdomain": "kadence-blocks",
   "attributes": {
@@ -290,7 +293,53 @@
       "type": "string",
       "default": "px"
     },
+    "gutterVariable": {
+      "type": "array",
+      "default": [
+        "",
+        "",
+        ""
+      ]
+    },
+    "rowGap": {
+      "type": "array",
+      "default": [
+        "",
+        "",
+        ""
+      ]
+    },
+    "rowGapUnit": {
+      "type": "string",
+      "default": "px"
+    },
+    "rowGapVariable": {
+      "type": "array",
+      "default": [
+        "",
+        "",
+        ""
+      ]
+    },
+    "flexBasis": {
+      "type": "array",
+      "default": [
+        "",
+        "",
+        ""
+      ]
+    },
+    "flexBasisUnit": {
+      "type": "string",
+      "default": "px"
+    },
     "verticalAlignment": {
+      "type": "string"
+    },
+    "verticalAlignmentTablet": {
+      "type": "string"
+    },
+    "verticalAlignmentMobile": {
       "type": "string"
     },
     "backgroundImgHover": {
@@ -801,6 +850,10 @@
     },
     "hoverOverlayBlendMode": {
       "type": "string"
+    },
+    "kbVersion": {
+      "type": "number",
+      "default": ""
     }
   },
   "supports": {
@@ -810,7 +863,8 @@
     "ktanimatepreview": true,
     "ktanimateswipe": true,
     "ktdynamic": true,
-    "kbcss": true
+    "kbcss": true,
+    "kbMetadata": true
   },
   "editorStyle": "kadence-blocks-column",
   "style": "kadence-blocks-column"

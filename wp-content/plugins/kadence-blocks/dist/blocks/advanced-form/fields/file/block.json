@@ -1,8 +1,15 @@
 {
+  "apiVersion": 3,
   "name": "kadence/advanced-form-file",
   "category": "kadence-blocks",
   "textdomain": "kadence-blocks",
   "attributes": {
+    "uniqueID": {
+      "type": "string"
+    },
+    "formID": {
+      "type": "string"
+    },
     "label": {
       "type": "string",
       "default": ""
@@ -14,6 +21,17 @@
     "required": {
       "type": "boolean",
       "default": false
+    },
+    "requiredMessage": {
+      "type": "string"
+    },
+    "multiple": {
+      "type": "boolean",
+      "default": false
+    },
+    "multipleLimit": {
+      "type": "number",
+      "default": 5
     },
     "allowedTypes": {
       "type": "array",
@@ -32,9 +50,17 @@
     "helpText": {
       "type": "string",
       "default": ""
+    },
+    "anchor": {
+      "type": "string"
+    },
+    "inputName": {
+      "type": "string"
     }
   },
-  "editorScript": "file:editor.js",
+  "supports": {
+    "ktfieldconditional": true
+  },
   "parent": [
     "kadence/advanced-form"
   ]

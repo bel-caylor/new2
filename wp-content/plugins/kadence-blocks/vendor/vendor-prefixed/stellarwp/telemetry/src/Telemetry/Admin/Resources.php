@@ -7,7 +7,7 @@
  * @package StellarWP\Telemetry
  *
  * @license GPL-2.0-or-later
- * Modified by kadencewp on 22-February-2023 using Strauss.
+ * Modified by kadencewp on 23-January-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -134,5 +134,4 @@ class Resources {
 	public static function get_asset_path(): string {
 		return plugin_dir_url( dirname( __DIR__ ) );
 	}
-
 }

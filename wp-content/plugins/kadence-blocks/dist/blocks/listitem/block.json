@@ -1,6 +1,6 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
-  "apiVersion": 2,
+  "apiVersion": 3,
   "parent": [
     "kadence/iconlist"
   ],
@@ -24,6 +24,14 @@
       "type": "string",
       "default": "",
       "__experimentalRole": "content"
+    },
+    "linkNoFollow": {
+      "type": "boolean",
+      "default": false
+    },
+    "linkSponsored": {
+      "type": "boolean",
+      "default": false
     },
     "target": {
       "type": "string",
@@ -74,6 +82,10 @@
     "level": {
       "type": "number",
       "default": 0
+    },
+    "iconTitle": {
+      "type": "string",
+      "default": ""
     }
   },
   "usesContext": [
@@ -83,6 +95,8 @@
   "supports": {
     "ktdynamic": true,
     "html": false,
-    "reusable": false
+    "reusable": false,
+    "kbMetadata": true,
+    "kbContentLabel": "text"
   }
 }

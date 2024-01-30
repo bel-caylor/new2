@@ -2,8 +2,8 @@
 Contributors: britner, oakesjosh, woodardmc
 Tags: gutenberg, blocks, page builder, google fonts, dual buttons, svg icons, editor width,
 Requires at least: 6.0
-Tested up to: 6.2
-Stable tag: 1.7.29
+Tested up to: 6.4
+Stable tag: 2.2.4
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -18,10 +18,219 @@ This plugin adds custom blocks to extend Gutenberg's editing capabilities. This 
 
 Install the plugin into the `/wp-content/plugins/` folder, and activate it. This plugin is an extension of Kadence Blocks, you will be asked to install it if you do not have it installed already.
 
+== Frequently Asked Questions ==
+
+= Where do I report security bugs found in this plugin? =
+Please report security bugs found in the source code of the
+Kadence Blocks Pro plugin through the Patchstack
+Vulnerability Disclosure Program https://patchstack.com/database/vdp/kadence-blocks-pro The
+Patchstack team will assist you with verification, CVE assignment, and
+notify the developers of this plugin.
+
+== Security Policy ==
+
+= Reporting Security Bugs =
+
+Please report security bugs found in the
+Kadence Blocks Pro plugin's source code through the
+Patchstack Vulnerability Disclosure
+Program https://patchstack.com/database/vdp/kadence-blocks-pro. The Patchstack team will
+assist you with verification, CVE assignment, and notify the
+developers of this plugin.
+
 == Changelog ==
 
+== 2.2.4 | 9th January 2024 ==
+* Fix: Undefined issue on settings page.
+
+== 2.2.3 | 8th January 2024 ==
+* Fix: Fix hard coded table name prefix.
+* Fix: Query loop API endpoint when site is in subfolder
+* Fix: Query loop API endpoint when not using pretty permalinks
+* Fix: Issue with RTL Carousels
+* Fix: Potential conflict with plugins that modify default post content
+* Fix: Advanced Query Loop labels not hiding when set to hidden
+* Fix: Icon based pagination links not clickable
+* Fix: Row & Column gap units not applying on Advanced Query Loop cards
+* Fix: Fix PHP undefined notice issue.
+
+== 2.2.2 | 3rd January 2024 ==
+* Add: Image Size option to split content block.
+* Update: Repeater Block to work in FSE template.
+* Update: Alt text input in split content and image overlay block.
+* Update: Obfuscate key input.
+* Fix: Box shadow display on front end for some query loop inputs
+* Fix: Inaccurate advanced query loop results when using more than 2 filters
+* Fix: Styling issue with checkbox and button filters.
+* Fix: Issue with pagination stylesheet.
+* Fix: Issue with alt text in some dynamic images.
+* Fix: Issue with modal styling in query loop.
+* Fix: Issue with slider padding.
+* Fix: Issue with portfolio block font size css.
+* Fix: Issue with widgets page notice.
+
+== 2.2.1 | 8th December 2023 ==
+* Fix: Issue with repeater and metabox.
+* Fix: RTL carousel css.
+* Fix: Multisite licensing issue.
+* Fix: Possible php notice with $group undefined.
+* Fix: Issue with image overlay css specificity.
+* Fix: Issue with border radius in portfolio grid.
+
+== 2.2.0 | 4th December 2023 ==
+* Add: New licensing.
+* Add: Connections with AI.
+
+== 2.1.5 | 30th November 2023 ==
+* Fix: Possible issue with PHP 7.3
+
+== 2.1.4 | 29th November 2023 ==
+* Update: Logic around inheriting queries in query loop.
+* Update: Logic around and/or with filters.
+* Fix: Issue with sliders in RTL
+* Fix: Arrow styles not showing on the front end.
+
+== 2.1.3 | 17th November 2023 ==
+* Add: Advanced query loop block
+* Fix: Post grid container padding not applying in editor
+
+== 2.1.2 BETA 3 | 11th October 2023 ==
+* Update: Add in 2.0.16
+* Update: Fix updater notice.
+
+== 2.1.1 BETA 2 | 5th October 2023 ==
+* Update: Text and Button blocks to use dynamic takeover instead of inline for repeater and query.
+
+== 2.1.0 BETA 1 | 16th August 2023 ==
+* Add: Repeater Field Block.
+
+== 2.0.17 | 13th November 2023 ==
+* Add: Setting to always show all custom fields in dynamic content.
+* Fix: Issue with Advanced From webhook values.
+* Fix: Post Grid custom except length when set greater than 55.
+* Fix: Setting post grid box shadow color
+* Fix: Post content & post excerpt both being selected in meta relationship dynamic content.
+* Fix: Better sizing for modal preview in editor.
+
+== 2.0.16 | 11th October 2023 ==
+* Update: Entry save when using multiple file uploads.
+* Update: ActiveCampaign connection.
+* Fix: Possible php notices.
+
+== 2.0.15 | 3rd October 2023 ==
+* Fix: Responsive max width issue in advanced slider.
+* Fix: Some Mailchimp API requests failing.
+* Fix: Possible issue with older PHP version.
+* Fix: Modal border radius not applying if no color is set on border.
+
+== 2.0.14 | 19th September 2023 ==
+* Add: Conditional fields for form block.
+* Add: Option in advanced slider to disable drag.
+* Fix: Portfolio fluid carousel issue.
+* Fix: Issue with dynamic posts page title.
+* Fix: Issue with slide render inline.
+
+== 2.0.13 | 11th September 2023 ==
+* Fix: Modal border not applying unless background color was set.
+* Fix: Modal border radius unit not applying.
+* Fix: Image overlay image ratios on front end and in editor.
+* Fix: Selecting a block inside a modal, from list view, will preview the modal.
+* Fix: Possible issue on widgets page.
+* Fix: Issue with Portfolio carousel in element.
+* Fix: Issue with mobile slider ratio setting.
+
+== 2.0.12 | 28th August 2023 ==
+* Fix: Advanced slider output on frontend.
+
+== 2.0.11 | 24th August 2023 ==
+* Update: Add attributes to portfolio filter query.
+* Fix: Issue with image overlay and firefox browser.
+* Fix: Issue with form, modal, video popup in advanced slider.
+* Fix: Min height issue in split content
+* Fix: Autoplay off in portfolio carousel.
+* Fix: Portfolio grid gap settings.
+
+== 2.0.10 | 16th August 2023 ==
+* Fix: Saving product carousel individual post selection.
+* Fix: Portfolio Grid single post selection ui.
+* Fix: Portfolio Grid gap not working on frontend.
+
+== 2.0.9 | 14th August 2023 ==
+* Update: Add filter for in query content.
+* Update: Blocks to API 3.
+
+== 2.0.8 | 4th August 2023 ==
+* Fix: Issue with portfolio grid filter.
+* Fix: Issue with media library filter bar.
+* Fix: Issue with excerpt length on Products in Post Grid.
+* Fix: Translation issue.
+
+== 2.0.7 | 2nd August 2023 ==
+* Fix: Issue with read more text color.
+* Fix: Manual post selection in Portfolio grid block.
+
+== 2.0.6 | 2nd August 2023 ==
+* Fix: Issue with missing css output when post grid block is present.
+* Fix: Issue with carousel align in post carousel.
+
+== 2.0.5 | 1st August 2023 ==
+* Fix: Template locate issue.
+* Fix: Splide Script name
+* Fix: Post grid taxonomy filtering.
+* Fix: Portfolio grid columns in editor when using column gaps.
+* Fix: Some responsive editor previews not displaying correctly.
+* Fix: Custom classes not applying to gallery when using Dynamic Content.
+* Fix: Portfolio grid carousel not initiating on frontend.
+* Fix: Toolbar appearing behind modal block preview in editor.
+* Fix: Modal hidden when link disabled.
+* Fix: Image overlay radio not working in editor.
+
+== 2.0.4 BETA 5 | 12 July 2023 ==
+* Fix: Improve PHP 8.2 support.
+* Fix: Issue with advanced form submit defaults.
+* Fix: "Select the post Taxonomy" not functioning.
+* Fix: Increase specificity of Splide CSS to avoid conflicts.
+* Fix: Product categories not showing while selecting individual products in Product Carousel.
+
+== 2.0.3 BETA 4 | 16th June 2023 ==
+* Fix: Class Conflict Issue.
+
+== 2.0.2 BETA 3 | 15th June 2023 ==
+* Update: Site wide Ids
+* Update: Pro Advanced Form Block
+* Update: Block Renaming
+
+== 2.0.1 BETA 2 | 3rd May 2023 ==
+* Update: Advanced slider to use splide.
+* Fix: Issue with post carousel defaults.
+
+== 2.0.0 BETA 1 | 28th April 2023 ==
+* Update: Use tabbed settings layout in all blocks
+* Update: Ability to copy/paste styles between blocks
+* Update: Support for variable font sizes
+* Update: Added block default settings
+* Update: All blocks using block API version 2
+* Update: Add more responsive setting to blocks and improve CSS output
+* Update: Use Kadence components for font, border, and spacing controls
+* Update: All sliders & carousels using Splide
+* Update: New border/radius controls for Image Overlay
+* Update: New border/radius controls for Portfolio grid
+* Update: New border/radius controls for Video Popup Block
+* Update: Improved clarity and organization for all block controls
+* Update: New editing experience for Modal block content
+* Fix: Various effects and style now properly applied for Video Popup Block
+* Fix: Theme style now more naturally apply to Product Carousel items.
+* Fix: Support for private, unlisted, and password protected Vimeo videos
+* Fix: Image overlay title line height when inserting via hooked element
+* Fix: Split content issue when min-height is removed
+* Fix: Image overlay focus-within hover displaying improperly
+* Fix: Modal z-index when inserted via hooked element
+* Fix: Issue with image overlay margin causing layout to shift.
+* Fix: Mobile preview of AOS.
+
+
 == 1.7.29 | 21st April 2023 ==
-* Update: Support for contextual media content in image block caption. 
+* Update: Support for contextual media content in image block caption.
 * Fix: Issue with saving form date when referer over 255 characters.
 * Fix: Issue with image overlay focus bug.
 
@@ -253,7 +462,7 @@ Install the plugin into the `/wp-content/plugins/` folder, and activate it. This
 * Add: Mapping for fields for Webhook.
 * Add: Post Grid title hover color option.
 * Fix: Thumbnail gallery load layout shift.
-* Fix: Issue with Image overlay. 
+* Fix: Issue with Image overlay.
 * Fix: Issue with post grid selecting by custom taxonomy.
 * Fix: Issue with product carousel individual select.
 

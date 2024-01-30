@@ -733,7 +733,12 @@ class Kadence_Blocks_Advancedgallery_Block extends Kadence_Blocks_Abstract_Block
 						'relate'       => ( isset( $blockattr['kadenceDynamic']['link']['relate'] ) ? $blockattr['kadenceDynamic']['link']['relate'] : '' ),
 						'relcustom'    => ( isset( $blockattr['kadenceDynamic']['link']['relcustom'] ) ? $blockattr['kadenceDynamic']['link']['relcustom'] : '' ),
 					);
-					$href = $this->get_content( $args );
+					if ( class_exists( 'Kadence_Blocks_Pro_Dynamic_Content' ) ) {
+						$dynamic_content_class = Kadence_Blocks_Pro_Dynamic_Content::get_instance();
+						$href                  = $dynamic_content_class->get_content( $args );
+					} else {
+						$href = ( ! empty( $image['customLink'] ) ? $image['customLink'] : '' );
+					}
 				} else {
 					$href = ( ! empty( $image['customLink'] ) ? $image['customLink'] : '' );
 				}
@@ -785,11 +790,11 @@ class Kadence_Blocks_Advancedgallery_Block extends Kadence_Blocks_Abstract_Block
 		}
 		$output = '<' . $item_tag . ' class="kadence-blocks-gallery-item">';
 		$output .= '<div class="kadence-blocks-gallery-item-inner">';
-		$output .= '<figure class="' . esc_attr( implode( ' ', $fig_classes ) ) . '">';
+		$output .= '<figure class="' . esc_attr( implode( ' ', $fig_classes ) ). '" ' . ( ! empty( $padding_bottom ) && 'below' === $caption_style ? 'style="max-width:' . $image['width'] . 'px;"' : '' ) . '">';
 		if ( ! empty( $href ) ) {
 			$output .= '<a href="' . esc_url( $href ) . '"' . ( $link_to === 'media' && $lightbox === 'magnific' && $lightbox_cap && ! empty( $caption ) && is_string( $caption ) ? ' data-description="' . esc_attr( $caption ) . '"' : '' ) . '' . ( $link_to === 'media' && $lightbox === 'magnific' && ! empty( $image_alt ) && is_string( $image_alt ) ? ' data-alt="' . esc_attr( $image_alt ) . '"' : '' ) . ' class="kb-gallery-item-link" ' . ( ( $link_to === 'custom' && '_blank' === $link_target ) || ( $link_to === 'media' && $lightbox === 'new_tab' ) ? 'target="_blank"' : '' ) . ' ' . ( ( $link_to === 'custom' && ! empty( $rel_attr ) ) || ( $link_to === 'media' && ! empty( $rel_attr ) ) ? 'rel="' . esc_attr( $rel_attr ) . '"' : '' ) . '>';
 		}
-		$output .= '<div class="kb-gal-image-radius" ' . ( ! empty( $padding_bottom ) ? 'style="max-width:' . $image['width'] . 'px;"' : '' ) . '>';
+		$output .= '<div class="kb-gal-image-radius"' . ( ! empty( $padding_bottom ) ? ' style="max-width:' . $image['width'] . 'px;"' : '' ) . '>';
 		$output .= $img;
 		if ( $show_caption && ! empty( $caption ) && is_string( $caption ) && 'below' !== $caption_style ) {
 			$output .= $figcap;
@@ -855,8 +860,8 @@ class Kadence_Blocks_Advancedgallery_Block extends Kadence_Blocks_Abstract_Block
 			return;
 		}
 
-		wp_register_style( 'kad-splide', KADENCE_BLOCKS_URL . 'includes/assets/css/kadence-splide.min.css', array(), KADENCE_BLOCKS_VERSION );
-		wp_register_style( 'kadence-blocks-splide', KADENCE_BLOCKS_URL . 'includes/assets/css/kb-blocks-splide.min.css', array( 'kad-splide' ), KADENCE_BLOCKS_VERSION );
+		wp_register_style( 'kadence-kb-splide', KADENCE_BLOCKS_URL . 'includes/assets/css/kadence-splide.min.css', array(), KADENCE_BLOCKS_VERSION );
+		wp_register_style( 'kadence-blocks-splide', KADENCE_BLOCKS_URL . 'includes/assets/css/kb-blocks-splide.min.css', array( 'kadence-kb-splide' ), KADENCE_BLOCKS_VERSION );
 		wp_register_style( 'kadence-glightbox', KADENCE_BLOCKS_URL . 'includes/assets/css/kb-glightbox.min.css', array(), KADENCE_BLOCKS_VERSION );
 		wp_register_script( 'kad-splide', KADENCE_BLOCKS_URL . 'includes/assets/js/splide.min.js', array(), KADENCE_BLOCKS_VERSION, true );
 		wp_register_script( 'kadence-blocks-splide-init', KADENCE_BLOCKS_URL . 'includes/assets/js/kb-splide-init.min.js', array( 'kad-splide' ), KADENCE_BLOCKS_VERSION, true );
@@ -868,6 +873,7 @@ class Kadence_Blocks_Advancedgallery_Block extends Kadence_Blocks_Abstract_Block
 			'kb_glightbox',
 			array(
 				'moreText' => __( 'See more', 'kadence-blocks' ),
+				'lightBoxAriaLabel' => __('Display this image in a lightbox', 'kadence-blocks'),
 			)
 		);
 	}

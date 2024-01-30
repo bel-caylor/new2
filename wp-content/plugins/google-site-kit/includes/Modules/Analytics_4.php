@@ -11,10 +11,14 @@
 namespace Google\Site_Kit\Modules;
 
 use Exception;
+use Google\Site_Kit\Context;
 use Google\Site_Kit\Core\Assets\Asset;
+use Google\Site_Kit\Core\Assets\Assets;
 use Google\Site_Kit\Core\Assets\Script;
+use Google\Site_Kit\Core\Authentication\Authentication;
 use Google\Site_Kit\Core\Authentication\Clients\Google_Site_Kit_Client;
 use Google\Site_Kit\Core\Dismissals\Dismissed_Items;
+use Google\Site_Kit\Core\Modules\Analytics_4\Tag_Matchers;
 use Google\Site_Kit\Core\Modules\Module;
 use Google\Site_Kit\Core\Modules\Module_Settings;
 use Google\Site_Kit\Core\Modules\Module_Sharing_Settings;
@@ -32,33 +36,42 @@ use Google\Site_Kit\Core\Modules\Module_With_Settings_Trait;
 use Google\Site_Kit\Core\Modules\Module_With_Owner;
 use Google\Site_Kit\Core\Modules\Module_With_Owner_Trait;
 use Google\Site_Kit\Core\Modules\Module_With_Service_Entity;
+use Google\Site_Kit\Core\Modules\Module_With_Tag;
+use Google\Site_Kit\Core\Modules\Module_With_Tag_Trait;
+use Google\Site_Kit\Core\Modules\Tags\Module_Tag_Matchers;
 use Google\Site_Kit\Core\REST_API\Exception\Invalid_Datapoint_Exception;
 use Google\Site_Kit\Core\REST_API\Data_Request;
 use Google\Site_Kit\Core\REST_API\Exception\Missing_Required_Param_Exception;
+use Google\Site_Kit\Core\Site_Health\Debug_Data;
+use Google\Site_Kit\Core\Storage\Options;
+use Google\Site_Kit\Core\Storage\User_Options;
 use Google\Site_Kit\Core\Tags\Guards\Tag_Environment_Type_Guard;
 use Google\Site_Kit\Core\Tags\Guards\Tag_Verify_Guard;
 use Google\Site_Kit\Core\Util\BC_Functions;
-use Google\Site_Kit\Core\Util\Debug_Data;
-use Google\Site_Kit\Core\Util\Feature_Flags;
 use Google\Site_Kit\Core\Util\Method_Proxy_Trait;
 use Google\Site_Kit\Core\Util\Sort;
 use Google\Site_Kit\Core\Util\URL;
 use Google\Site_Kit\Modules\Analytics\Account_Ticket;
+use Google\Site_Kit\Modules\Analytics\Advanced_Tracking;
 use Google\Site_Kit\Modules\Analytics\Settings as Analytics_Settings;
 use Google\Site_Kit\Modules\Analytics_4\AMP_Tag;
+use Google\Site_Kit\Modules\Analytics_4\Custom_Dimensions_Data_Available;
+use Google\Site_Kit\Modules\Analytics_4\Synchronize_Property;
 use Google\Site_Kit\Modules\Analytics_4\GoogleAnalyticsAdmin\AccountProvisioningService;
+use Google\Site_Kit\Modules\Analytics_4\GoogleAnalyticsAdmin\EnhancedMeasurementSettingsModel;
 use Google\Site_Kit\Modules\Analytics_4\GoogleAnalyticsAdmin\PropertiesEnhancedMeasurementService;
 use Google\Site_Kit\Modules\Analytics_4\GoogleAnalyticsAdmin\Proxy_GoogleAnalyticsAdminProvisionAccountTicketRequest;
 use Google\Site_Kit\Modules\Analytics_4\Report\Request as Analytics_4_Report_Request;
 use Google\Site_Kit\Modules\Analytics_4\Report\Response as Analytics_4_Report_Response;
 use Google\Site_Kit\Modules\Analytics_4\Settings;
 use Google\Site_Kit\Modules\Analytics_4\Tag_Guard;
+use Google\Site_Kit\Modules\Analytics_4\Tag_Interface;
 use Google\Site_Kit\Modules\Analytics_4\Web_Tag;
 use Google\Site_Kit_Dependencies\Google\Model as Google_Model;
 use Google\Site_Kit_Dependencies\Google\Service\AnalyticsData as Google_Service_AnalyticsData;
 use Google\Site_Kit_Dependencies\Google\Service\GoogleAnalyticsAdmin as Google_Service_GoogleAnalyticsAdmin;
-use Google\Site_Kit\Modules\Analytics_4\GoogleAnalyticsAdmin\EnhancedMeasurementSettingsModel;
 use Google\Site_Kit_Dependencies\Google\Service\GoogleAnalyticsAdmin\GoogleAnalyticsAdminV1betaAccount;
+use Google\Site_Kit_Dependencies\Google\Service\GoogleAnalyticsAdmin\GoogleAnalyticsAdminV1betaCustomDimension;
 use Google\Site_Kit_Dependencies\Google\Service\GoogleAnalyticsAdmin\GoogleAnalyticsAdminV1betaDataStream;
 use Google\Site_Kit_Dependencies\Google\Service\GoogleAnalyticsAdmin\GoogleAnalyticsAdminV1betaDataStreamWebStreamData;
 use Google\Site_Kit_Dependencies\Google\Service\GoogleAnalyticsAdmin\GoogleAnalyticsAdminV1betaListDataStreamsResponse;
@@ -77,18 +90,60 @@ use WP_Error;
  * @ignore
  */
 final class Analytics_4 extends Module
-	implements Module_With_Scopes, Module_With_Settings, Module_With_Debug_Fields, Module_With_Owner, Module_With_Assets, Module_With_Service_Entity, Module_With_Activation, Module_With_Deactivation, Module_With_Data_Available_State {
+	implements Module_With_Scopes, Module_With_Settings, Module_With_Debug_Fields, Module_With_Owner, Module_With_Assets, Module_With_Service_Entity, Module_With_Activation, Module_With_Deactivation, Module_With_Data_Available_State, Module_With_Tag {
 	use Method_Proxy_Trait;
 	use Module_With_Assets_Trait;
 	use Module_With_Owner_Trait;
 	use Module_With_Scopes_Trait;
 	use Module_With_Settings_Trait;
 	use Module_With_Data_Available_State_Trait;
+	use Module_With_Tag_Trait;
 
 	/**
 	 * Module slug name.
 	 */
 	const MODULE_SLUG = 'analytics-4';
+
+	/**
+	 * Prefix used to fetch custom dimensions in reports.
+	 */
+	const CUSTOM_EVENT_PREFIX = 'customEvent:';
+
+	/**
+	 * Custom dimensions tracked by Site Kit.
+	 */
+	const CUSTOM_DIMENSION_POST_AUTHOR     = 'googlesitekit_post_author';
+	const CUSTOM_DIMENSION_POST_CATEGORIES = 'googlesitekit_post_categories';
+
+	/**
+	 * Custom_Dimensions_Data_Available instance.
+	 *
+	 * @since 1.113.0
+	 * @var Custom_Dimensions_Data_Available
+	 */
+	protected $custom_dimensions_data_available;
+
+	/**
+	 * Constructor.
+	 *
+	 * @since 1.113.0
+	 *
+	 * @param Context        $context        Plugin context.
+	 * @param Options        $options        Optional. Option API instance. Default is a new instance.
+	 * @param User_Options   $user_options   Optional. User Option API instance. Default is a new instance.
+	 * @param Authentication $authentication Optional. Authentication instance. Default is a new instance.
+	 * @param Assets         $assets  Optional. Assets API instance. Default is a new instance.
+	 */
+	public function __construct(
+		Context $context,
+		Options $options = null,
+		User_Options $user_options = null,
+		Authentication $authentication = null,
+		Assets $assets = null
+	) {
+		parent::__construct( $context, $options, $user_options, $authentication, $assets );
+		$this->custom_dimensions_data_available = new Custom_Dimensions_Data_Available( $this->transients );
+	}
 
 	/**
 	 * Registers functionality through WordPress hooks.
@@ -99,6 +154,21 @@ final class Analytics_4 extends Module
 	public function register() {
 		$this->register_scopes_hook();
 
+		$synchronize_property = new Synchronize_Property(
+			$this,
+			$this->user_options
+		);
+		$synchronize_property->register();
+
+		( new Advanced_Tracking( $this->context ) )->register();
+
+		add_action(
+			'admin_init',
+			function() use ( $synchronize_property ) {
+				$synchronize_property->maybe_schedule_synchronize_property();
+			}
+		);
+
 		add_action(
 			'googlesitekit_analytics_handle_provisioning_callback',
 			$this->get_method_proxy( 'handle_provisioning_callback' ),
@@ -106,28 +176,40 @@ final class Analytics_4 extends Module
 			2
 		);
 		// Analytics 4 tag placement logic.
-		add_action( 'template_redirect', $this->get_method_proxy( 'register_tag' ) );
+		add_action( 'template_redirect', array( $this, 'register_tag' ) );
 		add_action( 'googlesitekit_analytics_tracking_opt_out', $this->get_method_proxy( 'analytics_tracking_opt_out' ) );
 
 		// Ensure that the data available state is reset when the measurement ID changes.
-		add_action(
-			'update_option_googlesitekit_analytics-4_settings',
+		$this->get_settings()->on_change(
 			function( $old_value, $new_value ) {
 				if ( $old_value['measurementID'] !== $new_value['measurementID'] ) {
 					$this->reset_data_available();
+					$this->custom_dimensions_data_available->reset_data_available();
 				}
+			}
+		);
+
+		// Check if the property ID has changed and reset availableCustomDimensions setting to null.
+		add_filter(
+			'pre_update_option_googlesitekit_analytics-4_settings',
+			function ( $new_value, $old_value ) {
+				if ( $new_value['propertyID'] !== $old_value['propertyID'] ) {
+					$new_value['availableCustomDimensions'] = null;
+				}
+
+				return $new_value;
 			},
 			10,
 			2
 		);
 
-		if ( Feature_Flags::enabled( 'ga4Reporting' ) ) {
-			// Replicate Analytics settings for Analytics-4 if not set.
-			add_filter(
-				'option_' . Module_Sharing_Settings::OPTION,
-				$this->get_method_proxy( 'replicate_analytics_sharing_settings' )
-			);
-		}
+		add_filter( 'googlesitekit_inline_modules_data', $this->get_method_proxy( 'inline_custom_dimensions_data' ) );
+
+		// Replicate Analytics settings for Analytics-4 if not set.
+		add_filter(
+			'option_' . Module_Sharing_Settings::OPTION,
+			$this->get_method_proxy( 'replicate_analytics_sharing_settings' )
+		);
 
 		add_filter(
 			'googlesitekit_auth_scopes',
@@ -226,6 +308,7 @@ final class Analytics_4 extends Module
 	public function on_deactivation() {
 		$this->get_settings()->delete();
 		$this->reset_data_available();
+		$this->custom_dimensions_data_available->reset_data_available();
 	}
 
 	/**
@@ -238,7 +321,7 @@ final class Analytics_4 extends Module
 	public function get_debug_fields() {
 		$settings = $this->get_settings()->get();
 
-		return array(
+		$debug_fields = array(
 			// phpcs:disable
 			/*
 			TODO: This can be uncommented when Analytics and Analytics 4 modules are officially separated.
@@ -275,6 +358,22 @@ final class Analytics_4 extends Module
 				'debug' => $settings['useSnippet'] ? 'yes' : 'no',
 			),
 		);
+
+		$debug_fields['analytics_4_available_custom_dimensions'] = array(
+			'label' => __( 'Analytics 4 available custom dimensions', 'google-site-kit' ),
+			'value' => empty( $settings['availableCustomDimensions'] )
+				? __( 'None', 'google-site-kit' )
+				: join(
+					/* translators: used between list items, there is a space after the comma */
+					__( ', ', 'google-site-kit' ),
+					$settings['availableCustomDimensions']
+				),
+			'debug' => empty( $settings['availableCustomDimensions'] )
+				? 'none'
+				: join( ', ', $settings['availableCustomDimensions'] ),
+		);
+
+		return $debug_fields;
 	}
 
 	/**
@@ -285,67 +384,72 @@ final class Analytics_4 extends Module
 	 * @return array Map of datapoints to their definitions.
 	 */
 	protected function get_datapoint_definitions() {
-		// GA4 is only shareable if ga4Reporting is also enabled.
-		$shareable = Feature_Flags::enabled( 'ga4Reporting' );
-
 		$datapoints = array(
-			'GET:account-summaries'              => array( 'service' => 'analyticsadmin' ),
-			'GET:accounts'                       => array( 'service' => 'analyticsadmin' ),
-			'GET:container-lookup'               => array(
+			'GET:account-summaries'                => array( 'service' => 'analyticsadmin' ),
+			'GET:accounts'                         => array( 'service' => 'analyticsadmin' ),
+			'GET:container-lookup'                 => array(
 				'service' => 'tagmanager',
 				'scopes'  => array(
 					'https://www.googleapis.com/auth/tagmanager.readonly',
 				),
 			),
-			'GET:container-destinations'         => array(
+			'GET:container-destinations'           => array(
 				'service' => 'tagmanager',
 				'scopes'  => array(
 					'https://www.googleapis.com/auth/tagmanager.readonly',
 				),
 			),
-			'GET:conversion-events'              => array(
+			'GET:conversion-events'                => array(
 				'service'   => 'analyticsadmin',
-				'shareable' => $shareable,
+				'shareable' => true,
 			),
-			'POST:create-account-ticket'         => array(
+			'POST:create-account-ticket'           => array(
 				'service'                => 'analyticsprovisioning',
 				'scopes'                 => array( Analytics::EDIT_SCOPE ),
 				'request_scopes_message' => __( 'You’ll need to grant Site Kit permission to create a new Analytics account on your behalf.', 'google-site-kit' ),
 			),
-			'GET:google-tag-settings'            => array(
+			'GET:google-tag-settings'              => array(
 				'service' => 'tagmanager',
 				'scopes'  => array(
 					'https://www.googleapis.com/auth/tagmanager.readonly',
 				),
 			),
-			'POST:create-property'               => array(
+			'POST:create-property'                 => array(
 				'service'                => 'analyticsadmin',
 				'scopes'                 => array( Analytics::EDIT_SCOPE ),
 				'request_scopes_message' => __( 'You’ll need to grant Site Kit permission to create a new Analytics 4 property on your behalf.', 'google-site-kit' ),
 			),
-			'POST:create-webdatastream'          => array(
+			'POST:create-webdatastream'            => array(
 				'service'                => 'analyticsadmin',
 				'scopes'                 => array( Analytics::EDIT_SCOPE ),
 				'request_scopes_message' => __( 'You’ll need to grant Site Kit permission to create a new Analytics 4 web data stream for this site on your behalf.', 'google-site-kit' ),
 			),
-			'GET:properties'                     => array( 'service' => 'analyticsadmin' ),
-			'GET:property'                       => array( 'service' => 'analyticsadmin' ),
-			'GET:webdatastreams'                 => array( 'service' => 'analyticsadmin' ),
-			'GET:webdatastreams-batch'           => array( 'service' => 'analyticsadmin' ),
-			'GET:enhanced-measurement-settings'  => array( 'service' => 'analyticsenhancedmeasurement' ),
-			'POST:enhanced-measurement-settings' => array(
+			'GET:properties'                       => array( 'service' => 'analyticsadmin' ),
+			'GET:property'                         => array( 'service' => 'analyticsadmin' ),
+			'GET:report'                           => array(
+				'service'   => 'analyticsdata',
+				'shareable' => true,
+			),
+			'GET:webdatastreams'                   => array( 'service' => 'analyticsadmin' ),
+			'GET:webdatastreams-batch'             => array( 'service' => 'analyticsadmin' ),
+			'GET:enhanced-measurement-settings'    => array( 'service' => 'analyticsenhancedmeasurement' ),
+			'POST:enhanced-measurement-settings'   => array(
 				'service'                => 'analyticsenhancedmeasurement',
 				'scopes'                 => array( Analytics::EDIT_SCOPE ),
 				'request_scopes_message' => __( 'You’ll need to grant Site Kit permission to update enhanced measurement settings for this Analytics 4 web data stream on your behalf.', 'google-site-kit' ),
 			),
+			'POST:create-custom-dimension'         => array(
+				'service'                => 'analyticsdata',
+				'scopes'                 => array( Analytics::EDIT_SCOPE ),
+				'request_scopes_message' => __( 'You’ll need to grant Site Kit permission to create a new Analytics 4 custom dimension on your behalf.', 'google-site-kit' ),
+			),
+			'POST:sync-custom-dimensions'          => array(
+				'service' => 'analyticsadmin',
+			),
+			'POST:custom-dimension-data-available' => array(
+				'service' => '',
+			),
 		);
-
-		if ( Feature_Flags::enabled( 'ga4Reporting' ) ) {
-			$datapoints['GET:report'] = array(
-				'service'   => 'analyticsdata',
-				'shareable' => $shareable,
-			);
-		}
 
 		return $datapoints;
 	}
@@ -474,7 +578,18 @@ final class Analytics_4 extends Module
 			return;
 		}
 
-		$this->get_settings()->merge( array( 'propertyID' => $property->_id ) );
+		$create_time    = isset( $property->createTime ) ? $property->createTime : ''; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+		$create_time_ms = 0;
+		if ( $create_time ) {
+			$create_time_ms = Synchronize_Property::convert_time_to_unix_ms( $create_time );
+		}
+
+		$this->get_settings()->merge(
+			array(
+				'propertyID'         => $property->_id,
+				'propertyCreateTime' => $create_time_ms,
+			)
+		);
 
 		$web_datastream = $this->create_webdatastream(
 			$property->_id,
@@ -496,6 +611,20 @@ final class Analytics_4 extends Module
 				'measurementID'   => $measurement_id,
 			)
 		);
+
+		if ( $account_ticket->get_enhanced_measurement_stream_enabled() ) {
+			$this->set_data(
+				'enhanced-measurement-settings',
+				array(
+					'propertyID'                  => $property->_id,
+					'webDataStreamID'             => $web_datastream->_id,
+					'enhancedMeasurementSettings' => array(
+						// We can hardcode this to `true` here due to the conditional invocation.
+						'streamEnabled' => true,
+					),
+				)
+			);
+		}
 
 		$this->sync_google_tag_settings();
 	}
@@ -613,7 +742,8 @@ final class Analytics_4 extends Module
 
 				return $this->get_service( 'analyticsadmin' )->properties->listProperties(
 					array(
-						'filter' => 'parent:' . self::normalize_account_id( $data['accountID'] ),
+						'filter'   => 'parent:' . self::normalize_account_id( $data['accountID'] ),
+						'pageSize' => 200,
 					)
 				);
 			case 'GET:property':
@@ -756,6 +886,114 @@ final class Analytics_4 extends Module
 							'updateMask' => 'streamEnabled', // Only allow updating the streamEnabled field for now.
 						)
 					);
+			case 'POST:create-custom-dimension':
+				if ( ! isset( $data['propertyID'] ) ) {
+					return new WP_Error(
+						'missing_required_param',
+						/* translators: %s: Missing parameter name */
+						sprintf( __( 'Request parameter is empty: %s.', 'google-site-kit' ), 'propertyID' ),
+						array( 'status' => 400 )
+					);
+				}
+
+				if ( ! isset( $data['customDimension'] ) ) {
+					return new WP_Error(
+						'missing_required_param',
+						/* translators: %s: Missing parameter name */
+						sprintf( __( 'Request parameter is empty: %s.', 'google-site-kit' ), 'customDimension' ),
+						array( 'status' => 400 )
+					);
+				}
+
+				$custom_dimension_data = $data['customDimension'];
+
+				$fields = array(
+					'parameterName',
+					'displayName',
+					'description',
+					'scope',
+					'disallowAdsPersonalization',
+				);
+
+				$invalid_keys = array_diff( array_keys( $custom_dimension_data ), $fields );
+
+				if ( ! empty( $invalid_keys ) ) {
+					return new WP_Error(
+						'invalid_property_name',
+						/* translators: %s: Invalid property names */
+						sprintf( __( 'Invalid properties in customDimension: %s.', 'google-site-kit' ), implode( ', ', $invalid_keys ) ),
+						array( 'status' => 400 )
+					);
+				}
+
+				// Define the valid `DimensionScope` enum values.
+				$valid_scopes = array( 'EVENT', 'USER', 'ITEM' );
+
+				// If the scope field is not set, default to `EVENT`.
+				// Otherwise, validate against the enum values.
+				if ( ! isset( $custom_dimension_data['scope'] ) ) {
+					$custom_dimension_data['scope'] = 'EVENT';
+				} elseif ( ! in_array( $custom_dimension_data['scope'], $valid_scopes, true ) ) {
+					return new WP_Error(
+						'invalid_scope',
+						/* translators: %s: Invalid scope */
+						sprintf( __( 'Invalid scope: %s.', 'google-site-kit' ), $custom_dimension_data['scope'] ),
+						array( 'status' => 400 )
+					);
+				}
+
+				$custom_dimension = new GoogleAnalyticsAdminV1betaCustomDimension();
+				$custom_dimension->setParameterName( $custom_dimension_data['parameterName'] );
+				$custom_dimension->setDisplayName( $custom_dimension_data['displayName'] );
+				$custom_dimension->setDescription( $custom_dimension_data['description'] );
+				$custom_dimension->setScope( $custom_dimension_data['scope'] );
+				$custom_dimension->setDisallowAdsPersonalization( $custom_dimension_data['disallowAdsPersonalization'] );
+
+				$analyticsadmin = $this->get_service( 'analyticsadmin' );
+
+				return $analyticsadmin
+					->properties_customDimensions // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+					->create(
+						self::normalize_property_id( $data['propertyID'] ),
+						$custom_dimension
+					);
+			case 'POST:sync-custom-dimensions':
+				$settings = $this->get_settings()->get();
+				if ( empty( $settings['propertyID'] ) ) {
+					return new WP_Error(
+						'missing_required_setting',
+						__( 'No connected Google Analytics 4 property ID.', 'google-site-kit' ),
+						array( 'status' => 500 )
+					);
+				}
+
+				$analyticsadmin = $this->get_service( 'analyticsadmin' );
+
+				return $analyticsadmin
+					->properties_customDimensions // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+					->listPropertiesCustomDimensions( self::normalize_property_id( $settings['propertyID'] ) );
+			case 'POST:custom-dimension-data-available':
+				if ( ! isset( $data['customDimension'] ) ) {
+					return new WP_Error(
+						'missing_required_param',
+						/* translators: %s: Missing parameter name */
+						sprintf( __( 'Request parameter is empty: %s.', 'google-site-kit' ), 'customDimension' ),
+						array( 'status' => 400 )
+					);
+				}
+
+				if ( ! $this->custom_dimensions_data_available->is_valid_custom_dimension( $data['customDimension'] ) ) {
+					return new WP_Error(
+						'invalid_custom_dimension_slug',
+						/* translators: %s: Invalid custom dimension slug */
+						sprintf( __( 'Invalid custom dimension slug: %s.', 'google-site-kit' ), $data['customDimension'] ),
+						array( 'status' => 400 )
+					);
+				}
+
+				return function() use ( $data ) {
+					return $this->custom_dimensions_data_available->set_data_available( $data['customDimension'] );
+				};
 			case 'GET:webdatastreams':
 				if ( ! isset( $data['propertyID'] ) ) {
 					return new WP_Error(
@@ -766,7 +1004,6 @@ final class Analytics_4 extends Module
 					);
 				}
 
-				/* @var Google_Service_GoogleAnalyticsAdmin $analyticsadmin phpcs:ignore Squiz.PHP.CommentedOutCode.Found */
 				$analyticsadmin = $this->get_service( 'analyticsadmin' );
 
 				return $analyticsadmin
@@ -793,7 +1030,6 @@ final class Analytics_4 extends Module
 					);
 				}
 
-				/* @var Google_Service_GoogleAnalyticsAdmin $analyticsadmin phpcs:ignore Squiz.PHP.CommentedOutCode.Found */
 				$analyticsadmin = $this->get_service( 'analyticsadmin' );
 				$batch_request  = $analyticsadmin->createBatch();
 
@@ -889,7 +1125,7 @@ final class Analytics_4 extends Module
 			case 'GET:accounts':
 				return array_map( array( self::class, 'filter_account_with_ids' ), $response->getAccounts() );
 			case 'GET:account-summaries':
-				return array_map(
+				$account_summaries = array_map(
 					function( $account ) {
 						$obj                    = self::filter_account_with_ids( $account, 'account' );
 						$obj->propertySummaries = array_map( // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
@@ -903,6 +1139,10 @@ final class Analytics_4 extends Module
 					},
 					$response->getAccountSummaries()
 				);
+				return Sort::case_insensitive_list_sort(
+					$account_summaries,
+					'displayName'
+				);
 			case 'POST:create-account-ticket':
 				$account_ticket = new Account_Ticket();
 				$account_ticket->set_id( $response->getAccountTicketId() );
@@ -910,6 +1150,7 @@ final class Analytics_4 extends Module
 				$account_ticket->set_property_name( $data['propertyName'] );
 				$account_ticket->set_data_stream_name( $data['dataStreamName'] );
 				$account_ticket->set_timezone( $data['timezone'] );
+				$account_ticket->set_enhanced_measurement_stream_enabled( ! empty( $data['enhancedMeasurementStreamEnabled'] ) );
 				// Cache the create ticket id long enough to verify it upon completion of the terms of service.
 				set_transient(
 					Analytics::PROVISION_ACCOUNT_TICKET_ID . '::' . get_current_user_id(),
@@ -944,6 +1185,44 @@ final class Analytics_4 extends Module
 			case 'GET:report':
 				$report = new Analytics_4_Report_Response( $this->context );
 				return $report->parse_response( $data, $response );
+			case 'POST:sync-custom-dimensions':
+				if ( is_wp_error( $response ) ) {
+					return $response;
+				}
+
+				$custom_dimensions   = wp_list_pluck( $response->getCustomDimensions(), 'parameterName' );
+				$matching_dimensions = array_values(
+					array_filter(
+						$custom_dimensions,
+						function( $dimension ) {
+							return strpos( $dimension, 'googlesitekit_' ) === 0;
+						}
+					)
+				);
+				$this->get_settings()->merge(
+					array(
+						'availableCustomDimensions' => $matching_dimensions,
+					)
+				);
+
+				// Reset the data available state for custom dimensions that are no longer available.
+				$missing_custom_dimensions_with_data_available = array_diff(
+					array_keys(
+						// Only compare against custom dimensions that have data available.
+						array_filter(
+							$this->custom_dimensions_data_available->get_data_availability()
+						)
+					),
+					$matching_dimensions
+				);
+
+				if ( count( $missing_custom_dimensions_with_data_available ) > 0 ) {
+					$this->custom_dimensions_data_available->reset_data_available(
+						$missing_custom_dimensions_with_data_available
+					);
+				}
+
+				return $matching_dimensions;
 		}
 
 		return parent::parse_data_response( $data, $response );
@@ -1085,14 +1364,12 @@ final class Analytics_4 extends Module
 	 *
 	 * @since 1.31.0
 	 * @since 1.104.0 Added support for AMP tag.
+	 * @since 1.119.0 Made method public.
 	 */
-	private function register_tag() {
-		if ( $this->context->is_amp() ) {
-			// AMP currently only works with the measurement ID.
-			$tag = new AMP_Tag( $this->get_measurement_id(), self::MODULE_SLUG );
-		} else {
-			$tag = new Web_Tag( $this->get_tag_id(), self::MODULE_SLUG );
-		}
+	public function register_tag() {
+		$tag = $this->context->is_amp()
+			? new AMP_Tag( $this->get_measurement_id(), self::MODULE_SLUG ) // AMP currently only works with the measurement ID.
+			: new Web_Tag( $this->get_tag_id(), self::MODULE_SLUG );
 
 		if ( $tag->is_tag_blocked() ) {
 			return;
@@ -1102,18 +1379,99 @@ final class Analytics_4 extends Module
 		$tag->use_guard( new Tag_Guard( $this->get_settings() ) );
 		$tag->use_guard( new Tag_Environment_Type_Guard() );
 
-		if ( $tag->can_register() ) {
-			$tag->set_home_domain(
-				URL::parse( $this->context->get_canonical_home_url(), PHP_URL_HOST )
-			);
-			// Here we need to retrieve the ads conversion ID from the
-			// classic/UA Analytics settings as it does not exist yet for this module.
-			// TODO: Update the value to be sourced from GA4 module settings once decoupled.
-			$ua_settings = ( new Analytics_Settings( $this->options ) )->get();
-			$tag->set_ads_conversion_id( $ua_settings['adsConversionID'] );
-
-			$tag->register();
+		if ( ! $tag->can_register() ) {
+			return;
 		}
+
+		$home_domain = URL::parse( $this->context->get_canonical_home_url(), PHP_URL_HOST );
+		$tag->set_home_domain( $home_domain );
+
+		$custom_dimensions_data = $this->get_custom_dimensions_data();
+		if ( ! empty( $custom_dimensions_data ) && $tag instanceof Tag_Interface ) {
+			$tag->set_custom_dimensions( $custom_dimensions_data );
+		}
+
+		// TODO: This should be replaced with the Analytics 4 adsConversionID module setting once the settings are migrated.
+		$tag->set_ads_conversion_id(
+			( new Analytics_Settings( $this->options ) )->get()['adsConversionID']
+		);
+
+		$tag->register();
+	}
+
+	/**
+	 * Returns the Module_Tag_Matchers instance.
+	 *
+	 * @since 1.119.0
+	 *
+	 * @return Module_Tag_Matchers Module_Tag_Matchers instance.
+	 */
+	public function get_tag_matchers() {
+		return new Tag_Matchers();
+	}
+
+	/**
+	 * Gets custom dimensions data based on available custom dimensions.
+	 *
+	 * @since 1.113.0
+	 *
+	 * @return array An associated array of custom dimensions data.
+	 */
+	private function get_custom_dimensions_data() {
+		if ( ! is_singular() ) {
+			return array();
+		}
+
+		$settings = $this->get_settings()->get();
+		if ( empty( $settings['availableCustomDimensions'] ) ) {
+			return array();
+		}
+
+		/**
+		 * Filters the allowed post types for custom dimensions tracking.
+		 *
+		 * @since 1.113.0
+		 *
+		 * @param array $allowed_post_types The array of allowed post types.
+		 */
+		$allowed_post_types = apply_filters( 'googlesitekit_custom_dimension_valid_post_types', array( 'post' ) );
+
+		$data = array();
+		$post = get_queried_object();
+
+		if ( in_array( 'googlesitekit_post_type', $settings['availableCustomDimensions'], true ) ) {
+			$data['googlesitekit_post_type'] = $post->post_type;
+		}
+
+		if ( is_singular( $allowed_post_types ) ) {
+			foreach ( $settings['availableCustomDimensions'] as $custom_dimension ) {
+				switch ( $custom_dimension ) {
+					case 'googlesitekit_post_author':
+						$author = get_userdata( $post->post_author );
+
+						if ( $author ) {
+							$data[ $custom_dimension ] = $author->display_name ? $author->display_name : $author->user_login;
+						}
+
+						break;
+					case 'googlesitekit_post_categories':
+						$categories = get_the_category( $post->ID );
+
+						if ( ! empty( $categories ) ) {
+							$category_names = wp_list_pluck( $categories, 'name' );
+
+							$data[ $custom_dimension ] = implode( '; ', $category_names );
+						}
+
+						break;
+					case 'googlesitekit_post_date':
+						$data[ $custom_dimension ] = get_the_date( 'Ymd', $post );
+						break;
+				}
+			}
+		}
+
+		return $data;
 	}
 
 	/**
@@ -1259,7 +1617,6 @@ final class Analytics_4 extends Module
 	 * @return boolean|WP_Error
 	 */
 	public function check_service_entity_access() {
-		/* @var Google_Service_GoogleAnalyticsAdmin $analyticsadmin phpcs:ignore Squiz.PHP.CommentedOutCode.Found */
 		$analyticsadmin = $this->get_service( 'analyticsadmin' );
 		$settings       = $this->settings->get();
 
@@ -1364,6 +1721,25 @@ final class Analytics_4 extends Module
 	}
 
 	/**
+	 * Populates custom dimension data to pass to JS via _googlesitekitModulesData.
+	 *
+	 * @since 1.113.0
+	 *
+	 * @param array $modules_data Inline modules data.
+	 * @return array Inline modules data.
+	 */
+	private function inline_custom_dimensions_data( $modules_data ) {
+		if ( $this->is_connected() ) {
+			// Add the data under the `analytics-4` key to make it clear it's scoped to this module.
+			$modules_data['analytics-4'] = array(
+				'customDimensionsDataAvailable' => $this->custom_dimensions_data_available->get_data_availability(),
+			);
+		}
+
+		return $modules_data;
+	}
+
+	/**
 	 * Returns sharing settings with settings for Analytics-4 replicated from Analytics.
 	 *
 	 * Module sharing settings for Analytics and Analytics-4 are always kept "in-sync" when
@@ -1400,7 +1776,7 @@ final class Analytics_4 extends Module
 			return $allowed;
 		}
 
-		if ( Feature_Flags::enabled( 'ga4Reporting' ) && $this->get_settings()->get()['useSnippet'] ) {
+		if ( $this->get_settings()->get()['useSnippet'] ) {
 			return true;
 		}
 

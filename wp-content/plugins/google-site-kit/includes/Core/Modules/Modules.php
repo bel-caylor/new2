@@ -22,12 +22,10 @@ use Google\Site_Kit\Core\Util\Method_Proxy_Trait;
 use Google\Site_Kit\Modules\AdSense;
 use Google\Site_Kit\Modules\Analytics;
 use Google\Site_Kit\Modules\Analytics_4;
-use Google\Site_Kit\Modules\Optimize;
 use Google\Site_Kit\Modules\PageSpeed_Insights;
 use Google\Site_Kit\Modules\Search_Console;
 use Google\Site_Kit\Modules\Site_Verification;
 use Google\Site_Kit\Modules\Tag_Manager;
-use Google\Site_Kit\Core\Util\Build_Mode;
 use Google\Site_Kit\Core\Util\URL;
 use Exception;
 
@@ -150,7 +148,6 @@ final class Modules {
 		Site_Verification::MODULE_SLUG  => Site_Verification::class,
 		Search_Console::MODULE_SLUG     => Search_Console::class,
 		Analytics::MODULE_SLUG          => Analytics::class,
-		Optimize::MODULE_SLUG           => Optimize::class,
 		Tag_Manager::MODULE_SLUG        => Tag_Manager::class,
 		AdSense::MODULE_SLUG            => AdSense::class,
 		PageSpeed_Insights::MODULE_SLUG => PageSpeed_Insights::class,
@@ -325,36 +322,7 @@ final class Modules {
 		add_filter( 'option_' . Module_Sharing_Settings::OPTION, $this->get_method_proxy( 'populate_default_shared_ownership_module_settings' ) );
 		add_filter( 'default_option_' . Module_Sharing_Settings::OPTION, $this->get_method_proxy( 'populate_default_shared_ownership_module_settings' ), 20 );
 
-		add_action(
-			'add_option_' . Module_Sharing_Settings::OPTION,
-			function( $option, $values ) {
-				array_walk(
-					$values,
-					function( $value, $module_slug ) {
-						if ( ! $this->module_exists( $module_slug ) ) {
-							return;
-						}
-
-						$module = $this->get_module( $module_slug );
-
-						if ( ! $module instanceof Module_With_Service_Entity ) {
-
-							$module->get_settings()->merge(
-								array(
-									'ownerID' => get_current_user_id(),
-								)
-							);
-
-						};
-					}
-				);
-			},
-			10,
-			2
-		);
-
-		add_action(
-			'update_option_' . Module_Sharing_Settings::OPTION,
+		$this->sharing_settings->on_change(
 			function( $old_values, $values ) {
 				if ( is_array( $values ) && is_array( $old_values ) ) {
 					array_walk(
@@ -367,6 +335,17 @@ final class Modules {
 							$module = $this->get_module( $module_slug );
 
 							if ( ! $module instanceof Module_With_Service_Entity ) {
+								// If the option was just added, set the ownerID directly and bail.
+								if ( empty( $old_values ) ) {
+									$module->get_settings()->merge(
+										array(
+											'ownerID' => get_current_user_id(),
+										)
+									);
+
+									return;
+								}
+
 								$changed_settings = false;
 
 								if ( is_array( $value ) ) {
@@ -407,9 +386,7 @@ final class Modules {
 						}
 					);
 				}
-			},
-			10,
-			2
+			}
 		);
 	}
 
@@ -677,7 +654,6 @@ final class Modules {
 		// Consider UA to be connected if GA4 is connected.
 		if (
 			Analytics::MODULE_SLUG === $slug &&
-			Feature_Flags::enabled( 'ga4Reporting' ) &&
 			! $module->is_connected() &&
 			$this->is_module_connected( Analytics_4::MODULE_SLUG )
 		) {
