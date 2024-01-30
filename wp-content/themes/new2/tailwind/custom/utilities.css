@@ -19,3 +19,33 @@
 .directory-article img {
     border-radius: 24px 24px 0 0;
 }
+
+
+img.attachment-post-thumbnail.size-post-thumbnail.wp-post-image {
+    border-radius: 24px 24px 0 0;
+}
+.kb-section-is-sticky figure.wp-block-image {
+  position: sticky;
+  top: 100px;
+}
+.grid-ad-desktop {
+    position: sticky;
+    top: 0;
+}
+.kt-inner-column-height-full:not(.kt-row-layout-row) {
+    grid-auto-rows: unset;
+}
+span.h-small {
+	font-size: 32px;
+	font-family: var(--wp--preset--font-family--serif);
+	display: block;
+}
+a {
+  color: var(--wp--preset--color--blue);
+}
+a:hover {
+	color: var(--wp--preset--color--green);
+}
+.fit-content {
+	width: fit-content;
+}
