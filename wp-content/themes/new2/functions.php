@@ -15,7 +15,7 @@ if ( ! defined( 'NEW2_VERSION' ) ) {
 	 * to create your production build, the value below will be replaced in the
 	 * generated zip file with a timestamp, converted to base 36.
 	 */
-	define( 'NEW2_VERSION', 's0kzff' );
+	define( 'NEW2_VERSION', 's9u4jz' );
 }
 
 if ( ! defined( 'NEW2_TYPOGRAPHY_CLASSES' ) ) {
@@ -68,7 +68,7 @@ if ( ! function_exists( 'new2_setup' ) ) :
 		 * hard-coded <title> tag in the document head, and expect WordPress to
 		 * provide it for us.
 		 */
-// 		add_theme_support( 'title-tag' );
+		add_theme_support( 'title-tag' );
 
 		/*
 		 * Enable support for Post Thumbnails on posts and pages.
@@ -157,8 +157,8 @@ function new2_scripts() {
 	wp_enqueue_style( 'open-sans', 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;800&display=swap', array(), null, 'all' ); // Google Font.
 	wp_enqueue_style( 'dancing-script', 'https://fonts.googleapis.com/css2?family=Dancing+Script&family=Noto+Sans:wght@100;400;600;800&display=swap', array(), null, 'all' ); // Google Font.
 
-// 	wp_register_script( 'font-awesome', 'https://kit.fontawesome.com/a91e37762c.js', array(), null, false ); // Font Awesome.
-// 	wp_enqueue_script( 'font-awesome' );
+	wp_register_script( 'font-awesome', 'https://kit.fontawesome.com/a91e37762c.js', array(), null, false ); // Font Awesome.
+	wp_enqueue_script( 'font-awesome' );
 
 	wp_enqueue_script( 'new2-script', get_template_directory_uri() . '/js/script.min.js', array(), NEW2_VERSION, true );
 
@@ -173,11 +173,12 @@ add_action( 'wp_enqueue_scripts', 'new2_scripts' );
  */
 function new2_enqueue_block_editor_script() {
 	wp_enqueue_script('new2-editor', get_template_directory_uri() . '/js/block-editor.min.js', array(	'wp-blocks', 'wp-edit-post', ), NEW2_VERSION, true);
-// 	wp_register_script( 'font-awesome', 'https://kit.fontawesome.com/a91e37762c.js', array(), null, false ); // Font Awesome.
-// 	wp_enqueue_script( 'font-awesome' );
+	wp_register_script( 'font-awesome', 'https://kit.fontawesome.com/a91e37762c.js', array(), null, false ); // Font Awesome.
+	wp_enqueue_script( 'font-awesome' );
 	
 	wp_enqueue_script( 'new2-js', get_template_directory_uri() . '/dist/editor.js', array( 'wp-blocks', 'wp-dom-ready', 'wp-edit-post', 'wp-i18n', 'wp-element', 'wp-editor' ), NEW2_VERSION, true );
-// 	wp_enqueue_style( 'typekit', 'https://use.typekit.net/tgx8twc.css', array(), null, 'all' ); // Typekit.
+	wp_enqueue_style( 'open-sans', 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;800&display=swap', array(), null, 'all' ); // Google Font.
+	wp_enqueue_style( 'dancing-script', 'https://fonts.googleapis.com/css2?family=Dancing+Script&family=Noto+Sans:wght@100;400;600;800&display=swap', array(), null, 'all' ); // Google Font.
 	// wp_enqueue_style( 'new2-style', get_template_directory_uri() . '/style-editor.css', array(), filemtime( get_template_directory() . '/style-editor.css' ) ); // Main theme styles
 	// add_editor_style(get_template_directory_uri() . '/style-editor.css');
 
@@ -196,11 +197,11 @@ function new2_enqueue_block_editor_script() {
 			'render_callback' => 'new2_render_church_title_link',
 		)
 	);	
-	register_block_type(
-		'new2/church-title-link', array(
-			'render_callback' => 'new2_render_church_title_link',
-		)
-	);	
+	// register_block_type(
+	// 	'new2/church-title-link', array(
+	// 		'render_callback' => 'new2_render_church_title_link',
+	// 	)
+	// );	
 };
 
 add_action( 'init', 'new2_enqueue_block_editor_script' );
@@ -304,3 +305,13 @@ require get_template_directory() . '/inc/template-tags.php';
  * Functions which enhance the theme by hooking into WordPress.
  */
 require get_template_directory() . '/inc/template-functions.php';
+
+
+/**
+ * Add url variable to social share links.
+ */
+function heateor_sss_customize_shared_url($postUrl, $sharingType, $standardWidget){
+	return $postUrl . '?SOCIAL_SHARE=1';
+}
+add_filter('heateor_sss_target_share_url_filter', 'heateor_sss_customize_shared_url', 10, 3);
+	
