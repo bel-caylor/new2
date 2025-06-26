@@ -340,7 +340,10 @@ body {
 
 body p {
     font-size: var(--wp--preset--font-size--large);
+<<<<<<< HEAD
     margin-bottom: var(--global-kb-spacing-sm);
+=======
+>>>>>>> 46a32e413d530213262af240f7ecf8d125454cf5
 }
 
 .entry-content {
