@@ -8,7 +8,6 @@ function initLayoutEditor( $ ) {
 	 * @returns {jQuery}
 	 */
 	$.fn.setGroupId = function ( groupId ) {
-
 		this.attr( 'data-groupId', groupId );
 
 		this.each( function () {
@@ -92,15 +91,6 @@ function initLayoutEditor( $ ) {
 			} );
 		};
 	}
-
-	// deprecated. remove in 2.8
-	String.prototype.format = function() {
-		var args = arguments;
-		console.warn( 'String.format will be replaced with String.gformFormat in Gravity Forms version 2.8.' );
-		return this.replace( /{(\d+)}/g, function( match, number ) {
-			return typeof args[ number ] != 'undefined' ? args[ number ] : match;
-		} );
-	};
 
 	var $editorContainer = $( '#form_editor_fields_container' ),
 		$editor = $( '.gform_editor' ),
@@ -193,7 +183,7 @@ function initLayoutEditor( $ ) {
 			$field.setGroupId( getGroupId() );
 
 			// If the submit button is inline, move it back to its own row
-			if( jQuery('#field_submit').data( 'field-position' ) == 'inline' ) {
+			if( jQuery('#field_submit').attr( 'data-field-position' ) == 'inline' ) {
 				moveButtonToBottom();
 			}
 
@@ -231,6 +221,9 @@ function initLayoutEditor( $ ) {
 			StartAddField( 'submit', Math.max( 0, $container.children().index( $elem ) + 1 ) );
 		}
 
+		var nativeEvent = new Event('gform/layout_editor/field_modified');
+		document.dispatchEvent(nativeEvent);
+
 	} );
 
 	// Save the group ID of the deleted field.
@@ -240,6 +233,9 @@ function initLayoutEditor( $ ) {
 			jQuery('input[name="submit_location"][value="inline"]').prop( 'disabled', false );
 			jQuery( '.submit_location_setting' ).prev( '.gform-alert--notice' ).remove();
 		}
+
+		var nativeEvent = new Event('gform/layout_editor/gform_field_deleted');
+		document.dispatchEvent(nativeEvent);
 	} );
 
 	// Handle resizing the group after the deleted field has been fully removed from the DOM.
@@ -269,20 +265,9 @@ function initLayoutEditor( $ ) {
 		initElement( $( '#field_' + fieldId ) );
 	} );
 
-		gform.addAction( 'gform_form_saving_action_element_after_reload', function( form, event, newElement, elementReloadId, existingElement ) {
-			if ( $( newElement ).hasClass( 'gfield' ) ) {
-				initElement( $( '[data-js-reload="' + elementReloadId + '"]' ) );
-			}
-
-			if ( $( newElement ).hasClass( 'editor-sidebar' ) ) {
-				initFieldButtons( $( fieldButtonsSelector ) );
-			}
-
-		} );
-
-		gform.addAction( 'gform_form_saving_action_editor_has_new_components', function( form, event, newElement, currentSidebar, newSidebar ) {
-			initFieldButtons( $( fieldButtonsSelector ) );
-		} );
+	gform.addAction( 'gform_after_change_input_type', function( fieldId ) {
+		initElement( $( '#field_' + fieldId ) );
+	} );
 
 	gform.addAction( 'gform_before_get_field_markup', function( form, field, index ) {
 		addFieldPlaceholder( field, index );
@@ -634,7 +619,7 @@ function initLayoutEditor( $ ) {
 	 * @since 2.6
 	 */
 	function setSubmitButtonGroup() {
-		if ( $( '#field_submit' ).data( 'field-position') === 'inline' ) {
+		if ( $( '#field_submit' ).attr( 'data-field-position') === 'inline' ) {
 			// Find the last group id.
 			var lastGroup = jQuery( '#field_submit' ).prev().attr( 'data-groupid' );
 			// Move the submit button to the group.
@@ -674,6 +659,8 @@ function initLayoutEditor( $ ) {
 						return false;
 					}
 
+					ui.helper.addClass( 'gform-theme__disable' );
+
 					// Match the helper to the current elements size.
 					ui.helper
 						.width( $( this ).width() )
@@ -682,7 +669,6 @@ function initLayoutEditor( $ ) {
 					$container.addClass( 'dragging' );
 					$elem = $( this ).clone();
 					$elem.addClass( 'placeholder' );
-
 					$( this ).addClass( 'fieldPlaceholder' );
 				},
 				drag: function( event, ui ) {
@@ -692,19 +678,19 @@ function initLayoutEditor( $ ) {
 					}
 
 					/**
-					 * New field buttons are dragged relative to #wpbody so their position needs to be adjusted to work the
+					 * New field buttons are dragged relative to #wpbody so their position needs to be adjusted to work
 					 * the same way as dragging an existing field (which is relative to #gform_fields).
 					 */
 					var helperTop = ui.position.top - 0 + ( ui.helper.outerHeight() / 2 ),
 						helperLeft = ui.position.left - 0 + ( ui.helper.outerWidth() / 2 );
 
 					handleDrag( event, ui, helperTop, helperLeft );
-
 				},
 				stop: function( event, ui ) {
 					$( this ).removeClass( 'fieldPlaceholder' );
 					$editorContainer.removeClass( 'droppable' );
 					$container.removeClass( 'dragging' );
+					ui.helper.removeClass( 'gform-theme__disable' );
 
 					var isAddingField = false;
 
@@ -743,16 +729,31 @@ function initLayoutEditor( $ ) {
 
 		$elements().removeClass( 'hovering' );
 
-		if ( ! isInEditorArea( helperLeft, helperTop ) ) {
+		var isCompactView = $( '.gform-compact-view' ).length > 0;
+
+		if ( ! isInEditorArea( helperLeft, helperTop, isCompactView ) ) {
 			$indicator( false ).remove();
 			return;
+		}
+
+		// drop indicator is a different distance from field in compact view.
+		if ( isCompactView ) {
+			var topDistanceAllFields = -9;
+			var topDistance = 9;
+			var bottomDistance = 5;
+			var bottomDistanceAllFields = 5;
+		} else {
+			var topDistanceAllFields = -10;
+			var topDistance = 10;
+			var bottomDistance = 0;
+			var bottomDistanceAllFields = 0;
 		}
 
 		// Check if field is dragged *above* all other fields.
 		if ( helperTop < 0 ) {
 			$indicator()
 				.css( {
-					top: -30,
+					top: topDistanceAllFields,
 					left: 0,
 					height: '4px',
 					width: $container.outerWidth()
@@ -768,7 +769,7 @@ function initLayoutEditor( $ ) {
 			if ( $elements().last().data( 'field-class' ) !== 'gform_editor_submit_container' && $elements().last().prev().data( 'field-class' ) !== 'gform_editor_submit_container' ) {
 				$indicator()
 					.css( {
-						top: $container.outerHeight() - 14,
+						top: $container.outerHeight() - bottomDistanceAllFields,
 						left: 0,
 						height: '4px',
 						width: $container.outerWidth()
@@ -877,7 +878,7 @@ function initLayoutEditor( $ ) {
 						return false;
 					case 'bottom':
 						$indicator().css( {
-							top: sibPos.top + $target.outerHeight() + 26,
+							top: sibPos.top + $target.outerHeight() + bottomDistance,
 							left: 0,
 							height: '4px',
 							width: '100%',
@@ -887,7 +888,7 @@ function initLayoutEditor( $ ) {
 					case 'top':
 
 						$indicator().css( {
-							top: sibPos.top - 30,
+							top: sibPos.top - topDistance,
 							left: 0,
 							height: '4px',
 							width: '100%'
@@ -978,11 +979,11 @@ function initLayoutEditor( $ ) {
 	 *
 	 * @param {number} x The left position of the coordinate.
 	 * @param {number} y The top position of the coordinate.
+	 * @param {boolean} isCompactView Whether or not the form editor is in compact view.
 	 *
 	 * @returns {boolean}
 	 */
-	function isInEditorArea( x, y ) {
-
+	function isInEditorArea( x, y, isCompactView = false ) {
 		if ( ! gform.tools.isRtl() ) {
 			var editorOffsetLeft = $editorContainer.offset().left;
 		} else {
@@ -993,7 +994,7 @@ function initLayoutEditor( $ ) {
 			offsetLeft = containerOffset.left - editorOffsetLeft,
 			buttonWidth = $button.outerWidth() || null,
 			editorArea = {
-				top: -offsetTop + buttonWidth,
+				top: isCompactView ? -offsetTop : -offsetTop + buttonWidth,
 				right: -offsetLeft + $editorContainer.outerWidth() - $sidebar.outerWidth() - buttonWidth,
 				bottom: -offsetTop + $editorContainer.outerHeight(),
 				left: -offsetLeft,

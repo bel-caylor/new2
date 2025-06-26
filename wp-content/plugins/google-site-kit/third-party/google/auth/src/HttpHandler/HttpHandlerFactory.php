@@ -17,20 +17,33 @@
  */
 namespace Google\Site_Kit_Dependencies\Google\Auth\HttpHandler;
 
+use Google\Site_Kit_Dependencies\GuzzleHttp\BodySummarizer;
 use Google\Site_Kit_Dependencies\GuzzleHttp\Client;
 use Google\Site_Kit_Dependencies\GuzzleHttp\ClientInterface;
+use Google\Site_Kit_Dependencies\GuzzleHttp\HandlerStack;
+use Google\Site_Kit_Dependencies\GuzzleHttp\Middleware;
 class HttpHandlerFactory
 {
     /**
      * Builds out a default http handler for the installed version of guzzle.
      *
      * @param ClientInterface $client
-     * @return Guzzle5HttpHandler|Guzzle6HttpHandler|Guzzle7HttpHandler
+     * @return Guzzle6HttpHandler|Guzzle7HttpHandler
      * @throws \Exception
      */
-    public static function build(\Google\Site_Kit_Dependencies\GuzzleHttp\ClientInterface $client = null)
+    public static function build(?\Google\Site_Kit_Dependencies\GuzzleHttp\ClientInterface $client = null)
     {
-        $client = $client ?: new \Google\Site_Kit_Dependencies\GuzzleHttp\Client();
+        if (\is_null($client)) {
+            $stack = null;
+            if (\class_exists(\Google\Site_Kit_Dependencies\GuzzleHttp\BodySummarizer::class)) {
+                // double the # of characters before truncation by default
+                $bodySummarizer = new \Google\Site_Kit_Dependencies\GuzzleHttp\BodySummarizer(240);
+                $stack = \Google\Site_Kit_Dependencies\GuzzleHttp\HandlerStack::create();
+                $stack->remove('http_errors');
+                $stack->unshift(\Google\Site_Kit_Dependencies\GuzzleHttp\Middleware::httpErrors($bodySummarizer), 'http_errors');
+            }
+            $client = new \Google\Site_Kit_Dependencies\GuzzleHttp\Client(['handler' => $stack]);
+        }
         $version = null;
         if (\defined('Google\\Site_Kit_Dependencies\\GuzzleHttp\\ClientInterface::MAJOR_VERSION')) {
             $version = \Google\Site_Kit_Dependencies\GuzzleHttp\ClientInterface::MAJOR_VERSION;
@@ -38,8 +51,6 @@ class HttpHandlerFactory
             $version = (int) \substr(\Google\Site_Kit_Dependencies\GuzzleHttp\ClientInterface::VERSION, 0, 1);
         }
         switch ($version) {
-            case 5:
-                return new \Google\Site_Kit_Dependencies\Google\Auth\HttpHandler\Guzzle5HttpHandler($client);
             case 6:
                 return new \Google\Site_Kit_Dependencies\Google\Auth\HttpHandler\Guzzle6HttpHandler($client);
             case 7:

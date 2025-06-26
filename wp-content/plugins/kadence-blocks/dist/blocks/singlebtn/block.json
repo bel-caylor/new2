@@ -1,12 +1,13 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
-  "apiVersion": 2,
+  "apiVersion": 3,
   "title": "Single Button",
   "name": "kadence/singlebtn",
   "parent": [
     "kadence/advancedbtn"
   ],
   "category": "kadence-blocks",
+  "textdomain": "kadence-blocks",
   "attributes": {
     "uniqueID": {
       "type": "string",
@@ -469,6 +470,13 @@
         ""
       ]
     },
+    "onlyText": {
+      "type": "array",
+      "default": [
+        false,
+        ""
+      ]
+    },
     "label": {
       "type": "string",
       "default": ""
@@ -486,13 +494,13 @@
             "",
             ""
           ],
-          "sizetype": "px",
+          "sizeType": "px",
           "lineHeight": [
             "",
             "",
             ""
           ],
-          "linetype": "",
+          "lineType": "",
           "letterSpacing": [
             "",
             "",
@@ -550,6 +558,9 @@
       "type": "boolean",
       "default": false
     },
+    "textUnderline": {
+      "type": "string"
+    },
     "anchor": {
       "type": "string"
     },
@@ -560,6 +571,19 @@
     "noCustomDefaults": {
       "type": "boolean",
       "default": false
+    },
+    "iconTitle": {
+      "type": "string",
+      "default": ""
+    },
+    "tooltip": {
+      "type": "string",
+      "default": "",
+      "__experimentalRole": "content"
+    },
+    "tooltipPlacement": {
+      "type": "string",
+      "default": ""
     }
   },
   "supports": {
@@ -569,10 +593,15 @@
     "ktanimatepreview": true,
     "ktdynamic": true,
     "html": false,
-    "reusable": false
+    "reusable": false,
+    "kbMetadata": true,
+    "kbContentLabel": "text"
   },
   "usesContext": [
     "postId",
-    "queryId"
+    "queryId",
+    "kadence/dynamicSource",
+    "kadence/repeaterRowData",
+    "kadence/repeaterRow"
   ]
 }

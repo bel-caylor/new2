@@ -315,7 +315,7 @@ class Migration {
 			$markers_converted = array();
 			foreach ($markers as $marker) {
 				$markers_converted[] = $this->convert_marker($marker);
-				$map_ids = json_decode($marker->layer, true);
+				$map_ids = (array) json_decode($marker->layer, true); // Cast to array, because LMM does not encode the column into JSON
 				$db->assign_maps_marker($map_ids, $marker->id);
 			}
 			$db->add_markers($markers_converted);

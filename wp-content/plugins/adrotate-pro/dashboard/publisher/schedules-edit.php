@@ -1,7 +1,7 @@
 <?php
 /* ------------------------------------------------------------------------------------
 *  COPYRIGHT AND TRADEMARK NOTICE
-*  Copyright 2008-2019 Arnan de Gans. All Rights Reserved.
+*  Copyright 2008-2024 Arnan de Gans. All Rights Reserved.
 *  ADROTATE is a registered trademark of Arnan de Gans.
 
 *  COPYRIGHT NOTICES AND ALL THE COMMENTS SHOULD REMAIN INTACT.
@@ -203,15 +203,12 @@ if($edit_schedule) {
 				<th width="5%"><center><?php _e('Device', 'adrotate-pro'); ?></center></th>
 				<th width="15%"><?php _e('Visible until', 'adrotate-pro'); ?></th>
 				<th width="5%"><center><?php _e('Weight', 'adrotate-pro'); ?></center></th>
-		        <?php if($adrotate_config['stats'] == 1) { ?>
-					<th width="5%"><center><?php _e('Shown', 'adrotate-pro'); ?></center></th>
-					<th width="5%"><center><?php _e('Clicks', 'adrotate-pro'); ?></center></th>
-				<?php } ?>
 			</tr>
 			</thead>
 
 			<tbody>
-			<?php if($ads) {
+			<?php 
+			if(count($ads) > 0) {
 				$class = '';
 				foreach($ads as $ad) {
 					$stoptime = $wpdb->get_var("SELECT `stoptime` FROM `{$wpdb->prefix}adrotate_schedule`, `{$wpdb->prefix}adrotate_linkmeta` WHERE `ad` = '".$ad->id."' AND `schedule` = `{$wpdb->prefix}adrotate_schedule`.`id` ORDER BY `stoptime` DESC LIMIT 1;");
@@ -220,10 +217,6 @@ if($edit_schedule) {
 					if($ad->type == 'error' OR $ad->type == 'a_error') $errorclass = ' row_yellow';
 					if($stoptime <= $in2days OR $stoptime <= $in7days) $errorclass = ' row_orange';
 					if($stoptime <= $now OR (($ad->crate > 0 OR $ad->irate > 0) AND $ad->budget == 0)) $errorclass = ' row_red';
-
-					if($adrotate_config['stats'] == 1) {
-						$stats = adrotate_stats($ad->id);
-					}
 
 					$class = ('alternate' != $class) ? 'alternate' : '';
 					$class = ($errorclass != '') ? $errorclass : $class;
@@ -246,17 +239,13 @@ if($edit_schedule) {
 						<td><center><?php echo $mobile; ?></center></td>
 						<td><span style="color: <?php echo adrotate_prepare_color($stoptime);?>;"><?php echo date_i18n("F d, Y", $stoptime); ?></span></td>
 						<td><center><?php echo $ad->weight; ?></center></td>
-						<?php if($adrotate_config['stats'] == 1) { ?>
-							<td><center><?php echo $stats['impressions']; ?></center></td>
-							<td><center><?php if($ad->tracker != 'N') { echo $stats['clicks']; } else { ?>--<?php } ?></center></td>
-						<?php } ?>
 					</tr>
 				<?php unset($stats);?>
 	 			<?php } ?>
 			<?php } else { ?>
 			<tr>
 				<th class="check-column">&nbsp;</th>
-				<td colspan="<?php echo ($adrotate_config['stats'] == 1) ? '6' : '4';?>"><em><?php _e('No adverts created!', 'adrotate-pro'); ?></em></td>
+				<td colspan="5"><em><?php _e('No adverts created!', 'adrotate-pro'); ?></em></td>
 			</tr>
 			<?php } ?>
 			</tbody>

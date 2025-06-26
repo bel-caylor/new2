@@ -1,7 +1,7 @@
 <?php
 /* ------------------------------------------------------------------------------------
 *  COPYRIGHT AND TRADEMARK NOTICE
-*  Copyright 2008-2023 Arnan de Gans. All Rights Reserved.
+*  Copyright 2008-2024 Arnan de Gans. All Rights Reserved.
 *  ADROTATE is a registered trademark of Arnan de Gans.
 
 *  COPYRIGHT NOTICES AND ALL THE COMMENTS SHOULD REMAIN INTACT.
@@ -12,7 +12,6 @@
 /*-------------------------------------------------------------
  Name:      adrotate_can_edit
  Purpose:   Return a array of adverts to use on advertiser dashboards
- Since:		3.11
 -------------------------------------------------------------*/
 function adrotate_can_edit() {
 	global $adrotate_config;
@@ -27,7 +26,6 @@ function adrotate_can_edit() {
 /*-------------------------------------------------------------
  Name:      adrotate_is_networked
  Purpose:   Determine if AdRotate is network activated
- Since:		3.9.8
 -------------------------------------------------------------*/
 function adrotate_is_networked() {
 	if(!function_exists('is_plugin_active_for_network')) require_once(ABSPATH.'/wp-admin/includes/plugin.php');
@@ -41,7 +39,6 @@ function adrotate_is_networked() {
 /*-------------------------------------------------------------
  Name:      adrotate_get_license
  Purpose:   Get the license
- Since:		5.6.2
 -------------------------------------------------------------*/
 function adrotate_get_license() {
 	$a = (adrotate_is_networked()) ? get_site_option('adrotate_activate') : get_option('adrotate_activate');
@@ -51,7 +48,6 @@ function adrotate_get_license() {
 /*-------------------------------------------------------------
  Name:      adrotate_is_human
  Purpose:   Check if visitor is a bot
- Since:		3.11.10
 -------------------------------------------------------------*/
 function adrotate_is_human() {
 	global $adrotate_crawlers;
@@ -79,13 +75,12 @@ function adrotate_is_human() {
 /*-------------------------------------------------------------
  Name:      adrotate_is_ios
  Purpose:   Check if OS is iOS
- Since:		4.1
 -------------------------------------------------------------*/
 function adrotate_is_ios() {
-	if(!class_exists('Mobile_Detect')) {
+	if(!class_exists('\Detection\MobileDetect')) {
 		require_once(dirname(__FILE__).'/library/mobile-detect.php');
 	}
-	$detect = new Mobile_Detect;
+	$detect = new \Detection\MobileDetect;
 
 	if($detect->isiOS() AND !$detect->isAndroidOS()) {
 		return true;
@@ -96,13 +91,12 @@ function adrotate_is_ios() {
 /*-------------------------------------------------------------
  Name:      adrotate_is_android
  Purpose:   Check if OS is Android
- Since:		4.1
 -------------------------------------------------------------*/
 function adrotate_is_android() {
-	if(!class_exists('Mobile_Detect')) {
+	if(!class_exists('\Detection\MobileDetect')) {
 		require_once(dirname(__FILE__).'/library/mobile-detect.php');
 	}
-	$detect = new Mobile_Detect;
+	$detect = new \Detection\MobileDetect;
 
 	if(!$detect->isiOS() AND $detect->isAndroidOS()) {
 		return true;
@@ -113,13 +107,12 @@ function adrotate_is_android() {
 /*-------------------------------------------------------------
  Name:      adrotate_is_mobile
  Purpose:   Check if visitor is on a smartphone
- Since:		3.12.6
 -------------------------------------------------------------*/
 function adrotate_is_mobile() {
-	if(!class_exists('Mobile_Detect')) {
+	if(!class_exists('\Detection\MobileDetect')) {
 		require_once(dirname(__FILE__).'/library/mobile-detect.php');
 	}
-	$detect = new Mobile_Detect;
+	$detect = new \Detection\MobileDetect;
 
 	if($detect->isMobile() AND !$detect->isTablet()) {
 		return true;
@@ -130,13 +123,12 @@ function adrotate_is_mobile() {
 /*-------------------------------------------------------------
  Name:      adrotate_is_tablet
  Purpose:   Check if visitor is on a tablet
- Since:		3.16
 -------------------------------------------------------------*/
 function adrotate_is_tablet() {
-	if(!class_exists('Mobile_Detect')) {
+	if(!class_exists('\Detection\MobileDetect')) {
 		require_once(dirname(__FILE__).'/library/mobile-detect.php');
 	}
-	$detect = new Mobile_Detect;
+	$detect = new \Detection\MobileDetect;
 
 	if($detect->isTablet()) {
 		return true;
@@ -147,37 +139,52 @@ function adrotate_is_tablet() {
 /*-------------------------------------------------------------
  Name:      adrotate_filter_duplicates
  Purpose:   Remove adverts that already show elsewhere on the page
- Since:		5.5
 -------------------------------------------------------------*/
-function adrotate_filter_duplicates($selected, $banner_id, $session_page) {
+function adrotate_filter_duplicates($banner_id, $session_page) {
 	if(isset($_SESSION['adrotate-duplicate-ads'])) {
 		// Set session data
 		if(!array_key_exists($session_page, $_SESSION['adrotate-duplicate-ads']) OR ($_SESSION['adrotate-duplicate-ads'][$session_page]['timeout'] < current_time('timestamp'))) {
 			$_SESSION['adrotate-duplicate-ads'][$session_page] = array('timeout' => current_time('timestamp'), 'adverts' => array());
 		}
 
-		// Remove advert if it's in session data
 		if(in_array($banner_id, $_SESSION['adrotate-duplicate-ads'][$session_page]['adverts'])) {
-			unset($selected[$banner_id]);
+			return true;
 		}
 	}
 
-	return $selected;
+	return false;
+}
+
+/*-------------------------------------------------------------
+ Name:      adrotate_filter_show_everyone
+ Purpose:   Remove adverts that don't show to logged in users
+-------------------------------------------------------------*/
+function adrotate_filter_show_everyone($banner) {
+	if(($banner['show_everyone'] == "N") AND is_user_logged_in()) {
+		return true;
+	}
+
+	return false;
 }
 
 /*-------------------------------------------------------------
  Name:      adrotate_filter_schedule
  Purpose:   Weed out ads that are over the limit of their schedule
- Since:		3.6.11
 -------------------------------------------------------------*/
-function adrotate_filter_schedule($selected, $banner) {
+function adrotate_filter_schedule($banner) {
 	global $wpdb, $adrotate_config;
 
 	$now = current_time('timestamp');
 	$day = date('D', $now);
 	$hour = date('Hi', $now);
 
-	$schedules = $wpdb->get_results("SELECT `{$wpdb->prefix}adrotate_schedule`.* FROM `{$wpdb->prefix}adrotate_schedule`, `{$wpdb->prefix}adrotate_linkmeta` WHERE `schedule` = `{$wpdb->prefix}adrotate_schedule`.`id` AND `ad` = {$banner->id} ORDER BY `starttime` ASC;");
+	if($banner['network'] === 1 AND adrotate_is_networked()) {
+		$network = get_site_option('adrotate_network_settings');
+		$current_blog = $wpdb->blogid;
+		switch_to_blog($network['primary']);
+	}
+
+	$schedules = $wpdb->get_results("SELECT `{$wpdb->prefix}adrotate_schedule`.* FROM `{$wpdb->prefix}adrotate_schedule`, `{$wpdb->prefix}adrotate_linkmeta` WHERE `schedule` = `{$wpdb->prefix}adrotate_schedule`.`id` AND `ad` = {$banner['id']} ORDER BY `starttime` ASC;");
 
 	$current = array();
 	foreach($schedules as $schedule) {
@@ -188,8 +195,8 @@ function adrotate_filter_schedule($selected, $banner) {
 		} else if(($schedule->daystarttime > 0 OR $schedule->daystoptime > 0) AND ($schedule->daystarttime > $hour OR $schedule->daystoptime < $hour)) {
 			$current[] = 0;
 		} else {
-			if($adrotate_config['stats'] == 1 AND $banner->tracker != 'N') {
-				$stat = adrotate_stats($banner->id, false, $schedule->starttime, $schedule->stoptime);
+			if($adrotate_config['stats'] == 1 AND $banner['tracker'] != 'N') {
+				$stat = adrotate_stats($banner['id'], false, $schedule->starttime, $schedule->stoptime);
 				if($schedule->spread_all == 'Y') {
 					$group_impressions = $wpdb->get_var("SELECT SUM(`impressions`) FROM `{$wpdb->prefix}adrotate_stats`, `{$wpdb->prefix}adrotate_linkmeta` WHERE `schedule` = {$schedule->id} AND `{$wpdb->prefix}adrotate_linkmeta`.`ad` = `{$wpdb->prefix}adrotate_stats`.`ad` AND `thetime` >= {$schedule->starttime} AND `thetime` <= {$schedule->stoptime};");
 				} else {
@@ -201,14 +208,14 @@ function adrotate_filter_schedule($selected, $banner) {
 
 				if($stat['clicks'] >= $schedule->maxclicks AND $schedule->maxclicks > 0) { // Click limit reached?
 					$current[] = 0;
-					$wpdb->query("UPDATE `{$wpdb->prefix}adrotate` SET `type` = 'limit' WHERE `id` = {$banner->id};"); // Set advert expired
+					$wpdb->query("UPDATE `{$wpdb->prefix}adrotate` SET `type` = 'limit' WHERE `id` = {$banner['id']};"); // Set advert expired
 				} else if($schedule->spread == 'Y' AND $stat['impressions'] > $temp_max_impressions) { // Impression spread
 					$current[] = 0;
 				} else if($schedule->spread_all == 'Y' AND $group_impressions > $temp_max_impressions) { // Impression spread all (campaigns)
 					$current[] = 0;
 				} else if($stat['impressions'] >= $schedule->maximpressions AND $schedule->maximpressions > 0) { // Impression limit reached?
 					$current[] = 0;
-					$wpdb->query("UPDATE `{$wpdb->prefix}adrotate` SET `type` = 'limit' WHERE `id` = {$banner->id};"); // Set advert expired
+					$wpdb->query("UPDATE `{$wpdb->prefix}adrotate` SET `type` = 'limit' WHERE `id` = {$banner['id']};"); // Set advert expired
 				} else { // Everything else
 					$current[] = 1;
 				}
@@ -218,62 +225,61 @@ function adrotate_filter_schedule($selected, $banner) {
 		}
 	}
 
+	if($banner['network'] === 1 AND adrotate_is_networked()) {
+		switch_to_blog($current_blog);
+	}
+
 	// Remove advert from array if all schedules are false (0)
 	if(!in_array(1, $current)) {
-		unset($selected[$banner->id]);
+		return true;
 	}
 	unset($current, $schedules);
 
-	return $selected;
-}
-
-/*-------------------------------------------------------------
- Name:      adrotate_filter_show_everyone
- Purpose:   Remove adverts that don't show to logged in users
- Since:		4.8
--------------------------------------------------------------*/
-function adrotate_filter_show_everyone($selected, $banner) {
-	if(($banner->show_everyone == "N") AND is_user_logged_in()) {
-		unset($selected[$banner->id]);
-	}
-
-	return $selected;
+	return false;
 }
 
 /*-------------------------------------------------------------
  Name:      adrotate_filter_budget
  Purpose:   Weed out ads that are over the limit of their schedule
- Since:		3.6.11
 -------------------------------------------------------------*/
-function adrotate_filter_budget($selected, $banner) {
+function adrotate_filter_budget($banner) {
 	global $wpdb;
 
-	if($banner->budget == null) $banner->budget = '0';
-	if($banner->crate == null) $banner->crate = '0';
-	if($banner->irate == null) $banner->irate = '0';
+	$result = false;
 
-	if(($banner->budget <= 0 AND $banner->crate > 0) OR ($banner->budget <= 0 AND $banner->irate > 0)) {
-		unset($selected[$banner->id]);
+	if($banner['budget'] == null) $banner['budget'] = '0';
+	if($banner['crate'] == null) $banner['crate'] = '0';
+	if($banner['irate'] == null) $banner['irate'] = '0';
 
+	if($banner['network'] === 1 AND adrotate_is_networked()) {
+		$network = get_site_option('adrotate_network_settings');
+		$current_blog = $wpdb->blogid;
+		switch_to_blog($network['primary']);
+	}
+
+	if(($banner['budget'] <= 0 AND $banner['crate'] > 0) OR ($banner['budget'] <= 0 AND $banner['irate'] > 0)) {
 		// Set advert expired
-		$wpdb->query("UPDATE `{$wpdb->prefix}adrotate` SET `type` = 'limit' WHERE `id` = {$banner->id};");
+		$wpdb->query("UPDATE `{$wpdb->prefix}adrotate` SET `type` = 'limit' WHERE `id` = {$banner['id']};");
 
-		return $selected;
+		$result = true;
 	}
-	if($banner->budget > 0 AND $banner->irate > 0) {
-		$cpm = number_format($banner->irate / 1000, 4, '.', '');
-		$wpdb->query("UPDATE `{$wpdb->prefix}adrotate` SET `budget` = `budget` - {$cpm} WHERE `id` = {$banner->id};");
+	if($banner['budget'] > 0 AND $banner['irate'] > 0) {
+		$cpm = number_format($banner['irate'] / 1000, 4, '.', '');
+		$wpdb->query("UPDATE `{$wpdb->prefix}adrotate` SET `budget` = `budget` - {$cpm} WHERE `id` = {$banner['id']};");
 	}
 
-	return $selected;
+	if($banner['network'] === 1 AND adrotate_is_networked()) {
+		switch_to_blog($current_blog);
+	}
+
+	return $result;
 }
 
 /*-------------------------------------------------------------
  Name:      adrotate_filter_location
  Purpose:   Determine the users location, the ads geo settings and filter out ads
- Since:		3.8.5.1
 -------------------------------------------------------------*/
-function adrotate_filter_location($selected, $banner) {
+function adrotate_filter_location($banner) {
 	// Grab geo data from session
 	$geo = $_SESSION['adrotate-geo'];
 
@@ -281,9 +287,9 @@ function adrotate_filter_location($selected, $banner) {
 		// Good Geo Response?
 		if($geo['code'] == 200) {
 			$keep = array();
-			$cities = unserialize(stripslashes($banner->cities));
-			$states = unserialize(stripslashes($banner->states));
-			$countries = unserialize(stripslashes($banner->countries));
+			$cities = unserialize(stripslashes($banner['cities']));
+			$states = unserialize(stripslashes($banner['states']));
+			$countries = unserialize(stripslashes($banner['countries']));
 			if(!is_array($cities)) $cities = array();
 			if(!is_array($states)) $states = array();
 			if(!is_array($countries)) $countries = array();
@@ -305,7 +311,7 @@ function adrotate_filter_location($selected, $banner) {
 				}
 			}
 			// Match a city in a state
-			if(count($cities) > 0 AND count($states) > 0 AND $banner->state_req == 'Y') {
+			if(count($cities) > 0 AND count($states) > 0 AND $banner['state_req'] == 'Y') {
 				if($keep['city'] == 'N' AND $keep['state'] = 'N') {
 					$keep['state_req'] = 'N';
 				} else {
@@ -323,19 +329,17 @@ function adrotate_filter_location($selected, $banner) {
 
 			// Remove advert from pool?
 			if(!in_array('Y', $keep)) {
-				unset($selected[$banner->id]);
+				return true;
 			}
-			unset($keep);
 		}
 	}
 
-	return $selected;
+	return false;
 }
 
 /*-------------------------------------------------------------
  Name:      adrotate_filter_content
  Purpose:   Deal with quotes, pre and embed codes
- Since:		4.14
 -------------------------------------------------------------*/
 function adrotate_filter_content($content) {
 	// Deal with <blockquote>
@@ -386,7 +390,6 @@ function adrotate_filter_content($content) {
 /*-------------------------------------------------------------
  Name:      adrotate_session
  Purpose:   Set up a session for Geo Targeting and Duplicate ads
- Since:		5.6.1
 -------------------------------------------------------------*/
 function adrotate_session() {
 	if(!wp_doing_cron() AND !defined('WP_CLI')) {
@@ -415,13 +418,12 @@ function adrotate_session() {
 /*-------------------------------------------------------------
  Name:      adrotate_geolocation
  Purpose:   Find the location of the visitor
- Since:		3.8.5
 -------------------------------------------------------------*/
 function adrotate_geolocation() {
 	if(!wp_doing_cron() AND !defined('WP_CLI') AND !isset($_SESSION['adrotate-geo']) AND adrotate_is_human()) {
 		$adrotate_config = get_option('adrotate_config');
 		$remote_ip = adrotate_get_remote_ip();
-		$geo_result = array();
+		$geo_result = array('code' => '503', 'message' => 'ERROR - Geo Targeting not enabled.');
 
 		$plugin_version = get_plugins();
 		$plugin_version = $plugin_version['adrotate-pro/adrotate-pro.php']['Version'];
@@ -574,7 +576,6 @@ function adrotate_geolocation() {
 /*-------------------------------------------------------------
  Name:      adrotate_object_to_array
  Purpose:   Convert an object to a array
- Since:		3.9.9
 -------------------------------------------------------------*/
 function adrotate_object_to_array($data) {
 	if(is_array($data)) {
@@ -594,7 +595,6 @@ function adrotate_object_to_array($data) {
 /*-------------------------------------------------------------
  Name:      adrotate_array_unique
  Purpose:   Filter out duplicate records in multidimensional arrays
- Since:		3.0
 -------------------------------------------------------------*/
 function adrotate_array_unique($array) {
 	if(count($array) > 0) {
@@ -619,7 +619,6 @@ function adrotate_array_unique($array) {
 /*-------------------------------------------------------------
  Name:      adrotate_rand
  Purpose:   Generate a random string
- Since:		3.8
 -------------------------------------------------------------*/
 function adrotate_rand($length = 8) {
 	$available_chars = "abcdefghijklmnopqrstuvwxyz";
@@ -634,36 +633,32 @@ function adrotate_rand($length = 8) {
 
 /*-------------------------------------------------------------
  Name:      adrotate_pick_weight
- Purpose:   Sort out and pick a random ad based on weight
- Since:		3.8
+ Purpose:   Sort out and pick a random advert based on weight
 -------------------------------------------------------------*/
-function adrotate_pick_weight($selected) {
-    $ads = array_keys($selected);
-    foreach($selected as $banner) {
-		$weight[] = $banner->weight;
-		unset($banner);
-	}
+function adrotate_pick_weight($ads) {
+    $ad_ids = array_column($ads, 'id');
+	$weight = array_column($ads, 'weight');
 
     $sum_of_weight = array_sum($weight)-1;
     if($sum_of_weight < 1) $sum_of_weight = 2;
     $random = mt_rand(0, $sum_of_weight);
 
-    foreach($ads as $key => $var){
+    foreach($ad_ids as $key => $ad_id){
         if($random < $weight[$key]){
-            return $ads[$key];
+            return $key;
         }
         $random = $random - $weight[$key];
     }
-    unset($ads, $weight, $sum_of_weight, $random);
+    unset($ad_ids, $weight, $sum_of_weight, $random);
 }
 
 /*-------------------------------------------------------------
  Name:      adrotate_shuffle
  Purpose:   Randomize and slice an array but keep keys intact
- Since:		3.8.8.3
 -------------------------------------------------------------*/
 function adrotate_shuffle($array, $amount = 20) {
 	if(!is_array($array)) return $array;
+
 	$keys = array_keys($array);
 	shuffle($keys);
 
@@ -677,7 +672,6 @@ function adrotate_shuffle($array, $amount = 20) {
 /*-------------------------------------------------------------
  Name:      adrotate_select_categories
  Purpose:   Create scrolling menu of all categories.
- Since:		3.8.4
 -------------------------------------------------------------*/
 function adrotate_select_categories($savedcats, $count = 2, $child_of = 0, $parent = 0) {
 	if(!is_array($savedcats)) $savedcats = explode(',', $savedcats);
@@ -719,7 +713,6 @@ function adrotate_select_categories($savedcats, $count = 2, $child_of = 0, $pare
 /*-------------------------------------------------------------
  Name:      adrotate_select_pages
  Purpose:   Create scrolling menu of all pages.
- Since:		3.8.4
 -------------------------------------------------------------*/
 function adrotate_select_pages($savedpages, $count = 2, $child_of = 0, $parent = 0) {
 	if(!is_array($savedpages)) $savedpages = explode(',', $savedpages);
@@ -761,7 +754,6 @@ function adrotate_select_pages($savedpages, $count = 2, $child_of = 0, $parent =
 /*-------------------------------------------------------------
  Name:      adrotate_select_woo_categories
  Purpose:   Create scrolling menu of all categories.
- Since:		5.10
 -------------------------------------------------------------*/
 function adrotate_select_woo_categories($savedcats, $count = 2, $child_of = 0, $parent = 0) {
 	if(!is_array($savedcats)) $savedcats = explode(',', $savedcats);
@@ -803,7 +795,6 @@ function adrotate_select_woo_categories($savedcats, $count = 2, $child_of = 0, $
 /*-------------------------------------------------------------
  Name:      adrotate_select_bbpress_forums
  Purpose:   Create scrolling menu of all categories.
- Since:		5.10
 -------------------------------------------------------------*/
 function adrotate_select_bbpress_forums($savedforums, $count = 2, $child_of = 0, $parent = 0) {
 	if(!is_array($savedforums)) $savedforums = explode(',', $savedforums);
@@ -845,7 +836,6 @@ function adrotate_select_bbpress_forums($savedforums, $count = 2, $child_of = 0,
 /*-------------------------------------------------------------
  Name:      adrotate_countries
  Purpose:   List of countries
- Since:		3.8.5.1
 -------------------------------------------------------------*/
 function adrotate_countries() {
 	return array(
@@ -1076,7 +1066,6 @@ function adrotate_countries() {
 /*-------------------------------------------------------------
  Name:      adrotate_select_countries
  Purpose:   Create scrolling menu of all countries.
- Since:		3.8.5.1
 -------------------------------------------------------------*/
 function adrotate_select_countries($savedcountries) {
 	if(!is_array($savedcountries)) $savedcountries = array();
@@ -1112,7 +1101,6 @@ function adrotate_select_countries($savedcountries) {
 /*-------------------------------------------------------------
  Name:      adrotate_evaluate_ads
  Purpose:   Initiate evaluations for errors and determine the ad status
- Since:		3.6.5
 -------------------------------------------------------------*/
 function adrotate_evaluate_ads() {
 	global $wpdb;
@@ -1168,7 +1156,6 @@ function adrotate_evaluate_ads() {
 /*-------------------------------------------------------------
  Name:      adrotate_prepare_evaluate_ads
  Purpose:   Initiate automated evaluations for errors and determine the ad status and return to a dashboard
- Since:		3.8.7.1
 -------------------------------------------------------------*/
 function adrotate_prepare_evaluate_ads() {
 	// Verify all ads
@@ -1180,7 +1167,6 @@ function adrotate_prepare_evaluate_ads() {
 /*-------------------------------------------------------------
  Name:      adrotate_evaluate_ad
  Purpose:   Evaluates ads for errors
- Since:		3.6.5
 -------------------------------------------------------------*/
 function adrotate_evaluate_ad($ad_id) {
 	global $wpdb, $adrotate_config;
@@ -1190,7 +1176,7 @@ function adrotate_evaluate_ad($ad_id) {
 	$in7days = $now + 604800;
 
 	// Fetch ad and its data
-	$ad = $wpdb->get_row($wpdb->prepare("SELECT `id`, `bannercode`, `imagetype`, `image`, `tracker`, `desktop`, `mobile`, `tablet`, `budget`, `os_ios`, `os_android`, `os_other`,`crate`, `irate`, `state_req`, `cities`, `states` FROM `{$wpdb->prefix}adrotate` WHERE `id` = %d;", $ad_id));
+	$ad = $wpdb->get_row($wpdb->prepare("SELECT `id`, `bannercode`, `imagetype`, `image`, `tracker`, `desktop`, `mobile`, `tablet`, `budget`, `os_ios`, `os_android`,`crate`, `irate`, `state_req`, `cities`, `states` FROM `{$wpdb->prefix}adrotate` WHERE `id` = %d;", $ad_id));
 
 	$stoptime = $wpdb->get_var("SELECT `stoptime` FROM `{$wpdb->prefix}adrotate_schedule`, `{$wpdb->prefix}adrotate_linkmeta` WHERE `ad` = {$ad->id} AND `schedule` = `{$wpdb->prefix}adrotate_schedule`.`id` ORDER BY `stoptime` DESC LIMIT 1;");
 	$has_groups = $wpdb->get_var("SELECT COUNT(`group`) FROM `{$wpdb->prefix}adrotate_linkmeta` WHERE `ad` = {$ad->id} AND `schedule` = 0 AND `user` = 0;");
@@ -1236,9 +1222,9 @@ function adrotate_evaluate_ad($ad_id) {
 		OR $has_schedules == 0 // No Schedules for this ad
 		OR ((!preg_match_all('/<(a)[^>](.*?)>/i', $bannercode, $things) OR preg_match_all('/<(ins|script|embed|iframe)[^>](.*?)>/i', $bannercode, $things)) AND ($ad->tracker == 'Y' OR $ad->tracker == 'C')) // Clicks active but no valid link/tag present
 		OR ($ad->tracker == 'N' AND ($ad->crate > 0 OR $ad->irate > 0))	// Stats inactive but set a Click|Impression rate
-		OR ($has_groups == 0 AND ($ad->desktop == "N" OR $ad->mobile == "N" OR $ad->tablet == "N")) // No groups but has devices (de)selected
+		OR ($has_groups == 0 AND ($ad->desktop == "N" OR $ad->mobile == "N" OR $ad->tablet == "N" OR $ad->os_ios == "N" OR $ad->os_android == "N")) // No groups but has devices (de)selected
 		OR ($has_groups > 0 AND ($ad->desktop == "N" AND $ad->mobile == "N" AND $ad->tablet == "N")) // Has group but no devices selected
-		OR ($has_groups > 0 AND $ad->os_ios == "N" AND $ad->os_other == "N" AND $ad->os_android == "N") // Has group but no OS selected
+		OR ($has_groups > 0 AND $ad->os_ios == "N" AND $ad->os_android == "N") // Has group but no OS selected
 		OR ($ad->state_req == "Y" AND count($cities) == 0 AND count($states) == 0) // Geo Targeting, no cities and states
 		OR ($ad->state_req == "Y" AND count($cities) > 0 AND count($states) == 0) // Geo Targeting, no cities
 		OR ($ad->state_req == "Y" AND count($cities) == 0 AND count($states) > 0) // Geo Targeting, no states
@@ -1272,7 +1258,6 @@ function adrotate_evaluate_ad($ad_id) {
 /*-------------------------------------------------------------
  Name:      adrotate_prepare_color
  Purpose:   Check if ads are expired and set a color for its end date
- Since:		3.0
 -------------------------------------------------------------*/
 function adrotate_prepare_color($enddate) {
 	$now = current_time('timestamp');
@@ -1293,7 +1278,6 @@ function adrotate_prepare_color($enddate) {
 /*-------------------------------------------------------------
  Name:      adrotate_ad_is_in_groups
  Purpose:   Build list of groups the ad is in (overview)
- Since:		3.8
 -------------------------------------------------------------*/
 function adrotate_ad_is_in_groups($id) {
 	global $wpdb;
@@ -1323,7 +1307,6 @@ function adrotate_ad_is_in_groups($id) {
 /*-------------------------------------------------------------
  Name:      adrotate_hash
  Purpose:   Generate the adverts clicktracking hash
- Since:		3.9.12
 -------------------------------------------------------------*/
 function adrotate_hash($ad, $group = 0, $blog_id = 0) {
 	global $adrotate_config;
@@ -1335,7 +1318,6 @@ function adrotate_hash($ad, $group = 0, $blog_id = 0) {
 /*-------------------------------------------------------------
  Name:      adrotate_get_remote_ip
  Purpose:   Get the remote IP from the visitor
- Since:		3.6.2
 -------------------------------------------------------------*/
 function adrotate_get_remote_ip(){
 	if(empty($_SERVER["HTTP_X_FORWARDED_FOR"])) {
@@ -1351,7 +1333,6 @@ function adrotate_get_remote_ip(){
 /*-------------------------------------------------------------
  Name:      adrotate_get_useragent
  Purpose:   Get the useragent from the visitor
- Since:		3.18.3
 -------------------------------------------------------------*/
 function adrotate_get_useragent(){
 	if(isset($_SERVER['HTTP_USER_AGENT'])) {
@@ -1367,7 +1348,6 @@ function adrotate_get_useragent(){
 /*-------------------------------------------------------------
  Name:      adrotate_apply_jetpack_photon
  Purpose:   Use Jetpack Photon if possible
- Since:		4.11
 -------------------------------------------------------------*/
 function adrotate_apply_jetpack_photon($image) {
 	if(class_exists('Jetpack_Photon') AND Jetpack::is_module_active('photon') AND function_exists('jetpack_photon_url')) {
@@ -1380,7 +1360,6 @@ function adrotate_apply_jetpack_photon($image) {
 /*-------------------------------------------------------------
  Name:      adrotate_sanitize_file_name
  Purpose:   Clean up file names of files that are being uploaded.
- Since:		3.11.3
 -------------------------------------------------------------*/
 function adrotate_sanitize_file_name($filename) {
     $filename_raw = $filename;
@@ -1394,7 +1373,6 @@ function adrotate_sanitize_file_name($filename) {
 /*-------------------------------------------------------------
  Name:      adrotate_get_sorted_roles
  Purpose:   Returns all roles and capabilities, sorted by user level. Lowest to highest.
- Since:		3.2
 -------------------------------------------------------------*/
 function adrotate_get_sorted_roles() {
 	global $wp_roles;
@@ -1414,7 +1392,6 @@ function adrotate_get_sorted_roles() {
 /*-------------------------------------------------------------
  Name:      adrotate_set_capability
  Purpose:   Grant or revoke capabilities to a role and all higher roles
- Since:		3.2
 -------------------------------------------------------------*/
 function adrotate_set_capability($lowest_role, $capability){
 	$check_order = adrotate_get_sorted_roles();
@@ -1430,7 +1407,6 @@ function adrotate_set_capability($lowest_role, $capability){
 /*-------------------------------------------------------------
  Name:      adrotate_remove_capability
  Purpose:   Remove the $capability from the all roles
- Since:		3.2
 -------------------------------------------------------------*/
 function adrotate_remove_capability($capability){
 	$check_order = adrotate_get_sorted_roles();
@@ -1444,7 +1420,6 @@ function adrotate_remove_capability($capability){
 /*-------------------------------------------------------------
  Name:      adrotate_notifications
  Purpose:   Contact admins/moderators about various things
- Since:		4.0
 -------------------------------------------------------------*/
 function adrotate_notifications($action = false, $adid = false) {
 	global $wpdb, $adrotate_config;
@@ -1527,7 +1502,6 @@ function adrotate_notifications($action = false, $adid = false) {
 /*-------------------------------------------------------------
  Name:      adrotate_mail_notifications
  Purpose:   Send emails to appointed recipients
- Since:		4.0
 -------------------------------------------------------------*/
 function adrotate_mail_notifications($emails, $title, $messages) {
 	$messages = implode("\n", $messages);
@@ -1556,7 +1530,6 @@ function adrotate_mail_notifications($emails, $title, $messages) {
 /*-------------------------------------------------------------
  Name:      adrotate_mail_advertiser
  Purpose:   Email a selected advertiser about his account/adverts/whatever
- Since:		4.0
 -------------------------------------------------------------*/
 function adrotate_mail_advertiser() {
 	global $wpdb;
@@ -1602,7 +1575,6 @@ function adrotate_mail_advertiser() {
 /*-------------------------------------------------------------
  Name:      adrotate_dashboard_scripts
  Purpose:   Load file uploaded popup
- Since:		3.6
 -------------------------------------------------------------*/
 function adrotate_dashboard_scripts() {
 	$page = (isset($_GET['page'])) ? $_GET['page'] : '';
@@ -1629,7 +1601,6 @@ function adrotate_dashboard_scripts() {
 /*-------------------------------------------------------------
  Name:      adrotate_dashboard_styles
  Purpose:   Load file uploaded popup
- Since:		3.6
 -------------------------------------------------------------*/
 function adrotate_dashboard_styles() {
 	// Keep global for notifications
@@ -1651,9 +1622,8 @@ function adrotate_dashboard_styles() {
 /*-------------------------------------------------------------
  Name:      adrotate_dropdown_folder_contents
  Purpose:   List folder contents for dropdown menu
- Since:		5.6
 -------------------------------------------------------------*/
-function adrotate_dropdown_folder_contents($base_dir, $extensions = array('jpg', 'jpeg', 'gif', 'png', 'webp', 'svg', 'html', 'htm', 'js'), $max_level = 1, $level = 0, $parent = '') {
+function adrotate_dropdown_folder_contents($base_dir, $extensions = array('jpg', 'jpeg', 'gif', 'png', 'webp', 'svg', 'html', 'htm', 'js', 'mp4'), $max_level = 1, $level = 0, $parent = '') {
 	$index = array();
 
 	// List the folders and files
@@ -1698,7 +1668,6 @@ function adrotate_dropdown_folder_contents($base_dir, $extensions = array('jpg',
 /*-------------------------------------------------------------
  Name:      adrotate_mediapage_folder_contents
  Purpose:   List sub-folder contents for media manager
- Since:		4.9
 -------------------------------------------------------------*/
 function adrotate_mediapage_folder_contents($asset_folder, $extensions = array('jpg', 'jpeg', 'gif', 'png', 'webp', 'svg', 'html', 'htm', 'js'), $level = 1) {
 	$index = $assets = array();
@@ -1743,7 +1712,6 @@ function adrotate_mediapage_folder_contents($asset_folder, $extensions = array('
 /*-------------------------------------------------------------
  Name:      adrotate_clean_folder_contents
  Purpose:   Delete unwanted advert assets after uploading a zip file
- Since:		5.8.7
 -------------------------------------------------------------*/
 function adrotate_clean_folder_contents($asset_folder) {
 	$index = $assets = array();
@@ -1778,7 +1746,6 @@ function adrotate_clean_folder_contents($asset_folder) {
 /*-------------------------------------------------------------
  Name:      adrotate_unlink
  Purpose:   Delete a file or folder from the banners folder
- Since:		4.9
 -------------------------------------------------------------*/
 function adrotate_unlink($asset, $path = '') {
 	global $adrotate_config;
@@ -1826,7 +1793,6 @@ function adrotate_unlink($asset, $path = '') {
 /*-------------------------------------------------------------
  Name:      adrotate_return
  Purpose:   Internal redirects
- Since:		3.8.5
 -------------------------------------------------------------*/
 function adrotate_return($page, $status, $args = null) {
 	if(strlen($page) > 0 AND ($status > 0 AND $status < 1000)) {
@@ -1845,7 +1811,6 @@ function adrotate_return($page, $status, $args = null) {
 /*-------------------------------------------------------------
  Name:      adrotate_status
  Purpose:   Internal redirects
- Since:		3.8.5
 -------------------------------------------------------------*/
 function adrotate_status($status, $args = null) {
 

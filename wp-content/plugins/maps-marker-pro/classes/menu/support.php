@@ -114,12 +114,10 @@ class Support extends Menu {
 					<li><a href="https://select2.org" target="_blank">Select2</a> by Kevin Brown, Igor Vaynberg, and Select2 contributors</li>
 					<li><a href="https://bgrins.github.io/spectrum/" target="_blank">Spectrum</a> by Brian Grinstead</li>
 					<li><a href="https://flatpickr.js.org" target="_blank">flatpickr</a> by Gregory Petrosyan</li>
-					<li><a href="https://date-fns.org" target="_blank">date-fns</a> by Sasha Koss</li>
 					<li><a href="https://github.com/kazuhikoarase/qrcode-generator" target="_blank">QR-Code generator</a> by Kazuhiko Arase</li>
 					<li><a href="https://mapicons.mapsmarker.com" target="_blank">Map Icons Collection</a> by Nicolas Mollet</li>
 					<li><a href="https://tobiasahlin.com/spinkit/" target="_blank">Map loading animation</a> by Tobias Ahlin</li>
 					<li>JSON & language icons by <a href="https://p.yusukekamiyamane.com" target="_blank">Yusuke Kamiyamane</a></li>
-					<li>Map edit icon by <a href="https://www.fatcow.com" target="_blank">FatCow Web Hosting</a></li>
 					<li>Fullscreen icons by <a href="https://pjonori.com" target="_blank">P.J. Onori</a></li>
 					<li>Home icon by <a href="https://www.flaticon.com/authors/dave-gandy" target="_blank">Dave Gandy</a></li>
 					<li>Pin icon by <a href="https://www.flaticon.com/authors/those-icons" target="_blank">Those Icons</a></li>

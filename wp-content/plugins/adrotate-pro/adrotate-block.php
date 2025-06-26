@@ -1,7 +1,7 @@
 <?php
 /* ------------------------------------------------------------------------------------
 *  COPYRIGHT AND TRADEMARK NOTICE
-*  Copyright 2008-2022 Arnan de Gans. All Rights Reserved.
+*  Copyright 2008-2024 Arnan de Gans. All Rights Reserved.
 *  ADROTATE is a registered trademark of Arnan de Gans.
 
 *  COPYRIGHT NOTICES AND ALL THE COMMENTS SHOULD REMAIN INTACT.
@@ -28,13 +28,57 @@ add_action('init', 'adrotate_register_blocks');
  Since:		5.8.19
 -------------------------------------------------------------*/
 function adrotate_advert_block($attr) {
+	global $adrotate_config;
+
     if(!isset($attr['advert_id']) OR !is_numeric($attr['advert_id'])) return;
-    return adrotate_ad($attr['advert_id']);
+
+	$output = '';
+	if($adrotate_config['w3caching'] == "Y") {
+		$output .= '<!-- mfunc '.W3TC_DYNAMIC_SECURITY.' -->';
+		$output .= 'echo adrotate_ad('.$attr['advert_id'].');';
+		$output .= '<!-- /mfunc '.W3TC_DYNAMIC_SECURITY.' -->';
+	} else if($adrotate_config['borlabscache'] == "Y" AND function_exists('BorlabsCacheHelper')) {
+		if(BorlabsCacheHelper()->willFragmentCachingPerform()) {
+			$borlabsphrase = BorlabsCacheHelper()->getFragmentCachingPhrase();
+
+			$output .= '<!--[borlabs cache start: '.$borlabsphrase.']--> ';
+			$output .= 'echo adrotate_ad('.$attr['advert_id'].');';
+			$output .= ' <!--[borlabs cache end: '.$borlabsphrase.']-->';
+
+			unset($borlabsphrase);
+		}
+	} else {
+		$output .= adrotate_ad($attr['advert_id']);
+	}
+
+	return $output;
 }
 
 function adrotate_group_block($attr) {
+	global $adrotate_config;
+
     if(!isset($attr['group_id']) OR !is_numeric($attr['group_id'])) return;
-    return adrotate_group($attr['group_id']);
+
+	$output = '';
+	if($adrotate_config['w3caching'] == "Y") {
+		$output .= '<!-- mfunc '.W3TC_DYNAMIC_SECURITY.' -->';
+		$output .= 'echo adrotate_group('.$attr['group_id'].');';
+		$output .= '<!-- /mfunc '.W3TC_DYNAMIC_SECURITY.' -->';
+	} else if($adrotate_config['borlabscache'] == "Y" AND function_exists('BorlabsCacheHelper')) {
+		if(BorlabsCacheHelper()->willFragmentCachingPerform()) {
+			$borlabsphrase = BorlabsCacheHelper()->getFragmentCachingPhrase();
+
+			$output .= '<!--[borlabs cache start: '.$borlabsphrase.']--> ';
+			$output .= 'echo adrotate_group('.$attr['group_id'].');';
+			$output .= ' <!--[borlabs cache end: '.$borlabsphrase.']-->';
+
+			unset($borlabsphrase);
+		}
+	} else {
+		$output .= adrotate_group($attr['group_id']);
+	}
+
+	return $output;
 }
 
 /*-------------------------------------------------------------
@@ -43,13 +87,11 @@ function adrotate_group_block($attr) {
  Since:		5.8.19
 -------------------------------------------------------------*/
 function adrotate_add_block_category($categories, $editor_context) {
-	if(!empty($editor_context->post)) {
-		$categories[] = array(
-			'slug'  => 'custom-adrotate',
-			'title' => __('AdRotate - Advertisements', 'adrotate-pro'),
-			'icon'  => null,
-		);
-	}
+	array_unshift($categories, array(
+		'slug'	=> 'custom-adrotate',
+		'title' => __('AdRotate - Advertisements', 'adrotate-pro'),
+		'icon'  => null,
+	));
 
 	return $categories;
 }

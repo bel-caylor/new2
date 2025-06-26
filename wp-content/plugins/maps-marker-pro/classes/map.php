@@ -366,18 +366,22 @@ class Map {
 						)
 					),
 					'properties' => array(
-						'id'         => $marker->id,
-						'name'       => $l10n->__($marker->name, "Marker (ID {$marker->id}) name"),
-						'address'    => $l10n->__($marker->address, "Marker (ID {$marker->id}) address"),
-						'zoom'       => $marker->zoom,
-						'icon'       => $marker->icon,
-						'popup'      => $popup,
-						'link'       => $l10n->__($marker->link, "Marker (ID {$marker->id}) link"),
-						'blank'      => $marker->blank,
-						'created_on' => (new \DateTime($marker->created_on, new \DateTimeZone('UTC')))->format('U'),
-						'updated_on' => (new \DateTime($marker->updated_on, new \DateTimeZone('UTC')))->format('U'),
-						'maps'       => explode(',', $marker->maps),
-						'edit'       => $marker->created_by_id == $current_user->ID || current_user_can('mmp_edit_other_markers')
+						'id'                    => $marker->id,
+						'name'                  => $l10n->__($marker->name, "Marker (ID {$marker->id}) name"),
+						'address'               => $l10n->__($marker->address, "Marker (ID {$marker->id}) address"),
+						'zoom'                  => $marker->zoom,
+						'icon'                  => $marker->icon,
+						'popup'                 => $popup,
+						'link'                  => $l10n->__($marker->link, "Marker (ID {$marker->id}) link"),
+						'blank'                 => $marker->blank,
+						'created_on'            => (new \DateTime($marker->created_on, new \DateTimeZone('UTC')))->format('U'),
+						'created_on_local_date' => $l10n->date('date', $marker->created_on),
+						'created_on_local_time' => $l10n->date('time', $marker->created_on),
+						'updated_on'            => (new \DateTime($marker->updated_on, new \DateTimeZone('UTC')))->format('U'),
+						'updated_on_local_date' => $l10n->date('date', $marker->updated_on),
+						'updated_on_local_time' => $l10n->date('time', $marker->updated_on),
+						'maps'                  => explode(',', $marker->maps),
+						'edit'                  => $marker->created_by_id == $current_user->ID || current_user_can('mmp_edit_other_markers')
 					)
 				);
 				$last_id = $marker->id;

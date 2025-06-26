@@ -1,7 +1,7 @@
 <?php
 /* ------------------------------------------------------------------------------------
 *  COPYRIGHT AND TRADEMARK NOTICE
-*  Copyright 2008-2020 Arnan de Gans. All Rights Reserved.
+*  Copyright 2008-2024 Arnan de Gans. All Rights Reserved.
 *  ADROTATE is a registered trademark of Arnan de Gans.
 
 *  COPYRIGHT NOTICES AND ALL THE COMMENTS SHOULD REMAIN INTACT.
@@ -320,7 +320,7 @@ function adrotate_export_ads($ids) {
 			'id' => $export['id'], 'title' => $export['title'], 'bannercode' => stripslashes($export['bannercode']),
 			'imagetype' => $export['imagetype'], 'image' => $export['image'],
 			'tracker' => $export['tracker'], 'desktop' => $export['desktop'], 'mobile' => $export['mobile'], 'tablet' => $export['tablet'],
-			'os_ios' => $export['os_ios'], 'os_android' => $export['os_android'], 'os_other' => $export['os_other'],
+			'os_ios' => $export['os_ios'], 'os_android' => $export['os_android'], 
 			'weight' => $export['weight'], 'budget' => $export['budget'], 'crate' => $export['crate'], 'irate' => $export['irate'],
 			'cities' => $export['cities'], 'countries' => $export['countries'],
 			'schedule_start' => $starttime, 'schedule_end' => $stoptime
@@ -401,7 +401,6 @@ function adrotate_import_ads() {
 							'tablet' => ($data[8] == "Y" OR $data[8] == "N") ? strip_tags(trim($data[8], "\t\n ")) : 'Y',
 							'os_ios' => ($data[9] == "Y" OR $data[9] == "N") ? strip_tags(trim($data[9], "\t\n ")) : 'Y',
 							'os_android' => ($data[10] == "Y" OR $data[10] == "N") ? strip_tags(trim($data[10], "\t\n ")) : 'Y',
-							'os_other' => ($data[11] == "Y" OR $data[11] == "N") ? strip_tags(trim($data[11], "\t\n ")) : 'Y',
 							'type' => 'import',
 							'weight' => (is_numeric($data[12])) ? strip_tags(trim($data[12], "\t\n ")) : 6,
 							'autodelete' => 'N',

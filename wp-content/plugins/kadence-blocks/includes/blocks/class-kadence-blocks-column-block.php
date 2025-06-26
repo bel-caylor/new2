@@ -51,23 +51,90 @@ class Kadence_Blocks_Column_Block extends Kadence_Blocks_Abstract_Block {
 	public function build_css( $attributes, $css, $unique_id, $unique_style_id ) {
 		$css->set_style_id( 'kb-' . $this->block_name . $unique_style_id );
 		// Style.
+		$is_version_two = ( isset( $attributes['kbVersion'] ) && 1 < $attributes['kbVersion'] ? true : false );
+		$desktop_vertical_align = ! empty( $attributes['verticalAlignment'] ) ? $attributes['verticalAlignment'] : '';
+		$tablet_vertical_align = ! empty( $attributes['verticalAlignmentTablet'] ) ? $attributes['verticalAlignmentTablet'] : $desktop_vertical_align;
+		$mobile_vertical_align = ! empty( $attributes['verticalAlignmentMobile'] ) ? $attributes['verticalAlignmentMobile'] : $tablet_vertical_align;
+		$desktop_horizontal_align = ! empty( $attributes['justifyContent'][0] ) ? $attributes['justifyContent'][0] : '';
+		$tablet_horizontal_align = ! empty( $attributes['justifyContent'][1] ) ? $attributes['justifyContent'][1] : $desktop_horizontal_align;
+		$mobile_horizontal_align = ! empty( $attributes['justifyContent'][2] ) ? $attributes['justifyContent'][2] : $tablet_horizontal_align;
+		$desktop_flex_wrap = ! empty( $attributes['wrapContent'][0] ) ? $attributes['wrapContent'][0] : '';
+		$tablet_flex_wrap = ! empty( $attributes['wrapContent'][1] ) ? $attributes['wrapContent'][1] : $desktop_flex_wrap;
+		$mobile_flex_wrap = ! empty( $attributes['wrapContent'][2] ) ? $attributes['wrapContent'][2] : $tablet_flex_wrap;
+		$desktop_direction = ! empty( $attributes['direction'][0] ) ? $attributes['direction'][0] : 'vertical';
+		$tablet_direction = ! empty( $attributes['direction'][1] ) ? $attributes['direction'][1] : $desktop_direction;
+		$mobile_direction = ! empty( $attributes['direction'][2] ) ? $attributes['direction'][2] : $tablet_direction;
+		$desktop_text_align = ! empty( $attributes['textAlign'][0] ) ? $attributes['textAlign'][0] : '';
+		$tablet_text_align = ! empty( $attributes['textAlign'][1] ) ? $attributes['textAlign'][1] : $desktop_text_align;
+		$mobile_text_align = ! empty( $attributes['textAlign'][2] ) ? $attributes['textAlign'][2] : $tablet_text_align;
+		$is_desktop_flex = in_array( $desktop_direction, array( 'horizontal', 'horizontal-reverse', 'vertical-reverse' ) ) || ! empty( $desktop_vertical_align ) || ! empty( $desktop_horizontal_align ) || ! empty( $attributes['rowGapVariable'][0] ) ? true : false;
+		$is_tablet_flex = false;
+		$is_mobile_flex = false;
+		// Max Width.
+		$max_width_unit        = ! empty( $attributes['maxWidthUnit'] ) ? $attributes['maxWidthUnit'] : 'px';
+		$tablet_max_width_unit = ! empty( $attributes['maxWidthTabletUnit'] ) ? $attributes['maxWidthTabletUnit'] : $max_width_unit;
+		$mobile_max_width_unit = ! empty( $attributes['maxWidthMobileUnit'] ) ? $attributes['maxWidthMobileUnit'] : $tablet_max_width_unit;
+		if ( $is_desktop_flex ) {
+			$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col' );
+			$css->add_property( 'display', 'flex' );
+		}
+		if ( ! $is_desktop_flex ) {
+			$is_tablet_flex = in_array( $tablet_direction, array( 'horizontal', 'horizontal-reverse', 'vertical-reverse' ) ) || ! empty( $tablet_vertical_align ) || ! empty( $tablet_horizontal_align ) || ! empty( $attributes['rowGapVariable'][1] ) ? true : false;
+			if ( $is_tablet_flex ) {
+				$css->set_media_state( 'tablet' );
+				$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col' );
+				$css->add_property( 'display', 'flex' );
+				$css->set_media_state( 'desktop' );
+			}
+		}
+		if ( ! $is_desktop_flex && ! $is_tablet_flex ) {
+			$is_mobile_flex = in_array( $mobile_direction, array( 'horizontal', 'horizontal-reverse', 'vertical-reverse' ) ) || ! empty( $mobile_vertical_align ) || ! empty( $mobile_horizontal_align ) || ! empty( $attributes['rowGapVariable'][2] ) ? true : false;
+			if ( $is_mobile_flex ) {
+				$css->set_media_state( 'mobile' );
+				$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col' );
+				$css->add_property( 'display', 'flex' );
+				$css->set_media_state( 'desktop' );
+			}
+		}
+		if ( isset( $attributes['flexGrow'][0] ) && $css->is_number( $attributes['flexGrow'][0] ) ) {
+			$css->set_selector( '.kadence-column' . $unique_id . ', .wp-block-kadence-column.kb-section-dir-horizontal > .kt-inside-inner-col > .kadence-column' . $unique_id );
+			$css->add_property( 'flex-grow', $attributes['flexGrow'][0] );
+			$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col' );
+			$css->add_property( 'height', '100%' );
+		}
+		if ( isset( $attributes['flexGrow'][1] ) && $css->is_number( $attributes['flexGrow'][1] ) ) {
+			$css->set_media_state( 'tablet' );
+			$css->set_selector( '.kadence-column' . $unique_id . ', .wp-block-kadence-column.kb-section-dir-horizontal > .kt-inside-inner-col > .kadence-column' . $unique_id );
+			$css->add_property( 'flex-grow', $attributes['flexGrow'][1] );
+			$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col' );
+			$css->add_property( 'height', '100%' );
+			$css->set_media_state( 'desktop' );
+		}
+		if ( isset( $attributes['flexGrow'][2] ) && $css->is_number( $attributes['flexGrow'][2] ) ) {
+			$css->set_media_state( 'mobile' );
+			$css->set_selector( '.kadence-column' . $unique_id . ', .wp-block-kadence-column.kb-section-dir-horizontal > .kt-inside-inner-col > .kadence-column' . $unique_id );
+			$css->add_property( 'flex-grow', $attributes['flexGrow'][2] );
+			$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col' );
+			$css->add_property( 'height', '100%' );
+			$css->set_media_state( 'desktop' );
+		}
 		if ( ! empty( $attributes['maxWidth'][0] ) ) {
 			$css->set_selector( '.kadence-column' . $unique_id );
-			$css->add_property( 'max-width', $attributes['maxWidth'][0] . ( isset( $attributes['maxWidthUnit'] ) ? $attributes['maxWidthUnit'] : 'px' ) );
+			$css->add_property( 'max-width', $attributes['maxWidth'][0] . $max_width_unit );
 			$css->add_property( 'margin-left', 'auto' );
 			$css->add_property( 'margin-right', 'auto' );
 			//Section inside Section compatablity.
 			// $css->set_selector( '.wp-block-kadence-column>.kt-inside-inner-col>.kadence-column' . $unique_id );
 			// $css->add_property( 'flex', '1 ' . $attributes['maxWidth'][0] . ( isset( $attributes['maxWidthUnit'] ) ? $attributes['maxWidthUnit'] : 'px' ) );
 			$css->set_selector( '.wp-block-kadence-column.kb-section-dir-horizontal:not(.kb-section-md-dir-vertical)>.kt-inside-inner-col>.kadence-column' . $unique_id );
-			$css->add_property( 'flex', '0 1 ' . $attributes['maxWidth'][0] . ( isset( $attributes['maxWidthUnit'] ) ? $attributes['maxWidthUnit'] : 'px' ) );
+			$css->add_property( 'flex', '0 1 ' . $attributes['maxWidth'][0] . $max_width_unit );
 			$css->add_property( 'max-width', 'unset' );
 			$css->add_property( 'margin-left', 'unset' );
 			$css->add_property( 'margin-right', 'unset' );
 			if ( apply_filters( 'kadence_blocks_css_output_media_queries', true ) ) {
 				$css->set_media_state( 'desktopOnly' );
 				$css->set_selector( '.wp-block-kadence-column.kb-section-dir-horizontal>.kt-inside-inner-col>.kadence-column' . $unique_id );
-				$css->add_property( 'flex', '0 1 ' . $attributes['maxWidth'][0] . ( isset( $attributes['maxWidthUnit'] ) ? $attributes['maxWidthUnit'] : 'px' ) );
+				$css->add_property( 'flex', '0 1 ' . $attributes['maxWidth'][0] . $max_width_unit );
 				$css->add_property( 'max-width', 'unset' );
 				$css->add_property( 'margin-left', 'unset' );
 				$css->add_property( 'margin-right', 'unset' );
@@ -148,26 +215,6 @@ class Kadence_Blocks_Column_Block extends Kadence_Blocks_Abstract_Block {
 			$css->add_property( '--kb-section-setting-offset', $attributes['stickyOffset'][2] . ( isset( $attributes['stickyOffsetUnit'] ) ? $attributes['stickyOffsetUnit'] : 'px' ) );
 			$css->set_media_state( 'desktop' );
 		}
-		if ( ! empty( $attributes['sticky'] ) && true === $attributes['sticky'] ) {
-			$css->set_selector( '#wrapper.site' );
-			$css->add_property( 'overflow', 'clip' );
-			if ( ! empty( $attributes['stickyOffset'][0] ) ) {
-				$css->set_selector( '.kadence-column' . $unique_id );
-				$css->add_property( '--kb-section-setting-offset', $attributes['stickyOffset'][0] . ( isset( $attributes['stickyOffsetUnit'] ) ? $attributes['stickyOffsetUnit'] : 'px' ) );
-			}
-		}
-		if ( ! empty( $attributes['stickyOffset'][1] ) ) {
-			$css->set_media_state( 'tablet' );
-			$css->set_selector( '.kadence-column' . $unique_id );
-			$css->add_property( '--kb-section-setting-offset', $attributes['stickyOffset'][1] . ( isset( $attributes['stickyOffsetUnit'] ) ? $attributes['stickyOffsetUnit'] : 'px' ) );
-			$css->set_media_state( 'desktop' );
-		}
-		if ( ! empty( $attributes['stickyOffset'][2] ) ) {
-			$css->set_media_state( 'mobile' );
-			$css->set_selector( '.kadence-column' . $unique_id );
-			$css->add_property( '--kb-section-setting-offset', $attributes['stickyOffset'][2] . ( isset( $attributes['stickyOffsetUnit'] ) ? $attributes['stickyOffsetUnit'] : 'px' ) );
-			$css->set_media_state( 'desktop' );
-		}
 
 		$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col' );
 		// Padding, check old first.
@@ -222,15 +269,15 @@ class Kadence_Blocks_Column_Block extends Kadence_Blocks_Abstract_Block {
 			);
 		}
 		$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col' );
-		if ( $css->is_number( $attributes['height'][0] ) ) {
+		if ( isset( $attributes['height'][0] ) && $css->is_number( $attributes['height'][0] ) ) {
 			$css->add_property( 'min-height', $attributes['height'][0] . ( ! empty( $attributes['heightUnit'] ) ? $attributes['heightUnit'] : 'px' ) );
 		}
 		$css->set_media_state( 'tablet' );
-		if ( $css->is_number( $attributes['height'][1] ) ) {
+		if ( isset( $attributes['height'][1] ) && $css->is_number( $attributes['height'][1] ) ) {
 			$css->add_property( 'min-height', $attributes['height'][1] . ( ! empty( $attributes['heightUnit'] ) ? $attributes['heightUnit'] : 'px' ) );
 		}
 		$css->set_media_state( 'mobile' );
-		if ( $css->is_number( $attributes['height'][2] ) ) {
+		if ( isset( $attributes['height'][2] ) && $css->is_number( $attributes['height'][2] ) ) {
 			$css->add_property( 'min-height', $attributes['height'][2] . ( ! empty( $attributes['heightUnit'] ) ? $attributes['heightUnit'] : 'px' ) );
 		}
 		$css->set_media_state( 'desktop' );
@@ -273,14 +320,72 @@ class Kadence_Blocks_Column_Block extends Kadence_Blocks_Abstract_Block {
 				$css->add_property( 'box-shadow', 'rgba(0, 0, 0, 0.2) 0px 0px 14px 0px' );
 			}
 		}
+		// Gap.
+		$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col' );
+		if ( ! $is_version_two && 'horizontal' === $desktop_direction ) {
+			$gutter = isset( $attributes['gutter'] ) && is_array( $attributes['gutter'] ) && isset( $attributes['gutter'][0] ) && is_numeric( $attributes['gutter'][0] ) ? $attributes['gutter'][0] : null;
+			if ( null === $gutter ) {
+				$attributes['gutter'][0] = 10;
+			}
+			if ( empty( $attributes['gutterVariable'] ) ) {
+				$attributes['gutterVariable'] = array( 'custom', 'custom', 'custom' );
+			}
+			$css->render_row_gap( $attributes, 'gutterVariable', 'gap', 'gutter', 'gutterUnit' );
+		} else {
+			if ( empty( $attributes['gutterVariable'][0] ) ) {
+				$attributes['gutterVariable'][0] = 'sm';
+			}
+			$css->render_row_gap( $attributes, 'rowGapVariable', 'row-gap', 'rowGap', 'rowGapUnit' );
+			$css->render_row_gap( $attributes, 'gutterVariable', 'column-gap', 'gutter', 'gutterUnit' );
+		}
+
 		// Direction Styles.
-		$desktop_direction = ( isset( $attributes['direction'] ) && is_array( $attributes['direction'] ) && ! empty( $attributes['direction'][0] ) ? $attributes['direction'][0] : 'vertical' );
-		if ( $desktop_direction === 'horizontal' ) {
+		if ( 'vertical' === $desktop_direction || 'vertical-reverse' === $desktop_direction ) {
 			$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col' );
-			$css->add_property( 'display', 'flex' );
-			$css->add_property( 'flex-direction', 'row' );
+			$css->add_property( 'flex-direction', ( 'vertical-reverse' === $desktop_direction ? 'column-reverse' : 'column' ) );
+			if ( ! empty( $desktop_vertical_align ) ) {
+				$align = $desktop_vertical_align;
+				switch ( $align ) {
+					case 'top':
+						$align = 'flex-start';
+						break;
+					case 'bottom':
+						$align = 'flex-end';
+						break;
+					case 'space-between':
+						$align = 'space-between';
+						break;
+					case 'space-around':
+						$align = 'space-around';
+						break;
+					case 'space-evenly':
+						$align = 'space-evenly';
+						break;
+					case 'stretch':
+						$align = 'stretch';
+						break;
+					default:
+						$align = 'center';
+						break;
+				}
+				$css->add_property( 'justify-content', $align );
+			}
+			if ( ! empty( $desktop_horizontal_align ) ) {
+				$css->add_property( 'align-items', $desktop_horizontal_align );
+				// Handle Ratio Images.
+				$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col > .kb-image-is-ratio-size' );
+				$css->add_property( 'align-self', 'stretch' );
+				// Handle Advanced Gallery
+				$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col > .wp-block-kadence-advancedgallery' );
+				$css->add_property( 'align-self', 'stretch' );
+			}
+			$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col > .aligncenter' );
+			$css->add_property( 'width', '100%' );
+		} elseif ( 'horizontal' === $desktop_direction || 'horizontal-reverse' === $desktop_direction ) {
+			$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col' );
+			$css->add_property( 'flex-direction', ( 'horizontal-reverse' === $desktop_direction ? 'row-reverse' : 'row' ) );
 			$css->add_property( 'flex-wrap', 'wrap' );
-			$align = ! empty( $attributes['verticalAlignment'] ) ? $attributes['verticalAlignment'] : 'center';
+			$align = ! empty( $desktop_vertical_align ) ? $desktop_vertical_align : 'center';
 			switch ( $align ) {
 				case 'top':
 					$align = 'flex-start';
@@ -288,15 +393,28 @@ class Kadence_Blocks_Column_Block extends Kadence_Blocks_Abstract_Block {
 				case 'bottom':
 					$align = 'flex-end';
 					break;
+				case 'space-between':
+					$align = 'space-between';
+					break;
+				case 'space-around':
+					$align = 'space-around';
+					break;
+				case 'space-evenly':
+					$align = 'space-evenly';
+					break;
+				case 'stretch':
+					$align = 'stretch';
+					break;
 				default:
 					$align = 'center';
 					break;
 			}
 			$css->add_property( 'align-items', $align );
-			if ( isset( $attributes['justifyContent'] ) && is_array( $attributes['justifyContent'] ) && ! empty( $attributes['justifyContent'][0] ) ) {
-				$css->add_property( 'justify-content', $attributes['justifyContent'][0] );
-			} else if ( isset( $attributes['textAlign'] ) && is_array( $attributes['textAlign'] ) && ! empty( $attributes['textAlign'][0] ) ) {
-				switch ( $attributes['textAlign'][0] ) {
+			if ( ! empty( $desktop_horizontal_align ) ) {
+				$css->add_property( 'justify-content', $desktop_horizontal_align );
+			} elseif ( ! $is_version_two && ! empty( $desktop_text_align ) ) {
+				// Fall Back for the old way of doing things.
+				switch ( $desktop_text_align ) {
 					case 'left':
 						$justify = 'flex-start';
 						break;
@@ -309,50 +427,55 @@ class Kadence_Blocks_Column_Block extends Kadence_Blocks_Abstract_Block {
 				}
 				$css->add_property( 'justify-content', $justify );
 			}
-			if ( isset( $attributes['wrapContent'] ) && is_array( $attributes['wrapContent'] ) && ! empty( $attributes['wrapContent'][0] ) ) {
-				$css->add_property( 'flex-wrap', $attributes['wrapContent'][0] );
+			if ( ! empty( $desktop_flex_wrap ) ) {
+				$css->add_property( 'flex-wrap', $desktop_flex_wrap );
 			}
-			$gutter      = isset( $attributes['gutter'] ) && is_array( $attributes['gutter'] ) && isset( $attributes['gutter'][0] ) && is_numeric( $attributes['gutter'][0] ) ? $attributes['gutter'][0] : 10;
-			$gutter_unit = ! empty( $attributes['gutterUnit'] ) ? $attributes['gutterUnit'] : 'px';
-			$css->add_property( 'gap', $gutter . $gutter_unit );
+			// Handle Margin issues.
 			$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col > *, .kadence-column' . $unique_id . ' > .kt-inside-inner-col > figure.wp-block-image, .kadence-column' . $unique_id . ' > .kt-inside-inner-col > figure.wp-block-kadence-image' );
 			$css->add_property( 'margin-top', '0px' );
 			$css->add_property( 'margin-bottom', '0px' );
-		} else {
-			if ( ! empty( $attributes['verticalAlignment'] ) ) {
-				switch ( $attributes['verticalAlignment'] ) {
-					case 'top':
-						$align = 'flex-start';
-						break;
-					case 'bottom':
-						$align = 'flex-end';
-						break;
-					default:
-						$align = 'center';
-						break;
-				}
-				$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col' );
-				$css->add_property( 'justify-content', $align );
-				$css->add_property( 'flex-direction', 'column' );
-				$css->add_property( 'display', 'flex' );
-				$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col > .aligncenter' );
-				$css->add_property( 'width', '100%' );
+			// Handle Ratio Images.
+			$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col > .kb-image-is-ratio-size' );
+			$css->add_property( 'flex-grow', 1 );
+			if ( ! empty( $attributes['flexBasis'][0] ) ) {
+				$css->set_selector( '.wp-block-kadence-column.kb-section-dir-horizontal.kadence-column' . $unique_id . ' > .kt-inside-inner-col > *' );
+				$basis_unit = ! empty( $attributes['flexBasisUnit'] ) ? $attributes['flexBasisUnit'] : 'px';
+				$css->add_property( 'flex-basis', $attributes['flexBasis'][0] . $basis_unit );
+				$css->set_selector( '.wp-block-kadence-column.kb-section-dir-horizontal.kadence-column' . $unique_id . ' > .kt-inside-inner-col > .wp-block-kadence-infobox' );
+				$css->add_property( 'width', '0px' );
 			}
 		}
 		// inside of Row.
-		if ( ! empty( $attributes['verticalAlignment'] ) ) {
-			switch ( $attributes['verticalAlignment'] ) {
+		if ( ! empty( $desktop_vertical_align ) ) {
+			// Restart $align variable to avoid inherit from above value assignment
+			$align = 'center';
+			$justify_content = '';
+			switch ( $desktop_vertical_align ) {
 				case 'top':
 					$align = 'flex-start';
+					$justify_content = 'flex-start';
 					break;
 				case 'bottom':
 					$align = 'flex-end';
+					$justify_content = 'flex-end';
+					break;
+				case 'space-between':
+					$justify_content = 'space-between';
+					break;
+				case 'space-around':
+					$justify_content = 'space-around';
+					break;
+				case 'space-evenly':
+					$justify_content = 'space-evenly';
+					break;
+				case 'stretch':
+					$justify_content = 'stretch';
 					break;
 				default:
-					$align = 'center';
+					$justify_content = 'center';
 					break;
 			}
-			if ( $desktop_direction === 'horizontal' ) {
+			if ( 'horizontal' === $desktop_direction || 'horizontal-reverse' === $desktop_direction ) {
 				$css->set_selector( '.kt-row-column-wrap > .kadence-column' . $unique_id );
 				$css->add_property( 'align-self', $align );
 				$css->set_selector( '.kt-inner-column-height-full:not(.kt-has-1-columns) > .wp-block-kadence-column.kadence-column' . $unique_id );
@@ -365,9 +488,8 @@ class Kadence_Blocks_Column_Block extends Kadence_Blocks_Abstract_Block {
 				$css->set_selector( '.kt-inner-column-height-full:not(.kt-has-1-columns) > .wp-block-kadence-column.kadence-column' . $unique_id );
 				$css->add_property( 'align-self', 'auto' );
 				$css->set_selector( '.kt-inner-column-height-full:not(.kt-has-1-columns) > .wp-block-kadence-column.kadence-column' . $unique_id . ' > .kt-inside-inner-col' );
-				$css->add_property( 'display', 'flex' );
 				$css->add_property( 'flex-direction', 'column' );
-				$css->add_property( 'justify-content', $align );
+				$css->add_property( 'justify-content', $justify_content );
 			}
 		}
 		// Background.
@@ -381,10 +503,15 @@ class Kadence_Blocks_Column_Block extends Kadence_Blocks_Abstract_Block {
 				}
 				if ( ! empty( $attributes['backgroundImg'][0]['bgImg'] ) ) {
 					$css->add_property( 'background-image', sprintf( "url('%s')", $attributes['backgroundImg'][0]['bgImg'] ) );
-					$css->add_property( 'background-size', ( isset( $attributes['backgroundImg'][0]['bgImgSize'] ) ? $attributes['backgroundImg'][0]['bgImgSize'] : 'cover' ) );
-					$css->add_property( 'background-position', ( isset( $attributes['backgroundImg'][0]['bgImgPosition'] ) ? $attributes['backgroundImg'][0]['bgImgPosition'] : 'center center' ) );
-					$css->add_property( 'background-attachment', ( isset( $attributes['backgroundImg'][0]['bgImgAttachment'] ) ? $attributes['backgroundImg'][0]['bgImgAttachment'] : 'scroll' ) );
-					$css->add_property( 'background-repeat', ( isset( $attributes['backgroundImg'][0]['bgImgRepeat'] ) ? $attributes['backgroundImg'][0]['bgImgRepeat'] : 'no-repeat' ) );
+					$css->add_property( 'background-size', ( ! empty( $attributes['backgroundImg'][0]['bgImgSize'] ) ? $attributes['backgroundImg'][0]['bgImgSize'] : 'cover' ) );
+					$css->add_property( 'background-position', ( ! empty( $attributes['backgroundImg'][0]['bgImgPosition'] ) ? $attributes['backgroundImg'][0]['bgImgPosition'] : 'center center' ) );
+					$css->add_property( 'background-attachment', ( ! empty( $attributes['backgroundImg'][0]['bgImgAttachment'] ) ? $attributes['backgroundImg'][0]['bgImgAttachment'] : 'scroll' ) );
+					$css->add_property( 'background-repeat', ( ! empty( $attributes['backgroundImg'][0]['bgImgRepeat'] ) ? $attributes['backgroundImg'][0]['bgImgRepeat'] : 'no-repeat' ) );
+					if ( ! empty( $attributes['backgroundImg'][0]['bgImgAttachment'] ) && 'fixed' === $attributes['backgroundImg'][0]['bgImgAttachment'] && ! apply_filters( 'kadence_blocks_attachment_fixed_on_mobile', false ) ) {
+						$css->set_media_state( 'tabletPro' );
+						$css->add_property( 'background-attachment', 'scroll' );
+						$css->set_media_state( 'desktop' );
+					}
 				}
 				break;
 			case 'gradient':
@@ -400,13 +527,19 @@ class Kadence_Blocks_Column_Block extends Kadence_Blocks_Abstract_Block {
 			case 'normal':
 				if ( ! empty( $attributes['backgroundHover'] ) ) {
 					$css->render_color_output( $attributes, 'backgroundHover', 'background-color' );
+					$css->add_property( 'background-image', 'none' );
 				}
 				if ( ! empty( $attributes['backgroundImgHover'][0]['bgImg'] ) ) {
 					$css->add_property( 'background-image', sprintf( "url('%s')", $attributes['backgroundImgHover'][0]['bgImg'] ) );
-					$css->add_property( 'background-size', ( isset( $attributes['backgroundImgHover'][0]['bgImgSize'] ) ? $attributes['backgroundImgHover'][0]['bgImgSize'] : 'cover' ) );
-					$css->add_property( 'background-position', ( isset( $attributes['backgroundImgHover'][0]['bgImgPosition'] ) ? $attributes['backgroundImgHover'][0]['bgImgPosition'] : 'center center' ) );
-					$css->add_property( 'background-attachment', ( isset( $attributes['backgroundImgHover'][0]['bgImgAttachment'] ) ? $attributes['backgroundImgHover'][0]['bgImgAttachment'] : 'scroll' ) );
-					$css->add_property( 'background-repeat', ( isset( $attributes['backgroundImgHover'][0]['bgImgRepeat'] ) ? $attributes['backgroundImgHover'][0]['bgImgRepeat'] : 'no-repeat' ) );
+					$css->add_property( 'background-size', ( ! empty( $attributes['backgroundImgHover'][0]['bgImgSize'] ) ? $attributes['backgroundImgHover'][0]['bgImgSize'] : 'cover' ) );
+					$css->add_property( 'background-position', ( ! empty( $attributes['backgroundImgHover'][0]['bgImgPosition'] ) ? $attributes['backgroundImgHover'][0]['bgImgPosition'] : 'center center' ) );
+					$css->add_property( 'background-attachment', ( ! empty( $attributes['backgroundImgHover'][0]['bgImgAttachment'] ) ? $attributes['backgroundImgHover'][0]['bgImgAttachment'] : 'scroll' ) );
+					$css->add_property( 'background-repeat', ( ! empty( $attributes['backgroundImgHover'][0]['bgImgRepeat'] ) ? $attributes['backgroundImgHover'][0]['bgImgRepeat'] : 'no-repeat' ) );
+					if ( ! empty( $attributes['backgroundImgHover'][0]['bgImgAttachment'] ) && 'fixed' === $attributes['backgroundImgHover'][0]['bgImgAttachment'] && ! apply_filters( 'kadence_blocks_attachment_fixed_on_mobile', false ) ) {
+						$css->set_media_state( 'tabletPro' );
+						$css->add_property( 'background-attachment', 'scroll' );
+						$css->set_media_state( 'desktop' );
+					}
 				}
 				break;
 			case 'gradient':
@@ -436,6 +569,11 @@ class Kadence_Blocks_Column_Block extends Kadence_Blocks_Abstract_Block {
 					$css->add_property( 'background-position', ( ! empty( $bg_img['bgImgPosition'] ) ? $bg_img['bgImgPosition'] : 'center center' ) );
 					$css->add_property( 'background-attachment', ( ! empty( $bg_img['bgImgAttachment'] ) ? $bg_img['bgImgAttachment'] : 'scroll' ) );
 					$css->add_property( 'background-repeat', ( ! empty( $bg_img['bgImgRepeat'] ) ? $bg_img['bgImgRepeat'] : 'no-repeat' ) );
+					if ( ! empty( $bg_img['bgImgAttachment'] ) && 'fixed' === $bg_img['bgImgAttachment'] && ! apply_filters( 'kadence_blocks_attachment_fixed_on_mobile', false ) ) {
+						$css->set_media_state( 'tabletPro' );
+						$css->add_property( 'background-attachment', 'scroll' );
+						$css->set_media_state( 'desktop' );
+					}
 				}
 				break;
 			case 'gradient':
@@ -457,6 +595,7 @@ class Kadence_Blocks_Column_Block extends Kadence_Blocks_Abstract_Block {
 			case 'normal':
 				if ( ! empty( $attributes['overlayHover'] ) ) {
 					$css->add_property( 'background-color', $css->render_color( $attributes['overlayHover'] ) );
+					$css->add_property( 'background-image', 'none' );
 				}
 				if ( ! empty( $attributes['overlayImgHover'][0]['bgImg'] ) ) {
 					$bg_img_hover = $attributes['overlayImgHover'][0];
@@ -466,17 +605,23 @@ class Kadence_Blocks_Column_Block extends Kadence_Blocks_Abstract_Block {
 					$css->add_property( 'background-position', ( ! empty( $bg_img_hover['bgImgPosition'] ) ? $bg_img_hover['bgImgPosition'] : 'center center' ) );
 					$css->add_property( 'background-attachment', ( ! empty( $bg_img_hover['bgImgAttachment'] ) ? $bg_img_hover['bgImgAttachment'] : 'scroll' ) );
 					$css->add_property( 'background-repeat', ( ! empty( $bg_img_hover['bgImgRepeat'] ) ? $bg_img_hover['bgImgRepeat'] : 'no-repeat' ) );
+					if ( ! empty( $bg_img_hover['bgImgAttachment'] ) && 'fixed' === $bg_img_hover['bgImgAttachment'] && ! apply_filters( 'kadence_blocks_attachment_fixed_on_mobile', false ) ) {
+						$css->set_media_state( 'tabletPro' );
+						$css->add_property( 'background-attachment', 'scroll' );
+						$css->set_media_state( 'desktop' );
+					}
 				}
+				break;
 			case 'gradient':
 				if ( ! empty( $attributes['overlayGradientHover'] ) ) {
 					$css->add_property( 'background-image', $attributes['overlayGradientHover'] );
 				}
 				break;
 		}
-		// Align.
-		if ( isset( $attributes['textAlign'] ) && is_array( $attributes['textAlign'] ) && isset( $attributes['textAlign'][0] ) && ! empty( $attributes['textAlign'][0] ) ) {
+		// Text Align.
+		if ( ! empty( $desktop_text_align ) ) {
 			$css->set_selector( '.kadence-column' . $unique_id );
-			$css->add_property( 'text-align', $attributes['textAlign'][0] );
+			$css->add_property( 'text-align', $desktop_text_align );
 		}
 		// Text Colors.
 		if ( isset( $attributes['textColor'] ) ) {
@@ -516,30 +661,59 @@ class Kadence_Blocks_Column_Block extends Kadence_Blocks_Abstract_Block {
 		$css->set_media_state( 'tablet' );
 		if ( ! empty( $attributes['maxWidth'][1] ) ) {
 			$css->set_selector( '.kadence-column' . $unique_id );
-			$css->add_property( 'max-width', $attributes['maxWidth'][1] . ( isset( $attributes['maxWidthUnit'] ) ? $attributes['maxWidthUnit'] : 'px' ) );
-			$css->set_selector( '.wp-block-kadence-column>.kt-inside-inner-col>.kadence-column' . $unique_id );
-			$css->add_property( 'flex', '1 ' . $attributes['maxWidth'][1] . ( isset( $attributes['maxWidthUnit'] ) ? $attributes['maxWidthUnit'] : 'px' ) );
+			$css->add_property( 'max-width', $attributes['maxWidth'][1] . $tablet_max_width_unit );
+			$css->set_selector( '.wp-block-kadence-column.kb-section-dir-horizontal:not(.kb-section-md-dir-vertical)>.kt-inside-inner-col>.kadence-column' . $unique_id );
+			$css->add_property( 'flex', '0 1 ' . $attributes['maxWidth'][1] . $tablet_max_width_unit );
+
+			if ( apply_filters( 'kadence_blocks_css_output_media_queries', true ) ) {
+				$css->set_media_state( 'tabletOnly' );
+				$css->set_selector( '.wp-block-kadence-column.kb-section-dir-horizontal>.kt-inside-inner-col>.kadence-column' . $unique_id );
+				$css->add_property( 'flex', '0 1 ' . $attributes['maxWidth'][1] . $tablet_max_width_unit );
+				$css->add_property( 'max-width', 'unset' );
+				$css->add_property( 'margin-left', 'unset' );
+				$css->add_property( 'margin-right', 'unset' );
+				$css->set_media_state( 'tablet' );
+			}
 		}
 		if ( isset( $attributes['collapseOrder'] ) ) {
 			$css->set_selector( '.kt-row-column-wrap.kt-tab-layout-three-grid > .kadence-column' . $unique_id . ', .kt-row-column-wrap.kt-tab-layout-two-grid > .kadence-column' . $unique_id . ', .kt-row-column-wrap.kt-tab-layout-row > .kadence-column' . $unique_id );
 			$css->add_property( 'order', $attributes['collapseOrder'] );
 		}
-		if ( isset( $attributes['textAlign'] ) && is_array( $attributes['textAlign'] ) && isset( $attributes['textAlign'][1] ) && ! empty( $attributes['textAlign'][1] ) ) {
+		// Tablet Text Align.
+		if ( ! empty( $attributes['textAlign'][1] ) ) {
 			$css->set_selector( '.kadence-column' . $unique_id );
 			$css->add_property( 'text-align', $attributes['textAlign'][1] );
 		}
-		$tablet_direction = ( isset( $attributes['direction'] ) && is_array( $attributes['direction'] ) && ! empty( $attributes['direction'][1] ) ? $attributes['direction'][1] : '' );
-		if ( empty( $tablet_direction ) ) {
-			$tablet_direction = ( isset( $attributes['direction'] ) && is_array( $attributes['direction'] ) && ! empty( $attributes['direction'][0] ) ? $attributes['direction'][0] : '' );
-		}
-		if ( 'vertical' === $tablet_direction ) {
-			// If desktop horizonal remove margin.
-			if ( $desktop_direction === 'horizontal' ) {
-				$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col' );
-				$css->add_property( 'display', 'block' );
+		// Tablet Direction.
+		if ( 'vertical' === $tablet_direction || 'vertical-reverse' === $tablet_direction ) {
+			$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col' );
+			$css->add_property( 'flex-direction', ( 'vertical-reverse' === $tablet_direction ? 'column-reverse' : 'column' ) );
+			if ( ( 'horizontal' === $desktop_direction || 'horizontal-reverse' === $desktop_direction ) && empty( $attributes['justifyContent'][1] ) ) {
+				$css->add_property( 'align-items', 'stretch' );
+			} elseif ( ! empty( $tablet_horizontal_align ) ) {
+				$css->add_property( 'align-items', $tablet_horizontal_align );
 			}
-		} elseif ( 'horizontal' === $tablet_direction ) {
-			if ( $desktop_direction === 'vertical' && ! empty( $attributes['verticalAlignment'] ) ) {
+			if ( ( 'horizontal' === $desktop_direction || 'horizontal-reverse' === $desktop_direction ) ) {
+				$css->add_property( 'flex-wrap', 'nowrap' );
+			}
+			if ( ( 'horizontal' === $desktop_direction || 'horizontal-reverse' === $desktop_direction ) ) {
+				$css->set_selector( '.wp-block-kadence-column.kb-section-dir-horizontal.kadence-column' . $unique_id . ' > .kt-inside-inner-col > *' );
+				$css->add_property( 'flex', 'unset' );
+			}
+			if ( ( 'horizontal' === $desktop_direction || 'horizontal-reverse' === $desktop_direction ) && ! empty( $attributes['flexBasis'][0] ) ) {
+				$css->set_selector( '.wp-block-kadence-column.kb-section-dir-horizontal.kadence-column' . $unique_id . ' > .kt-inside-inner-col > *' );
+				$css->add_property( 'flex', '1' );
+				$css->add_property( 'max-width', '100%' );
+				$css->set_selector( '.wp-block-kadence-column.kb-section-dir-horizontal.kadence-column' . $unique_id . ' > .kt-inside-inner-col > .wp-block-kadence-infobox' );
+				$css->add_property( 'width', 'auto' );
+			}
+		} elseif ( 'horizontal' === $tablet_direction || 'horizontal-reverse' === $tablet_direction ) {
+			if ( ! empty( $attributes['flexBasis'][1] ) ) {
+				$css->set_selector( '.wp-block-kadence-column.kb-section-dir-horizontal.kadence-column' . $unique_id . ' > .kt-inside-inner-col > *' );
+				$basis_unit = ! empty( $attributes['flexBasisUnit'] ) ? $attributes['flexBasisUnit'] : 'px';
+				$css->add_property( 'flex-basis', $attributes['flexBasis'][1] . $basis_unit );
+			}
+			if ( ( 'vertical' === $desktop_direction || 'vertical-reverse' === $desktop_direction ) && ! empty( $tablet_vertical_align ) ) {
 				$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col' );
 				$css->add_property( 'justify-content', 'inherit' );
 				$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col > .aligncenter' );
@@ -547,11 +721,10 @@ class Kadence_Blocks_Column_Block extends Kadence_Blocks_Abstract_Block {
 			}
 			// If desktop vertical lets add the horizontal css.
 			$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col' );
-			if ( isset( $attributes['direction'] ) && is_array( $attributes['direction'] ) && ! empty( $attributes['direction'][0] ) && $attributes['direction'][0] === 'vertical' ) {
-				$css->add_property( 'display', 'flex' );
-				$css->add_property( 'flex-direction', 'row' );
-				$css->add_property( 'flex-wrap', 'wrap' );
-				$align = ! empty( $attributes['verticalAlignment'] ) ? $attributes['verticalAlignment'] : 'center';
+			$css->add_property( 'flex-direction', ( 'horizontal-reverse' === $tablet_direction ? 'row-reverse' : 'row' ) );
+			$css->add_property( 'flex-wrap', 'wrap' );
+			if ( ! empty( $tablet_vertical_align ) ) {
+				$align = $tablet_vertical_align;
 				switch ( $align ) {
 					case 'top':
 						$align = 'flex-start';
@@ -559,16 +732,19 @@ class Kadence_Blocks_Column_Block extends Kadence_Blocks_Abstract_Block {
 					case 'bottom':
 						$align = 'flex-end';
 						break;
+					case 'stretch':
+						$align = 'stretch';
+						break;
 					default:
 						$align = 'center';
 						break;
 				}
 				$css->add_property( 'align-items', $align );
 			}
-			if ( isset( $attributes['justifyContent'] ) && is_array( $attributes['justifyContent'] ) && ! empty( $attributes['justifyContent'][1] ) ) {
-				$css->add_property( 'justify-content', $attributes['justifyContent'][1] );
-			} else if ( isset( $attributes['textAlign'] ) && is_array( $attributes['textAlign'] ) && ! empty( $attributes['textAlign'][1] ) ) {
-				switch ( $attributes['textAlign'][1] ) {
+			if ( ! empty( $tablet_horizontal_align ) ) {
+				$css->add_property( 'justify-content', $tablet_horizontal_align );
+			} elseif ( ! $is_version_two && ! empty( $tablet_text_align ) ) {
+				switch ( $tablet_text_align ) {
 					case 'left':
 						$justify = 'flex-start';
 						break;
@@ -581,41 +757,43 @@ class Kadence_Blocks_Column_Block extends Kadence_Blocks_Abstract_Block {
 				}
 				$css->add_property( 'justify-content', $justify );
 			}
-			if ( isset( $attributes['wrapContent'] ) && is_array( $attributes['wrapContent'] ) && ! empty( $attributes['wrapContent'][1] ) ) {
-				$css->add_property( 'flex-wrap', $attributes['wrapContent'][1] );
-			}
-			$gutter      = isset( $attributes['gutter'] ) && is_array( $attributes['gutter'] ) && isset( $attributes['gutter'][0] ) && is_numeric( $attributes['gutter'][0] ) ? $attributes['gutter'][0] : 10;
-			$gutter      = isset( $attributes['gutter'] ) && is_array( $attributes['gutter'] ) && isset( $attributes['gutter'][1] ) && is_numeric( $attributes['gutter'][1] ) ? $attributes['gutter'][1] : $gutter;
-			$gutter_unit = ! empty( $attributes['gutterUnit'] ) ? $attributes['gutterUnit'] : 'px';
-			if ( '' !== $gutter ) {
-				$css->add_property( 'gap', $gutter . $gutter_unit );
+			if ( ! empty( $tablet_flex_wrap ) ) {
+				$css->add_property( 'flex-wrap', $tablet_flex_wrap );
 			}
 			$css->set_media_state( 'tabletOnly' );
 			$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col > *, .kadence-column' . $unique_id . ' > .kt-inside-inner-col > figure.wp-block-image, .kadence-column' . $unique_id . ' > .kt-inside-inner-col > figure.wp-block-kadence-image' );
 			$css->add_property( 'margin-top', '0px' );
 			$css->add_property( 'margin-bottom', '0px' );
+			// Handle Ratio Images.
+			$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col > .kb-image-is-ratio-size' );
+			$css->add_property( 'flex-grow', 1 );
 		}
 		$css->set_media_state( 'mobile' );
 		if ( ! empty( $attributes['maxWidth'][2] ) ) {
 			$css->set_selector( '.kadence-column' . $unique_id . ', .wp-block-kadence-column.kb-section-sm-dir-vertical:not(.kb-section-sm-dir-horizontal):not(.kb-section-sm-dir-specificity)>.kt-inside-inner-col>.kadence-column' . $unique_id );
-			$css->add_property( 'max-width', $attributes['maxWidth'][2] . ( isset( $attributes['maxWidthUnit'] ) ? $attributes['maxWidthUnit'] : 'px' ) );
+			$css->add_property( 'max-width', $attributes['maxWidth'][2] . $mobile_max_width_unit );
+			$css->add_property( 'flex', '1' );
 			$css->add_property( 'margin-left', 'auto' );
 			$css->add_property( 'margin-right', 'auto' );
 			$css->set_selector( '.wp-block-kadence-column>.kt-inside-inner-col>.kadence-column' . $unique_id );
-			$css->add_property( 'flex', '1 ' . $attributes['maxWidth'][2] . ( isset( $attributes['maxWidthUnit'] ) ? $attributes['maxWidthUnit'] : 'px' ) );
+			$css->add_property( 'flex', '1 ' . $attributes['maxWidth'][2] . $mobile_max_width_unit );
 			$css->set_selector( '.wp-block-kadence-column.kb-section-sm-dir-horizontal>.kt-inside-inner-col>.kadence-column' . $unique_id . ', .wp-block-kadence-column.kb-section-dir-horizontal:not(.kb-section-sm-dir-vertical):not(.kb-section-md-dir-vertical) >.kt-inside-inner-col>.kadence-column' . $unique_id );
-			$css->add_property( 'flex', '0 1 ' . $attributes['maxWidth'][2] . ( isset( $attributes['maxWidthUnit'] ) ? $attributes['maxWidthUnit'] : 'px' ) );
+			$css->add_property( 'flex', '0 1 ' . $attributes['maxWidth'][2] . $mobile_max_width_unit );
 			$css->add_property( 'max-width', 'unset' );
 			$css->add_property( 'margin-left', 'unset' );
 			$css->add_property( 'margin-right', 'unset' );
 		} else if ( ! empty( $attributes['maxWidth'][1] ) ) {
+			// Tablet fallback.
 			$css->set_selector( '.wp-block-kadence-column.kb-section-sm-dir-vertical:not(.kb-section-sm-dir-horizontal):not(.kb-section-sm-dir-specificity)>.kt-inside-inner-col>.kadence-column' . $unique_id );
-			$css->add_property( 'max-width', $attributes['maxWidth'][1] . ( isset( $attributes['maxWidthUnit'] ) ? $attributes['maxWidthUnit'] : 'px' ) );
+			$css->add_property( 'max-width', $attributes['maxWidth'][1] . $tablet_max_width_unit );
+			$css->add_property( 'flex', '1' );
 			$css->add_property( 'margin-left', 'auto' );
 			$css->add_property( 'margin-right', 'auto' );
 		} else if ( ! empty( $attributes['maxWidth'][0] ) ) {
+			// Desktop fallback.
 			$css->set_selector( '.wp-block-kadence-column.kb-section-sm-dir-vertical:not(.kb-section-sm-dir-horizontal):not(.kb-section-sm-dir-specificity)>.kt-inside-inner-col>.kadence-column' . $unique_id );
-			$css->add_property( 'max-width', $attributes['maxWidth'][0] . ( isset( $attributes['maxWidthUnit'] ) ? $attributes['maxWidthUnit'] : 'px' ) );
+			$css->add_property( 'max-width', $attributes['maxWidth'][0] . $max_width_unit );
+			$css->add_property( 'flex', '1' );
 			$css->add_property( 'margin-left', 'auto' );
 			$css->add_property( 'margin-right', 'auto' );
 		}
@@ -623,40 +801,48 @@ class Kadence_Blocks_Column_Block extends Kadence_Blocks_Abstract_Block {
 			$css->set_selector( '.kt-row-column-wrap.kt-mobile-layout-three-grid > .kadence-column' . $unique_id . ', .kt-row-column-wrap.kt-mobile-layout-two-grid > .kadence-column' . $unique_id . ', .kt-row-column-wrap.kt-mobile-layout-row > .kadence-column' . $unique_id );
 			$css->add_property( 'order', $attributes['collapseOrder'] );
 		}
-		if ( isset( $attributes['textAlign'] ) && is_array( $attributes['textAlign'] ) && isset( $attributes['textAlign'][2] ) && ! empty( $attributes['textAlign'][2] ) ) {
+		if ( ! empty( $attributes['textAlign'][2] ) ) {
 			$css->set_selector( '.kadence-column' . $unique_id );
 			$css->add_property( 'text-align', $attributes['textAlign'][2] );
 		}
-		$mobile_direction = ( isset( $attributes['direction'] ) && is_array( $attributes['direction'] ) && ! empty( $attributes['direction'][2] ) ? $attributes['direction'][2] : '' );
-		if ( empty( $mobile_direction ) ) {
-			$mobile_direction = ( isset( $attributes['direction'] ) && is_array( $attributes['direction'] ) && ! empty( $attributes['direction'][1] ) ? $attributes['direction'][1] : '' );
-		}
-		if ( empty( $mobile_direction ) ) {
-			$mobile_direction = ( isset( $attributes['direction'] ) && is_array( $attributes['direction'] ) && ! empty( $attributes['direction'][0] ) ? $attributes['direction'][0] : '' );
-		}
-		if ( 'vertical' === $mobile_direction ) {
-			// If desktop horizonal remove margin.
-			if ( $desktop_direction === 'horizontal' || $tablet_direction === 'horizontal' ) {
-				$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col' );
-				$css->add_property( 'display', 'block' );
-				$css->add_property( 'margin-left', '0px' );
-				$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col > *' );
-				$css->add_property( 'margin-left', '0px' );;
+		if ( 'vertical' === $mobile_direction || 'vertical-reverse' === $mobile_direction ) {
+			$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col' );
+			$css->add_property( 'flex-direction', ( 'vertical-reverse' === $mobile_direction ? 'column-reverse' : 'column' ) );
+			if ( ( ( 'horizontal' === $tablet_direction || 'horizontal-reverse' === $tablet_direction ) && empty( $attributes['justifyContent'][2] ) ) || ( ( 'horizontal' === $desktop_direction || 'horizontal-reverse' === $desktop_direction ) && empty( $attributes['justifyContent'][1] ) && empty( $attributes['justifyContent'][2] ) ) ) {
+				$css->add_property( 'align-items', 'stretch' );
+			} elseif ( ! empty( $mobile_horizontal_align ) ) {
+				$css->add_property( 'align-items', $mobile_horizontal_align );
 			}
-		} elseif ( 'horizontal' === $mobile_direction ) {
-			if ( $desktop_direction === 'vertical' && ! empty( $attributes['verticalAlignment'] ) ) {
+			if ( ( 'horizontal' === $tablet_direction || 'horizontal-reverse' === $tablet_direction ) ) {
+				$css->add_property( 'flex-wrap', 'nowrap' );
+			}
+			if ( ( 'horizontal' === $tablet_direction || 'horizontal-reverse' === $tablet_direction ) && ( ! empty( $attributes['flexBasis'][0] ) || ! empty( $attributes['flexBasis'][1] ) ) ) {
+				$css->set_selector( '.wp-block-kadence-column.kb-section-dir-horizontal.kadence-column' . $unique_id . ' > .kt-inside-inner-col > *,.wp-block-kadence-column.kb-section-md-dir-vertical.kadence-column' . $unique_id . ' > .kt-inside-inner-col > *' );
+				$css->add_property( 'flex', '1' );
+				$css->add_property( 'max-width', '100%' );
+				$css->set_selector( '.wp-block-kadence-column.kb-section-dir-horizontal.kadence-column' . $unique_id . ' > .kt-inside-inner-col > .wp-block-kadence-infobox' );
+				$css->add_property( 'width', 'auto' );
+			}
+		} elseif ( 'horizontal' === $mobile_direction || 'horizontal-reverse' === $mobile_direction ) {
+
+			if ( ! empty( $attributes['flexBasis'][2] ) ) {
+				$css->set_selector( '.wp-block-kadence-column.kb-section-dir-horizontal.kadence-column' . $unique_id . ' > .kt-inside-inner-col > *' );
+				$basis_unit = ! empty( $attributes['flexBasisUnit'] ) ? $attributes['flexBasisUnit'] : 'px';
+				$css->add_property( 'flex-basis', $attributes['flexBasis'][2] . $basis_unit );
+			}
+
+			if ( 'vertical' === $tablet_direction && ! empty( $mobile_vertical_align ) ) {
 				$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col' );
 				$css->add_property( 'justify-content', 'inherit' );
 				$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col > .aligncenter' );
 				$css->add_property( 'width', 'auto' );
 			}
-			// If desktop vertical lets add the horizontal css.
+			// If tablet vertical lets add the horizontal css.
 			$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col' );
-			if ( $desktop_direction === 'vertical' || $tablet_direction === 'vertical' ) {
-				$css->add_property( 'display', 'flex' );
-				$css->add_property( 'flex-direction', 'row' );
-				$css->add_property( 'flex-wrap', 'wrap' );
-				$align = ! empty( $attributes['verticalAlignment'] ) ? $attributes['verticalAlignment'] : 'center';
+			$css->add_property( 'flex-direction', ( 'horizontal-reverse' === $mobile_direction ? 'row-reverse' : 'row' ) );
+			$css->add_property( 'flex-wrap', 'wrap' );
+			if ( 'vertical' === $tablet_direction || 'vertical-reverse' === $tablet_direction ) {
+				$align = $mobile_vertical_align;
 				switch ( $align ) {
 					case 'top':
 						$align = 'flex-start';
@@ -664,16 +850,19 @@ class Kadence_Blocks_Column_Block extends Kadence_Blocks_Abstract_Block {
 					case 'bottom':
 						$align = 'flex-end';
 						break;
+					case 'stretch':
+						$align = 'stretch';
+						break;
 					default:
 						$align = 'center';
 						break;
 				}
 				$css->add_property( 'align-items', $align );
 			}
-			if ( isset( $attributes['justifyContent'] ) && is_array( $attributes['justifyContent'] ) && ! empty( $attributes['justifyContent'][2] ) ) {
-				$css->add_property( 'justify-content', $attributes['justifyContent'][2] );
-			} else if ( isset( $attributes['textAlign'] ) && is_array( $attributes['textAlign'] ) && ! empty( $attributes['textAlign'][2] ) ) {
-				switch ( $attributes['textAlign'][2] ) {
+			if ( ! empty( $mobile_horizontal_align ) ) {
+				$css->add_property( 'justify-content', $mobile_horizontal_align );
+			} elseif ( ! $is_version_two && ! empty( $mobile_text_align ) ) {
+				switch ( $mobile_text_align ) {
 					case 'left':
 						$justify = 'flex-start';
 						break;
@@ -686,20 +875,16 @@ class Kadence_Blocks_Column_Block extends Kadence_Blocks_Abstract_Block {
 				}
 				$css->add_property( 'justify-content', $justify );
 			}
-			if ( isset( $attributes['wrapContent'] ) && is_array( $attributes['wrapContent'] ) && ! empty( $attributes['wrapContent'][2] ) ) {
-				$css->add_property( 'flex-wrap', $attributes['wrapContent'][2] );
-			}
-			$gutter      = isset( $attributes['gutter'] ) && is_array( $attributes['gutter'] ) && isset( $attributes['gutter'][0] ) && is_numeric( $attributes['gutter'][0] ) ? $attributes['gutter'][0] : 10;
-			$gutter      = isset( $attributes['gutter'] ) && is_array( $attributes['gutter'] ) && isset( $attributes['gutter'][1] ) && is_numeric( $attributes['gutter'][1] ) ? $attributes['gutter'][1] : $gutter;
-			$gutter      = isset( $attributes['gutter'] ) && is_array( $attributes['gutter'] ) && isset( $attributes['gutter'][2] ) && is_numeric( $attributes['gutter'][2] ) ? $attributes['gutter'][2] : $gutter;
-			$gutter_unit = ! empty( $attributes['gutterUnit'] ) ? $attributes['gutterUnit'] : 'px';
-			if ( '' !== $gutter ) {
-				$css->add_property( 'gap', $gutter . $gutter_unit );
+			if ( ! empty( $mobile_flex_wrap ) ) {
+				$css->add_property( 'flex-wrap', $mobile_flex_wrap );
 			}
 			$css->set_media_state( 'mobile' );
 			$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col > *, .kadence-column' . $unique_id . ' > .kt-inside-inner-col > figure.wp-block-image, .kadence-column' . $unique_id . ' > .kt-inside-inner-col > figure.wp-block-kadence-image' );
 			$css->add_property( 'margin-top', '0px' );
 			$css->add_property( 'margin-bottom', '0px' );
+			// Handle Ratio Images.
+			$css->set_selector( '.kadence-column' . $unique_id . ' > .kt-inside-inner-col > .kb-image-is-ratio-size' );
+			$css->add_property( 'flex-grow', 1 );
 		}
 		$css->set_media_state( 'desktop' );
 		if ( isset( $attributes['kadenceBlockCSS'] ) && ! empty( $attributes['kadenceBlockCSS'] ) ) {

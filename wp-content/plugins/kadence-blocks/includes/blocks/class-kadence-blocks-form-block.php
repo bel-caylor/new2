@@ -381,7 +381,7 @@ class Kadence_Blocks_Form_Block extends Kadence_Blocks_Abstract_Block {
 					$css->add_property( 'height', '1em' );
 					$css->add_property( 'margin-top', '0' );
 				}
-
+				$css->set_media_state( 'desktop' );
 			}
 			if ( ( isset( $label_font['size'] ) && is_array( $label_font['size'] ) && is_numeric( $label_font['size'][2] ) ) || ( isset( $label_font['lineHeight'] ) && is_array( $label_font['lineHeight'] ) && is_numeric( $label_font['lineHeight'][2] ) ) ) {
 				$css->set_media_state( 'mobile' );
@@ -400,7 +400,7 @@ class Kadence_Blocks_Form_Block extends Kadence_Blocks_Abstract_Block {
 					$css->add_property( 'margin-top', '0' );
 
 				}
-
+				$css->set_media_state( 'desktop' );
 			}
 		}
 		if ( isset( $attributes['submit'] ) && is_array( $attributes['submit'] ) && isset( $attributes['submit'][0] ) && is_array( $attributes['submit'][0] ) ) {
@@ -790,7 +790,7 @@ class Kadence_Blocks_Form_Block extends Kadence_Blocks_Abstract_Block {
 			$recaptcha_site_key = 'missingkey';
 		}
 
-		$recaptcha_lang = !empty( get_option('kadence_blocks_recaptcha_language') ) ? '&hl=' . get_option('kadence_blocks_recaptcha_language') : '';
+		$recaptcha_lang = ! empty( get_option('kadence_blocks_recaptcha_language') ) ? '&hl=' . get_option('kadence_blocks_recaptcha_language') : '';
 
 		wp_register_script( 'kadence-blocks-google-recaptcha-v3', 'https://www.google.com/recaptcha/api.js?render=' . esc_attr( $recaptcha_site_key ) . $recaptcha_lang, array(), KADENCE_BLOCKS_VERSION, true );
 		$recaptcha_script = "grecaptcha.ready(function () { var recaptchaResponse = document.getElementById('kb_recaptcha_response'); if ( recaptchaResponse ) { grecaptcha.execute('" . esc_attr( $recaptcha_site_key ) . "', { action: 'kb_form' }).then(function (token) { recaptchaResponse.value = token; }); } var kb_recaptcha_inputs = document.getElementsByClassName('kb_recaptcha_response'); if ( ! kb_recaptcha_inputs.length ) { return; } for (var i = 0; i < kb_recaptcha_inputs.length; i++) { const e = i; grecaptcha.execute('" . esc_attr( $recaptcha_site_key ) . "', { action: 'kb_form' }).then(function (token) { kb_recaptcha_inputs[e].setAttribute('value', token); }); } });";

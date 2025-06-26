@@ -9,8 +9,8 @@ Newsletter: https://www.mapsmarker.com/newsletter/
 Tags: map, maps, Leaflet, OpenStreetMap, geoJSON, OSM, travelblog, WMS, geoRSS, location, geo, geo-mashup, geocoding, geolocation, travel, mapquest, geotag, geocaching, gpx, OpenLayers, mapping, bikemap, coordinates, geocode, geocoding, geotagging, latitude, longitude, position, route, tracks, google maps, googlemaps, gmaps, google map, google map short code, google map widget, google maps v3, google earth, gmaps, wms, web map service, geocache, geocaching, qr code, fullscreen, marker, marker icons, layer, multiple markers, karte, blogmap, geocms, geographic, routes, tracks, directions, navigation, routing, location plan, ORS, openrouteservice, widget, bing, bing maps, map short code, map widget, kml, cross-browser, traffic, bike lanes, map short code, custom marker text, custom marker icons and text, maps maker
 Requires at least: 4.5
 Requires PHP: 5.6
-Tested up to: 6.1.1
-Stable tag: 4.24.1
+Tested up to: 6.2.2
+Stable tag: 4.25
 License: All rights reserved
 License URI: https://www.mapsmarker.com/tos/
 
@@ -136,11 +136,11 @@ Done. You can create your first map.
 For basic usage and tutorials, you can also have a look at [our knowledgebase](https://www.mapsmarker.com/kb/).
 
 == Upgrade Notice ==
-= 4.24.1 =
-See [https://www.mapsmarker.com/v4.24.1](https://www.mapsmarker.com/v4.24.1) for more details - if you experience any issues, please [use our support area at https://www.mapsmarker.com/support/](https://www.mapsmarker.com/support/).
+= 4.25 =
+See [https://www.mapsmarker.com/v4.25](https://www.mapsmarker.com/v4.25) for more details - if you experience any issues, please [use our support area at https://www.mapsmarker.com/support/](https://www.mapsmarker.com/support/).
 
 == Changelog ==
-= 4.24.1 =
-See [https://www.mapsmarker.com/v4.24.1](https://www.mapsmarker.com/v4.24.1) for more details
+= 4.25 =
+See [https://www.mapsmarker.com/v4.25](https://www.mapsmarker.com/v4.25) for more details
 
 [changelog for all releases](https://www.mapsmarker.com/changelog/pro/)

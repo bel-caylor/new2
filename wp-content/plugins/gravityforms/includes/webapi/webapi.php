@@ -82,15 +82,17 @@ if ( class_exists( 'GFForms' ) ) {
 			global $_gaddon_posted_settings;
 
 			if ( defined( 'DOING_CRON' ) && DOING_CRON ) {
-				add_action( 'gravityforms_results_cron_' . $this->_slug, array( $this, 'results_cron' ), 10, 3 );
+				add_action( 'gravityforms_results_cron_' . $this->get_slug(), array( $this, 'results_cron' ), 10, 3 );
 
 				return;
 			}
 
 			$is_v2_enabled = $this->is_v2_enabled( $this->get_plugin_settings() ) || $this->is_v2_enabled();
-			if ( $is_v2_enabled  ) {
+			if ( $is_v2_enabled ) {
 
-				$this->maybe_upgrade_schema();
+				if ( is_admin() && $this->current_user_can_any( array( 'manage_options', 'gravityforms_api_settings' ) ) ) {
+					$this->maybe_upgrade_schema();
+				}
 
 				if ( ! is_admin() ) {
 					require_once( plugin_dir_path( __FILE__ ) . 'v2/class-gf-rest-authentication.php' );
@@ -216,7 +218,7 @@ if ( class_exists( 'GFForms' ) ) {
 		public function init_admin() {
 			parent::init_admin();
 
-			if( GFForms::get_page() == 'settings' && rgget( 'subview' ) == $this->_slug ) {
+			if( GFForms::get_page() == 'settings' && rgget( 'subview' ) == $this->get_slug() ) {
 				require_once( plugin_dir_path( __FILE__ ) . 'includes/class-gf-api-keys-table.php' );
 			}
 
@@ -564,7 +566,11 @@ if ( class_exists( 'GFForms' ) ) {
 				array(
 					'title'       => esc_html__( 'Authentication ( API version 2 )', 'gravityforms' ),
 					'id'          => 'gform_section_authentication_v2',
-					'description' => sprintf( __( 'Create an API Key below to use the REST API version 2. Alternatively, you can use cookie authentication which is supported for logged in users. %sVisit our documentation pages%s for more information.', 'gravityforms' ), '<a href="https://docs.gravityforms.com/rest-api-v2/" target="_blank">', '</a>' ),
+					'description' => sprintf(
+						esc_html__( 'Create an API Key below to use the REST API version 2. Alternatively, you can use cookie authentication which is supported for logged in users. %1$sVisit our documentation pages%2$s for more information.', 'gravityforms' ),
+						'<a href="https://docs.gravityforms.com/rest-api-v2/" target="_blank">',
+						'<span class="screen-reader-text">' . esc_html__( '(opens in a new tab)', 'gravityforms' ) . '</span>&nbsp;<span class="gform-icon gform-icon--external-link"></span></a>'
+					),
 					'dependency'  => array( $this, 'is_v2_enabled' ),
 					'fields'      => array(
 						array(
@@ -577,7 +583,11 @@ if ( class_exists( 'GFForms' ) ) {
 				array(
 					'title'       => esc_html__( 'Authentication ( API version 1 )', 'gravityforms' ),
 					'id'          => 'gform_section_authentication',
-					'description' => sprintf( __( 'Configure your API Key below to use the REST API version 1. Alternatively, you can use cookie authentication which is supported for logged in users. %sVisit our documentation pages%s for more information.', 'gravityforms' ), '<a href="https://docs.gravityforms.com/web-api/" target="_blank">', '</a>' ),
+					'description' => sprintf(
+						esc_html__( 'Configure your API Key below to use the REST API version 1. Alternatively, you can use cookie authentication which is supported for logged in users. %1$sVisit our documentation pages%2$s for more information.', 'gravityforms' ),
+						'<a href="https://docs.gravityforms.com/web-api/" target="_blank">',
+						'<span class="screen-reader-text">' . esc_html__( '(opens in a new tab)', 'gravityforms' ) . '</span>&nbsp;<span class="gform-icon gform-icon--external-link"></span></a>'
+					),
 					'dependency'  => array( $this, 'is_v1_enabled' ),
 					'fields'      => array(
 						array(
@@ -788,7 +798,7 @@ if ( class_exists( 'GFForms' ) ) {
 				$format = 'json';
 			}
 
-			$schema    = strtolower( ( rgget( 'schema' ) ) );
+			$schema    = strtolower( (string) rgget( 'schema' ) );
 			$offset    = isset( $_GET['paging']['offset'] ) ? strtolower( $_GET['paging']['offset'] ) : 0;
 			$page_size = isset( $_GET['paging']['page_size'] ) ? strtolower( $_GET['paging']['page_size'] ) : 10;
 
@@ -1897,7 +1907,7 @@ if ( class_exists( 'GFForms' ) ) {
 
 			$key = is_multisite() ? $blog_id . '-' : '';
 
-			$key .= sprintf( '%s-cache-%s-', $this->_slug, $form_id );
+			$key .= sprintf( '%s-cache-%s-', $this->get_slug(), $form_id );
 
 			// The option_name column in the options table has a max length of 64 chars.
 			// Truncate the key if it's too long for column and allow space for the 'tmp' prefix
@@ -2057,7 +2067,7 @@ if ( class_exists( 'GFForms' ) ) {
 				if ( ! class_exists( 'GFResults' ) ) {
 					require_once( GFCommon::get_base_path() . '/includes/addon/class-gf-results.php' );
 				}
-				$gf_results = new GFResults( $this->_slug, array() );
+				$gf_results = new GFResults( $this->get_slug(), array() );
 				$results    = $gf_results->get_results_data( $form, $fields, $search_criteria, $state );
 				if ( 'complete' == $results['status'] ) {
 					if ( isset( $results['progress'] ) ) {
@@ -2142,7 +2152,7 @@ if ( class_exists( 'GFForms' ) ) {
 					if ( ! class_exists( 'GFResults' ) ) {
 						require_once( GFCommon::get_base_path() . '/includes/addon/class-gf-results.php' );
 					}
-					$gf_results         = new GFResults( $this->_slug, array() );
+					$gf_results         = new GFResults( $this->get_slug(), array() );
 					$max_execution_time = 5;
 					$results            = $gf_results->get_results_data( $form, $fields, $search_criteria, $state, $max_execution_time );
 					if ( 'complete' == rgar( $data, 'status' ) ) {
@@ -2214,7 +2224,7 @@ if ( class_exists( 'GFForms' ) ) {
 		}
 
 		public function get_results_cron_hook() {
-			return 'gravityforms_results_cron_' . $this->_slug;
+			return 'gravityforms_results_cron_' . $this->get_slug();
 		}
 
 		public function results_data_add_labels( $form, $fields ) {

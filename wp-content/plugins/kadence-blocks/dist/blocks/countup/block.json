@@ -1,9 +1,10 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
-  "apiVersion": 2,
+  "apiVersion": 3,
   "title": "Count Up",
   "name": "kadence/countup",
   "category": "kadence-blocks",
+  "textdomain": "kadence-blocks",
   "description": "",
   "attributes": {
     "uniqueID": {
@@ -286,5 +287,8 @@
       "type": "number",
       "default": 2
     }
+  },
+  "supports": {
+    "kbMetadata": true
   }
 }

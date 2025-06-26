@@ -1,7 +1,7 @@
 <?php
 /* ------------------------------------------------------------------------------------
 *  COPYRIGHT AND TRADEMARK NOTICE
-*  Copyright 2008-2021 Arnan de Gans. All Rights Reserved.
+*  Copyright 2008-2024 Arnan de Gans. All Rights Reserved.
 *  ADROTATE is a registered trademark of Arnan de Gans.
 
 *  COPYRIGHT NOTICES AND ALL THE COMMENTS SHOULD REMAIN INTACT.
@@ -176,8 +176,8 @@ class adrotate_group_widget extends WP_Widget {
 		if(empty($instance['groupid'])) $instance['groupid'] = 0;
 		if(empty($instance['categories'])) $instance['categories'] = '';
 		if(empty($instance['pages'])) $instance['pages'] = '';
-		$instance['before'] = (empty($instance['before'])) ? '' : stripslashes(htmlspecialchars_decode($instance['before'], ENT_QUOTES)).'.';
-		$instance['after'] = (empty($instance['after'])) ? '' : '.'.stripslashes(htmlspecialchars_decode($instance['after'], ENT_QUOTES));
+		$instance['before'] = (empty($instance['before'])) ? '' : stripslashes(htmlspecialchars_decode($instance['before'], ENT_QUOTES));
+		$instance['after'] = (empty($instance['after'])) ? '' : stripslashes(htmlspecialchars_decode($instance['after'], ENT_QUOTES));
 
 		// Determine post injection
 		if($instance['categories'] != '' OR $instance['pages'] != '') {

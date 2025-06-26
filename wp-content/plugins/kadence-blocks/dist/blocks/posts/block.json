@@ -1,9 +1,10 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
-  "apiVersion": 2,
+  "apiVersion": 3,
   "title": "Posts",
   "name": "kadence/posts",
   "category": "kadence-blocks",
+  "textdomain": "kadence-blocks",
   "attributes": {
     "uniqueID": {
       "type": "string"
@@ -219,6 +220,7 @@
     }
   },
   "supports": {
-    "html": false
+    "html": false,
+    "kbMetadata": true
   }
 }

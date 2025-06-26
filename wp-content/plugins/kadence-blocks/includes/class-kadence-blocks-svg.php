@@ -31,7 +31,7 @@ class Kadence_Blocks_Svg_Render {
 	 * @var null
 	 */
 	private static $all_icons = null;
-
+	
 	/**
 	 * Instance Control
 	 */
@@ -47,6 +47,9 @@ class Kadence_Blocks_Svg_Render {
 	 */
 	public function __construct() {
 		add_filter( 'render_block', array( $this, 'render_icons_dynamically' ), 10, 2 );
+		if ( apply_filters( 'kadence_blocks_fix_svg_dimensions', false ) ) {
+			add_filter( 'wp_get_attachment_image_src', array( $this, 'fix_wp_get_attachment_image_svg' ), 10, 4 );
+		}
 	}
 	/**
 	 * On build convert icons into svgs.
@@ -89,9 +92,16 @@ class Kadence_Blocks_Svg_Render {
 					if ( $line_icon ) {
 						$stroke_width = ( ! empty( $args['stroke'] ) ? $args['stroke'] : 2 );
 					}
-					$hidden = ( ! empty( $args['title'] ) ? true : false );
+					$hidden = ( empty( $args['title'] ) ? true : false );
+					$extras = '';
+					if ( ! empty( $args['tooltip-id'] ) ) {
+						$extras = 'data-tooltip-id="' . esc_attr( $args['tooltip-id'] ) . '"';
+						if ( ! empty( $args['tooltip-placement'] ) ) {
+							$extras .= ' data-tooltip-placement="' . esc_attr( $args['tooltip-placement'] ) . '"';
+						}
+					}
 					$svg    = self::render( $args['name'], $fill, $stroke_width, $args['title'], $hidden );
-					return '<span class="kb-svg-icon-wrap kb-svg-icon-' . esc_attr( $args['name'] ) . ( ! empty( $args['class'] ) ? ' ' . esc_attr( $args['class'] ) : '' ) . '">' . $svg . '</span>';
+					return '<span class="kb-svg-icon-wrap kb-svg-icon-' . esc_attr( $args['name'] ) . ( ! empty( $args['class'] ) ? ' ' . esc_attr( $args['class'] ) : '' ) . '"' . $extras . '>' . $svg . '</span>';
 				},
 				$block_content
 			);
@@ -100,11 +110,17 @@ class Kadence_Blocks_Svg_Render {
 		}
 		return $block_content;
 	}
+
 	/**
-	 * Return or echo an SVG icon matching the provided key
+	 *  Return or echo an SVG icon matching the provided key
 	 *
-	 * @param string  $name the name of the svg.
-	 * @param boolean $echo wheather or not to echo.
+	 * @param $name
+	 * @param $fill
+	 * @param $stroke_width
+	 * @param $title
+	 * @param $hidden
+	 * @param $extras string Escape any attributes passed to this
+	 * @param $echo
 	 *
 	 * @return string|void
 	 */
@@ -118,37 +134,34 @@ class Kadence_Blocks_Svg_Render {
 		if ( 'fa_facebook' === $name ) {
 			$name = 'fa_facebook-n';
 		}
+
+		// Custom SVGs
+		$is_custom_svg = strpos($name, 'kb-custom-') === 0;
+		if ( $is_custom_svg && !isset(  self::$all_icons[ $name ] ) ) {
+			$custom_post = get_post( str_replace('kb-custom-', '', $name) );
+
+			if ( ! empty( $custom_post ) && ! is_wp_error( $custom_post ) && 'kadence_custom_svg' === $custom_post->post_type && 'publish' === $custom_post->post_status ) {
+				self::$all_icons[ $name ] = json_decode( $custom_post->post_content, true );
+			}
+		}
+
 		if ( ! empty( self::$all_icons[ $name ] ) ) {
 			$icon = self::$all_icons[ $name ];
 			$vb = ( ! empty( $icon['vB'] ) ? $icon['vB'] : '0 0 24 24' );
 			$preserve = '';
 			$vb_array = explode( ' ', $vb );
 			$typeL = substr( $name, 0, 3 );
-			if( $typeL && 'fas' !== $typeL && isset( $vb_array[2] ) && isset( $vb_array[3] ) && $vb_array[2] !== $vb_array[3] ) {
+
+			// This is added because some people upload icons that have negative values in the viewbox which cause part of the icons to get cut off unless this is added.
+			if ( $typeL && 'fas' !== $typeL && 'fe_' !== $typeL && 'ic_' !== $typeL && ( ( isset( $vb_array[0] ) && absint( $vb_array[0] ) > 0 ) || ( isset( $vb_array[1] ) && absint( $vb_array[1] ) > 0 ) ) ) {
 				$preserve = 'preserveAspectRatio="xMinYMin meet"';
 			}
-			$svg .= '<svg viewBox="' . $vb . '" ' . $preserve . ' fill="' . esc_attr( $fill ) . '"' . ( ! empty( $stroke_width ) ? ' stroke="currentColor" stroke-width="' . esc_attr( $stroke_width ) . '" stroke-linecap="round" stroke-linejoin="round"' : '' ) . ' xmlns="http://www.w3.org/2000/svg" ' . ( ! empty( $extras ) ? ' ' . $extras : '' ) . ( $hidden ? ' aria-hidden="true"' : '' ) . '>';
+			$svg .= '<svg viewBox="' . $vb . '" ' . $preserve . ' fill="' . esc_attr( $fill ) . '"' . ( ! empty( $stroke_width ) ? ' stroke="currentColor" stroke-width="' . esc_attr( $stroke_width ) . '" stroke-linecap="round" stroke-linejoin="round"' : '' ) . ' xmlns="http://www.w3.org/2000/svg" ' . ( ! empty( $extras ) ? ' ' . $extras : '' ) . ( $hidden ? ' aria-hidden="true"' : ' role="img"' ) . '>';
 			if ( ! empty( $title ) ) {
 				$svg .= '<title>' . $title . '</title>';
 			}
 			if ( ! empty( $icon['cD'] ) ) {
-				foreach ( $icon['cD'] as $cd ) {
-					$nE      = $cd['nE'];
-					$aBs     = $cd['aBs'];
-					$tmpAttr = array();
-
-					foreach ( $aBs as $key => $attribute ) {
-						if ( ! in_array( $key, array( 'fill', 'stroke', 'none' ) ) ) {
-							$tmpAttr[ $key ] = $key . '="' . $attribute . '"';
-						}
-					}
-
-					if ( isset( $aBs['fill'], $aBs['stroke'] ) && $aBs['fill'] === 'none' ) {
-						$tmpAttr['stroke'] = 'stroke="currentColor"';
-					}
-
-					$svg .= '<' . $nE . ' ' . implode( ' ', $tmpAttr ) . '/>';
-				}
+				$svg .= self::generate_svg_elements($icon['cD']);
 			}
 
 			$svg .= '</svg>';
@@ -164,6 +177,43 @@ class Kadence_Blocks_Svg_Render {
 		return $svg;
 
 	}
+
+	/**
+	 * Recursively generate SVG elements
+	 * Out native SVGs do not have children, but user uploaded SVGs in pro can contain children elements.
+	 *
+	 * @param $elements
+	 *
+	 * @return string
+	 */
+	private static function generate_svg_elements( $elements ) {
+		$output = '';
+		foreach ( $elements as $element ) {
+			$nE       = $element['nE'];
+			$aBs      = $element['aBs'];
+			$children = ! empty( $element['children'] ) ? $element['children'] : [];
+			$tmpAttr  = array();
+
+			foreach ( $aBs as $key => $attribute ) {
+				if ( ! in_array( $key, array( 'fill', 'stroke', 'none' ) ) ) {
+					$tmpAttr[ $key ] = $key . '="' . esc_attr( $attribute ) . '"';
+				}
+			}
+
+			if ( isset( $aBs['fill'], $aBs['stroke'] ) && $aBs['fill'] === 'none' ) {
+				$tmpAttr['stroke'] = 'stroke="currentColor"';
+			}
+
+			$output .= '<' . $nE . ' ' . implode( ' ', $tmpAttr );
+			if ( ! empty( $children ) ) {
+				$output .= '>' . self::generate_svg_elements( $children ) . '</' . $nE . '>';
+			} else {
+				$output .= '/>';
+			}
+		}
+
+		return $output;
+	}
 	/**
 	 * Return an array of icons.
 	 *
@@ -174,6 +224,36 @@ class Kadence_Blocks_Svg_Render {
 		$faico = include KADENCE_BLOCKS_PATH . 'includes/icons-array.php';
 
 		return apply_filters( 'kadence_svg_icons', array_merge( $ico, $faico ) );
+	}
+
+	/**
+	 * Fix an issue where wp_get_attachment_source returns non-values for width and height on svg's
+	 *
+	 * @param string  $image the image retrieved.
+	 * @param boolean $attachment_id The attachment id.
+	 * @param boolean $size The size request.
+	 * @param boolean $icon If it was requested as an icon.
+	 *
+	 * @return array|boolean
+	 */
+	public function fix_wp_get_attachment_image_svg( $image, $attachment_id, $size, $icon ) {
+		// If the image requested is an svg and the width is unset (1 or less in this case).
+		if ( is_array( $image ) && preg_match( '/\.svg$/i', $image[0] ) && $image[1] <= 1 ) {
+			// Use the requested size's dimensions first if available.
+			if ( is_array( $size ) ) {
+				$image[1] = $size[0];
+				$image[2] = $size[1];
+			} elseif ( ini_get( 'allow_url_fopen' ) && ( $xml = simplexml_load_file( $image[0], SimpleXMLElement::class, LIBXML_NOWARNING ) ) !== false ) {
+				$attr = $xml->attributes();
+				$viewbox = explode( ' ', $attr->viewBox );
+				$image[1] = isset( $attr->width ) && preg_match( '/\d+/', $attr->width, $value ) ? (int) $value[0] : ( count( $viewbox ) == 4 ? (int) $viewbox[2] : null );
+				$image[2] = isset( $attr->height ) && preg_match( '/\d+/', $attr->height, $value ) ? (int) $value[0] : ( count( $viewbox ) == 4 ? (int) $viewbox[3] : null );
+			} else {
+				$image[1] = null;
+				$image[2] = null;
+			}
+		}
+		return $image;
 	}
 
 }

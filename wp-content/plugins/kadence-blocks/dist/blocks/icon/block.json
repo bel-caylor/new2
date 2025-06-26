@@ -1,9 +1,10 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
-  "apiVersion": 2,
+  "apiVersion": 3,
   "title": "Icon",
   "name": "kadence/icon",
   "category": "kadence-blocks",
+  "textdomain": "kadence-blocks",
   "attributes": {
     "icons": {
       "type": "array",
@@ -90,6 +91,10 @@
     "mobileTextAlignment": {
       "type": "string"
     },
+    "wrapIcons": {
+      "type": "boolean",
+      "default": false
+    },
     "verticalAlignment": {
       "type": "string"
     },
@@ -111,7 +116,8 @@
     }
   },
   "supports": {
-    "ktdynamic": true
+    "ktdynamic": true,
+    "kbMetadata": true
   },
   "usesContext": [
     "postId",

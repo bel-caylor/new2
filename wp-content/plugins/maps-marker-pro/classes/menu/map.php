@@ -2086,6 +2086,28 @@ class Map extends Menu {
 									</div>
 									<div class="mmp-map-setting mmp-advanced">
 										<div class="mmp-map-setting-desc">
+											<label for="listGeocodingShowMarker"><?= esc_html__('Show marker', 'mmp') ?></label>
+										</div>
+										<div class="mmp-map-setting-input">
+											<label>
+												<div class="switch">
+													<input type="checkbox" id="listGeocodingShowMarker" name="listGeocodingShowMarker" <?= !$settings['listGeocodingShowMarker'] ?: 'checked="checked"' ?> />
+													<span class="slider"></span>
+												</div>
+											</label>
+										</div>
+									</div>
+									<div class="mmp-map-setting mmp-advanced">
+										<div class="mmp-map-setting-desc">
+											<?= esc_html__('Marker icon', 'mmp') ?>
+										</div>
+										<div class="mmp-map-setting-input">
+											<input type="hidden" id="listGeocodingMarkerIcon" name="listGeocodingMarkerIcon" value="<?= $settings['listGeocodingMarkerIcon'] ?>" />
+											<img class="mmp-list-geocoding-icon mmp-align-middle" src="<?= (!$settings['listGeocodingMarkerIcon']) ? plugins_url('images/leaflet/pin.png', MMP::$path) : MMP::$icons_url . $settings['listGeocodingMarkerIcon'] ?>" />
+										</div>
+									</div>
+									<div class="mmp-map-setting mmp-advanced">
+										<div class="mmp-map-setting-desc">
 											<label for="listGeocodingZoom"><?= esc_html__('Zoom', 'mmp') ?></label>
 										</div>
 										<div class="mmp-map-setting-input">

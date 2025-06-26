@@ -82,6 +82,17 @@ class Geocoding {
 			);
 		}
 
+		if (isset($response['results'][0]['placeId'])) {
+			$result = $this->placesToLatLng($response['results'][0]['placeId']);
+
+			if ($result['success'] === false) {
+				return $result;
+			}
+
+			$response['results'][0]['lat'] = $result['lat'];
+			$response['results'][0]['lon'] = $result['lon'];
+		}
+
 		$db->cache_address(
 			$address,
 			$response['results'][0]['address'],

@@ -1,7 +1,7 @@
 <?php
 /* ------------------------------------------------------------------------------------
 *  COPYRIGHT AND TRADEMARK NOTICE
-*  Copyright 2008-2023 Arnan de Gans. All Rights Reserved.
+*  Copyright 2008-2024 Arnan de Gans. All Rights Reserved.
 *  ADROTATE is a registered trademark of Arnan de Gans.
 
 *  COPYRIGHT NOTICES AND ALL THE COMMENTS SHOULD REMAIN INTACT.
@@ -13,7 +13,7 @@ if(!$group_edit_id) {
 	$action = "group_new";
 	$edit_id = $wpdb->get_var("SELECT `id` FROM `{$wpdb->prefix}adrotate_groups` WHERE `name` = '' ORDER BY `id` DESC LIMIT 1;");
 	if($edit_id == 0) {
-		$wpdb->insert($wpdb->prefix.'adrotate_groups', array('name' => '', 'modus' => 0, 'swap' => 0, 'fallback' => '0', 'cat' => '', 'cat_loc' => 0, 'cat_par' => 0, 'page' => '', 'page_loc' => 0, 'page_par' => 0, 'woo_cat' => '', 'woo_loc' => 0, 'bbpress' => '', 'bbpress_loc' => 0, 'mobile' => 0, 'geo' => 0, 'wrapper_before' => '', 'wrapper_after' => '', 'gridrows' => 2, 'gridcolumns' => 2, 'admargin' => 0, 'admargin_bottom' => 0, 'admargin_left' => 0, 'admargin_right' => 0, 'adwidth' => '728', 'adheight' => '90', 'adspeed' => 6000, 'repeat_impressions' => 'Y'));
+		$wpdb->insert($wpdb->prefix.'adrotate_groups', array('name' => '', 'modus' => 0, 'swap' => 0, 'fallback' => '0', 'network' => 0, 'cat' => '', 'cat_loc' => 0, 'cat_par' => 0, 'page' => '', 'page_loc' => 0, 'page_par' => 0, 'woo_cat' => '', 'woo_loc' => 0, 'bbpress' => '', 'bbpress_loc' => 0, 'mobile' => 0, 'geo' => 0, 'wrapper_before' => '', 'wrapper_after' => '', 'gridrows' => 2, 'gridcolumns' => 2, 'admargin' => 0, 'admargin_bottom' => 0, 'admargin_left' => 0, 'admargin_right' => 0, 'adwidth' => '728', 'adheight' => '90', 'adspeed' => 6000, 'repeat_impressions' => 'Y'));
 	    $edit_id = $wpdb->insert_id;
 	}
 	$group_edit_id = $edit_id;
@@ -25,9 +25,51 @@ if(!$group_edit_id) {
 $edit_group = $wpdb->get_row("SELECT * FROM `{$wpdb->prefix}adrotate_groups` WHERE `id` = '{$group_edit_id}';");
 
 if($edit_group) {
-	$groups = $wpdb->get_results("SELECT * FROM `{$wpdb->prefix}adrotate_groups` WHERE `name` != '' ORDER BY `id` ASC;");
+	$groups = $wpdb->get_results("SELECT `id`, `name` FROM `{$wpdb->prefix}adrotate_groups` WHERE `name` != '' ORDER BY `id` ASC;");
+	$linkmeta = $wpdb->get_results("SELECT `ad` FROM `{$wpdb->prefix}adrotate_linkmeta` WHERE `group` = {$group_edit_id} AND `user` = 0;");
+
 	$ads = $wpdb->get_results("SELECT `id`, `title`, `type`, `tracker`, `desktop`, `mobile`, `tablet`, `weight`, `crate`, `budget`, `irate` FROM `{$wpdb->prefix}adrotate` WHERE (`type` != 'empty' AND `type` != 'a_empty' AND `type` != 'archived' AND `type` != 'trash' AND `type` != 'generator') ORDER BY `id` ASC;");
-	$linkmeta = $wpdb->get_results("SELECT `ad` FROM `{$wpdb->prefix}adrotate_linkmeta` WHERE `group` = '{$group_edit_id}' AND `user` = 0;");
+
+	foreach($ads as &$value) {
+		$value->network = 0;
+	}
+
+	if(adrotate_is_networked() AND $license['type'] == 'Developer') {
+		$current_blog = $wpdb->blogid;
+		switch_to_blog($network['primary']);
+
+		// If group is linked to network, load its ads
+		if($edit_group->network > 0) {
+			$ads_network = $wpdb->get_results("SELECT
+					`{$wpdb->prefix}adrotate`.`id`, `title`, `type`, `tracker`, `desktop`, `mobile`, `tablet`, `weight`, `crate`, `budget`, `irate`, `{$wpdb->prefix}adrotate_linkmeta`.`group`
+				FROM
+					`{$wpdb->prefix}adrotate`,
+					`{$wpdb->prefix}adrotate_linkmeta`
+				WHERE
+					`group` = {$edit_group->network}
+					AND `{$wpdb->prefix}adrotate_linkmeta`.`user` = 0
+					AND `{$wpdb->prefix}adrotate`.`id` = `{$wpdb->prefix}adrotate_linkmeta`.`ad`
+					AND (`{$wpdb->prefix}adrotate`.`type` = 'active'
+						OR `{$wpdb->prefix}adrotate`.`type` = '2days'
+						OR `{$wpdb->prefix}adrotate`.`type` = '7days')
+				GROUP BY `{$wpdb->prefix}adrotate`.`id`
+				ORDER BY `{$wpdb->prefix}adrotate`.`id` ASC;");
+
+			foreach($ads_network as &$value) {
+				$value->network = 1;
+			}
+	
+			// Merge network ads with local ads
+			$ads = (object) array_merge((array) $ads, (array) $ads_network);
+	
+			unset($ads_network);
+		}
+
+		// Get network groups
+		$groups_network = $wpdb->get_results("SELECT `id`, `name` FROM `{$wpdb->prefix}adrotate_groups` WHERE `name` != '' ORDER BY `id` ASC;");
+
+		switch_to_blog($current_blog);
+	}
 
 	$class = '';
 	$meta_array = array();
@@ -261,6 +303,25 @@ if($edit_group) {
 			        <em><?php _e('Select another group to fall back on when all adverts are expired, not in the visitors geographic area or are otherwise unavailable.', 'adrotate-pro'); ?></em>
 				</td>
 			</tr>
+			<?php if(adrotate_is_networked() AND $license['type'] == 'Developer') { ?>
+		    <tr>
+				<th valign="top"><?php _e('Network group', 'adrotate-pro'); ?></th>
+				<td>
+					<label for="adrotate_network">
+					<select tabindex="16" name="adrotate_network">
+			        <option value="0"><?php _e('No', 'adrotate-pro'); ?></option>
+				<?php if($groups_network) { ?>
+					<?php foreach($groups_network as $group) { ?>
+				        <option value="<?php echo $group->id;?>" <?php if($edit_group->network == $group->id) { echo 'selected'; } ?>><?php echo $group->id;?> - <?php echo $group->name;?></option>
+		 			<?php } ?>
+				<?php } ?>
+					</select>
+				</td>
+		        <td>
+			        <em><?php _e('Select a group from your multisite main instance to load adverts from and mix them in with this groups ads. All settings from this group are ignored for the remote group.', 'adrotate-pro'); ?></em>
+				</td>
+			</tr>
+			<?php } ?>
 			</tbody>
 		</table>
 
@@ -483,20 +544,18 @@ if($edit_group) {
 				<th width="5%"><center><?php _e('Device', 'adrotate-pro'); ?></center></th>
 				<th width="15%"><?php _e('Visible until', 'adrotate-pro'); ?></th>
 				<th width="5%"><center><?php _e('Weight', 'adrotate-pro'); ?></center></th>
-		        <?php if($adrotate_config['stats'] == 1) { ?>
-					<th width="5%"><center><?php _e('Shown', 'adrotate-pro'); ?></center></th>
-					<th width="5%"><center><?php _e('Clicks', 'adrotate-pro'); ?></center></th>
-				<?php } ?>
+				<th width="5%"><center><?php _e('Shown', 'adrotate-pro'); ?></center></th>
+				<th width="5%"><center><?php _e('Clicks', 'adrotate-pro'); ?></center></th>
 			</tr>
 			</thead>
 
 			<tbody>
-			<?php if($ads) {
+			<?php if(count($ads) > 0) {
 				$class = '';
 				foreach($ads as $ad) {
 					$stoptime = $wpdb->get_var("SELECT `stoptime` FROM `{$wpdb->prefix}adrotate_schedule`, `{$wpdb->prefix}adrotate_linkmeta` WHERE `ad` = '{$ad->id}' AND `schedule` = `{$wpdb->prefix}adrotate_schedule`.`id` ORDER BY `stoptime` DESC LIMIT 1;");
 
-					if($adrotate_config['stats'] == 1) {
+					if($adrotate_config['stats'] == 1 AND $ad->tracker != 'N') {
 						$stats = adrotate_stats($ad->id);
 					}
 
@@ -504,6 +563,7 @@ if($edit_group) {
 					if($ad->type == 'error' OR $ad->type == 'a_error') $errorclass = ' row_yellow';
 					if($stoptime <= $in2days OR $stoptime <= $in7days) $errorclass = ' row_orange';
 					if($stoptime <= $now OR (($ad->crate > 0 OR $ad->irate > 0) AND $ad->budget == 0)) $errorclass = ' row_red';
+					if($ad->network == 1) $errorclass = ' row_blue';
 
 					$class = ('alternate' != $class) ? 'alternate' : '';
 					$class = ($errorclass != '') ? $errorclass : $class;
@@ -520,20 +580,18 @@ if($edit_group) {
 					}
 					?>
 				    <tr class='<?php echo $class; ?>'>
-						<th class="check-column"><input type="checkbox" name="adselect[]" value="<?php echo $ad->id; ?>" <?php if(in_array($ad->id, $meta_array)) echo "checked"; ?> /></th>
+						<th class="check-column"><input type="checkbox" name="adselect[]" value="<?php echo $ad->id; ?>" <?php if(in_array($ad->id, $meta_array) AND $ad->network == 0) echo "checked"; ?>  <?php if($ad->network == 1) echo "checked disabled"; ?> /></th>
 						<td><center><?php echo $ad->id; ?></center></td>
 						<td><?php echo stripslashes($ad->title); ?></td>
 						<td><center><?php echo $mobile; ?></center></td>
 						<td><span style="color: <?php echo adrotate_prepare_color($stoptime);?>;"><?php echo date_i18n("F d, Y", $stoptime); ?></span></td>
 						<td><center><?php echo $ad->weight; ?></center></td>
-						<?php if($adrotate_config['stats'] == 1) {
-							if($ad->tracker != 'N') { ?>
-								<td><center><?php echo $stats['impressions']; ?></center></td>
-								<td><center><?php echo $stats['clicks']; ?></center></td>
-							<?php } else { ?>
-								<td><center>--</center></td>
-								<td><center>--</center></td>
-							<?php } ?>
+						<?php if($adrotate_config['stats'] == 1 AND $ad->tracker != 'N') { ?>
+							<td><center><?php echo $stats['impressions']; ?></center></td>
+							<td><center><?php echo $stats['clicks']; ?></center></td>
+						<?php } else { ?>
+							<td><center>--</center></td>
+							<td><center>--</center></td>
 						<?php } ?>
 					</tr>
 				<?php unset($stoptime, $stats);?>
@@ -541,7 +599,7 @@ if($edit_group) {
 			<?php } else { ?>
 			<tr>
 				<th class="check-column">&nbsp;</th>
-				<td colspan="<?php echo ($adrotate_config['stats'] == 1) ? '6' : '4'; ?>"><em><?php _e('No adverts created!', 'adrotate-pro'); ?></em></td>
+				<td colspan="7"><em><?php _e('No adverts created!', 'adrotate-pro'); ?></em></td>
 			</tr>
 			<?php } ?>
 			</tbody>
@@ -551,6 +609,7 @@ if($edit_group) {
 			<span style="border: 1px solid #e6db55; height: 12px; width: 12px; background-color: #ffffe0">&nbsp;&nbsp;&nbsp;&nbsp;</span> <?php _e("Configuration errors", "adrotate-pro"); ?>
 			&nbsp;&nbsp;&nbsp;&nbsp;<span style="border: 1px solid #c80; height: 12px; width: 12px; background-color: #fdefc3">&nbsp;&nbsp;&nbsp;&nbsp;</span> <?php _e("Expires soon", "adrotate-pro"); ?>
 			&nbsp;&nbsp;&nbsp;&nbsp;<span style="border: 1px solid #c00; height: 12px; width: 12px; background-color: #ffebe8">&nbsp;&nbsp;&nbsp;&nbsp;</span> <?php _e("Expired", "adrotate-pro"); ?>
+			&nbsp;&nbsp;&nbsp;&nbsp;<span style="border: 1px solid #466f82; height: 12px; width: 12px; background-color: #ebf3fa">&nbsp;&nbsp;&nbsp;&nbsp;</span> <?php _e("Network", "adrotate-pro"); ?>
 		</center></p>
 
 		<p class="submit">

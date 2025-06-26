@@ -25,6 +25,31 @@ abstract class GF_Telemetry_Data {
 	public $key = '';
 
 	/**
+	 * @var bool $data_collection Whether data collection is allowed.
+	 */
+	public $data_collection = '';
+
+	/**
+	 * @var string
+	 */
+	const TELEMETRY_ENDPOINT = 'https://in.gravity.io/';
+
+	public function __construct() {
+		$this->data_collection = $this->is_data_collection_allowed();
+	}
+
+	/**
+	 * Determine if the user has allowed data collection.
+	 *
+	 * @since 2.8.3
+	 *
+	 * @return false|mixed|null
+	 */
+	public function is_data_collection_allowed() {
+		return get_option( 'rg_gforms_dataCollection', false );
+	}
+
+	/**
 	 * Get the current telemetry data.
 	 *
 	 * @since 2.8
@@ -62,7 +87,7 @@ abstract class GF_Telemetry_Data {
 			$existing_data['events'][] = $data;
 		}
 
-		update_option( 'gf_telemetry_data', $existing_data );
+		update_option( 'gf_telemetry_data', $existing_data, false );
 	}
 
 	/**
@@ -82,24 +107,33 @@ abstract class GF_Telemetry_Data {
 	 *
 	 * @since 2.8
 	 *
-	 * @param array  $data     The data to send.
-	 * @param string $endpoint The endpoint to send the data to.
+	 * @param array  $entries The data to send.
 	 *
 	 * @return array|WP_Error
 	 */
-	public static function send_data( $data, $endpoint = 'telemetry' ) {
-
-		$options = array(
-			'headers' => array(
-				'referrer'     => 'GF_Telemetry',
-				'Content-Type' => 'application/x-www-form-urlencoded; charset=' . get_option( 'blog_charset' ),
-				'User-Agent'   => 'WordPress/' . get_bloginfo( 'version' ),
-			),
-			'method'  => 'POST',
-			'timeout' => 15,
-			'body'    => $data,
+	public static function send_data( $entries ) {
+		// allow overriding the endpoint to use the local or staging environment for testing purposes.
+		$endpoint = defined( 'GF_TELEMETRY_ENDPOINT' ) ? GF_TELEMETRY_ENDPOINT : self::TELEMETRY_ENDPOINT;
+		$site_url = get_site_url();
+		$data = array(
+			'license_key_md5' => GFCommon::get_key(),
+			'site_url'        => $site_url,
+			'product'         => 'gravityforms',
+			'tag'             => 'system_report',
+			'data'            => $entries,
 		);
 
-		return GFCommon::post_to_manager( $endpoint, 'nocache=1', $options );
+		return wp_remote_post(
+			$endpoint . 'api/telemetry_data_bulk',
+			array(
+				'headers'     => array(
+					'Content-Type'  => 'application/json',
+					'Authorization' => sha1( $site_url ),
+				),
+				'method'      => 'POST',
+				'data_format' => 'body',
+				'body'        => json_encode( $data ),
+			)
+		);
 	}
 }

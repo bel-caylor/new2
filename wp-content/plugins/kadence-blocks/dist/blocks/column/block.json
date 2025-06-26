@@ -1,11 +1,14 @@
 {
-  "apiVersion": 2,
+  "apiVersion": 3,
   "title": "Section",
   "name": "kadence/column",
   "category": "kadence-blocks",
   "usesContext": [
     "postId",
-    "queryId"
+    "queryId",
+    "kadence/dynamicSource",
+    "kadence/repeaterRowData",
+    "kadence/repeaterRow"
   ],
   "textdomain": "kadence-blocks",
   "attributes": {
@@ -252,7 +255,16 @@
       "default": ""
     },
     "templateLock": {
-      "type": "string"
+      "type": [
+        "string",
+        "boolean"
+      ],
+      "enum": [
+        "all",
+        "insert",
+        "contentOnly",
+        false
+      ]
     },
     "direction": {
       "type": "array",
@@ -290,7 +302,53 @@
       "type": "string",
       "default": "px"
     },
+    "gutterVariable": {
+      "type": "array",
+      "default": [
+        "",
+        "",
+        ""
+      ]
+    },
+    "rowGap": {
+      "type": "array",
+      "default": [
+        "",
+        "",
+        ""
+      ]
+    },
+    "rowGapUnit": {
+      "type": "string",
+      "default": "px"
+    },
+    "rowGapVariable": {
+      "type": "array",
+      "default": [
+        "",
+        "",
+        ""
+      ]
+    },
+    "flexBasis": {
+      "type": "array",
+      "default": [
+        "",
+        "",
+        ""
+      ]
+    },
+    "flexBasisUnit": {
+      "type": "string",
+      "default": "px"
+    },
     "verticalAlignment": {
+      "type": "string"
+    },
+    "verticalAlignmentTablet": {
+      "type": "string"
+    },
+    "verticalAlignmentMobile": {
       "type": "string"
     },
     "backgroundImgHover": {
@@ -453,6 +511,14 @@
     "maxWidthUnit": {
       "type": "string",
       "default": "px"
+    },
+    "maxWidthTabletUnit": {
+      "type": "string",
+      "default": ""
+    },
+    "maxWidthMobileUnit": {
+      "type": "string",
+      "default": ""
     },
     "height": {
       "type": "array",
@@ -801,6 +867,21 @@
     },
     "hoverOverlayBlendMode": {
       "type": "string"
+    },
+    "kadenceFieldConditional": {
+      "type": "object"
+    },
+    "flexGrow": {
+      "type": "array",
+      "default": [
+        "",
+        "",
+        ""
+      ]
+    },
+    "kbVersion": {
+      "type": "number",
+      "default": ""
     }
   },
   "supports": {
@@ -810,7 +891,8 @@
     "ktanimatepreview": true,
     "ktanimateswipe": true,
     "ktdynamic": true,
-    "kbcss": true
+    "kbcss": true,
+    "kbMetadata": true
   },
   "editorStyle": "kadence-blocks-column",
   "style": "kadence-blocks-column"

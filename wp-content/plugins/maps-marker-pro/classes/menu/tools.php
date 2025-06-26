@@ -1073,7 +1073,8 @@ class Tools extends Menu {
 			'include_maps' => -1
 		));
 		$settings = $mmp_settings->get_map_defaults();
-		$old_version = get_option('leafletmapsmarker_version_pro');
+		$old_version_pro = get_option('leafletmapsmarker_version_pro');
+		$old_version_free = get_option('leafletmapsmarker_version');
 
 		$basemaps = $layers->get_basemaps();
 		$overlays = $layers->get_overlays();
@@ -1095,7 +1096,7 @@ class Tools extends Menu {
 				<button id="import_tab" class="mmp-tablink" type="button"><?= esc_html__('Import markers', 'mmp') ?></button>
 				<button id="export_tab" class="mmp-tablink" type="button"><?= esc_html__('Export markers', 'mmp') ?></button>
 				<button id="backup_restore_tab" class="mmp-tablink" type="button"><?= esc_html__('Backup and restore', 'mmp') ?></button>
-				<?php if ($old_version !== false): ?>
+				<?php if ($old_version_pro !== false || $old_version_free !== false): ?>
 					<button id="migration_tab" class="mmp-tablink" type="button"><?= esc_html__('Data migration', 'mmp') ?></button>
 				<?php endif; ?>
 				<button id="health_tab" class="mmp-tablink" type="button"><?= esc_html__('Health check', 'mmp') ?></button>
@@ -3079,6 +3080,30 @@ class Tools extends Menu {
 								</div>
 								<div class="mmp-map-batch-setting mmp-advanced">
 									<div class="mmp-map-setting-desc">
+										<input type="checkbox" id="listGeocodingShowMarkerCheck" class="batch-settings-check" name="listGeocodingShowMarkerCheck" />
+										<label for="listGeocodingShowMarker"><?= esc_html__('Show marker', 'mmp') ?></label>
+									</div>
+									<div class="mmp-map-setting-input">
+										<label>
+											<div class="switch">
+												<input type="checkbox" id="listGeocodingShowMarker" name="listGeocodingShowMarker" <?= !$settings['listGeocodingShowMarker'] ?: 'checked="checked"' ?> />
+												<span class="slider"></span>
+											</div>
+										</label>
+									</div>
+								</div>
+								<div class="mmp-map-batch-setting mmp-advanced">
+									<div class="mmp-map-setting-desc">
+										<input type="checkbox" id="listGeocodingMarkerIconCheck" class="batch-settings-check" name="listGeocodingMarkerIconCheck" />
+										<?= esc_html__('Marker icon', 'mmp') ?>
+									</div>
+									<div class="mmp-map-setting-input">
+										<input type="hidden" id="listGeocodingMarkerIcon" name="listGeocodingMarkerIcon" value="<?= $settings['listGeocodingMarkerIcon'] ?>" />
+										<img class="mmp-geocoding-control-icon mmp-align-middle" src="<?= (!$settings['listGeocodingMarkerIcon']) ? plugins_url('images/leaflet/pin.png', MMP::$path) : MMP::$icons_url . $settings['listGeocodingMarkerIcon'] ?>" />
+									</div>
+								</div>
+								<div class="mmp-map-batch-setting mmp-advanced">
+									<div class="mmp-map-setting-desc">
 										<input type="checkbox" id="listGeocodingZoomCheck" class="batch-settings-check" name="listGeocodingZoomCheck" />
 										<label for="listGeocodingZoom"><?= esc_html__('Zoom', 'mmp') ?></label>
 									</div>
@@ -4270,21 +4295,21 @@ class Tools extends Menu {
 					</div>
 				</div>
 			</div>
-			<?php if ($old_version !== false): ?>
+			<?php if ($old_version_pro !== false || $old_version_free !== false): ?>
 				<div id="migration_tab_content" class="mmp-tools-tab">
 					<div id="data_migration" class="mmp-tools-section">
-						<h2><?= esc_html__('Maps Marker Pro 3.1.1 data migration', 'mmp') ?></h2>
+						<h2><?= esc_html__('Data migration', 'mmp') ?></h2>
 						<div>
-							<?php if ($old_version === '3.1.1'): ?>
-								<p><?= esc_html__('Maps Marker Pro 4.0 was completely rewritten from scratch and received a new database structure. As a result, existing data needs to be migrated. To make this as risk-free as possible, the plugin folder was renamed (which means it is considered a different plugin by WordPress) and a new database was created. This allows you to easily go back to the old plugin, should you encounter any issues, by simply deactivating this version and reactivating Maps Marker 3.1.1.', 'mmp') ?></p>
-								<p class="mmp-warning"><?= esc_html__('Warning: If you migrate your data, any maps or markers created with Maps Marker Pro 4.0 will be deleted and replaced with the Maps Marker Pro 3.1.1 data (which will remain unchanged). This cannot be undone.', 'mmp') ?></p>
-								<p><?= sprintf(esc_html__('Please do not delete Maps Marker Pro 3.1.1 until you have verified that all data has been migrated correctly. We also recommend to make a backup of the %1$s and %2$s database tables, to be able to run the migration again at a later point, should it become necessary.', 'mmp'), "<code>{$wpdb->prefix}leafletmapsmarker_layers</code>", "<code>{$wpdb->prefix}leafletmapsmarker_markers</code>") ?></p>
-								<p><?= esc_html__('Starting with Maps Marker Pro 4.0, marker maps have been deprecated, but can still be used for backwards compatibility. However, additional shortcode attributes are needed in order to make them look the same. Due to the high risk of doing this programmatically, we require you to replace these shortcodes manually. Start the migration check to get a list of used shortcodes and how they need to be updated. Only shortcodes in posts and pages can be detected, so please also check if you are using any shortcodes in widgets or other places. This only affects shortcodes for marker maps. Shortcodes for layer maps do not need to be updated.', 'mmp') ?></p>
+							<?php if (version_compare($old_version_pro, '3.1.1', '>=') || version_compare($old_version_free, '3.12.7', '>=')): ?>
+								<p><?= esc_html__('Maps Marker Pro 4 was completely rewritten from scratch and received a new database structure. As a result, existing data needs to be migrated. To make this as risk-free as possible, the plugin folder was renamed (which means it is considered a different plugin by WordPress) and a new database was created. This allows you to easily go back to the old plugin, should you encounter any issues, by simply deactivating this version and reactivating the old one.', 'mmp') ?></p>
+								<p class="mmp-warning"><?= esc_html__('Warning: If you migrate your data, any maps or markers created with this installation of Maps Marker Pro will be deleted and replaced with the data from the old plugin (which will remain unchanged). This cannot be undone.', 'mmp') ?></p>
+								<p><?= sprintf(esc_html__('Please do not delete the old plugin until you have verified that all data has been migrated correctly. We also recommend to make a backup of the %1$s and %2$s database tables, to be able to run the migration again at a later point, should it become necessary.', 'mmp'), "<code>{$wpdb->prefix}leafletmapsmarker_layers</code>", "<code>{$wpdb->prefix}leafletmapsmarker_markers</code>") ?></p>
+								<p><?= esc_html__('Please note that marker maps have been deprecated, but can still be used for backwards compatibility. However, additional shortcode attributes are needed in order to make them look the same. Due to the high risk of doing this programmatically, we require you to replace these shortcodes manually. Start the migration check to get a list of used shortcodes and how they need to be updated. Only shortcodes in posts and pages can be detected, so please also check if you are using any shortcodes in widgets or other places. This only affects shortcodes for marker maps. Shortcodes for layer maps do not need to be updated.', 'mmp') ?></p>
 								<div id="migration_log"></div>
 								<button id="data_migration_check" class="button button-primary" data-nonce="<?= wp_create_nonce('mmp-tools-check-migration') ?>"><?= esc_html__('Check migration', 'mmp') ?></button>
 								<button id="data_migration_start" class="button button-primary" data-nonce="<?= wp_create_nonce('mmp-tools-migration') ?>" disabled="disabled"><?= esc_html__('Start migration', 'mmp') ?></button>
 							<?php else: ?>
-								<?= sprintf($l10n->kses__('If you want to copy your existing maps to this version, you need to update the old Maps Marker Pro installation to version %1$s first.', 'mmp'), '3.1.1') ?>
+								<?= sprintf($l10n->kses__('In order to migrate your data, the old installation needs to be updated first. Please head to the <a href="%1$s">plugins page</a>, deactivate this plugin, reactivate the old one and start the update process.', 'mmp'), get_admin_url(null, 'plugins.php')) ?>
 							<?php endif; ?>
 						</div>
 					</div>

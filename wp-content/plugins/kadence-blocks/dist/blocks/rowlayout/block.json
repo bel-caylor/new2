@@ -1,12 +1,15 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
-  "apiVersion": 2,
+  "apiVersion": 3,
   "name": "kadence/rowlayout",
   "title": "Row Layout",
   "category": "kadence-blocks",
   "usesContext": [
     "postId",
-    "queryId"
+    "queryId",
+    "kadence/dynamicSource",
+    "kadence/repeaterRowData",
+    "kadence/repeaterRow"
   ],
   "textdomain": "kadence-blocks",
   "attributes": {
@@ -330,6 +333,54 @@
       "type": "number"
     },
     "secondColumnWidth": {
+      "type": "number"
+    },
+    "thirdColumnWidth": {
+      "type": "number"
+    },
+    "fourthColumnWidth": {
+      "type": "number"
+    },
+    "fifthColumnWidth": {
+      "type": "number"
+    },
+    "sixthColumnWidth": {
+      "type": "number"
+    },
+    "firstColumnWidthTablet": {
+      "type": "number"
+    },
+    "secondColumnWidthTablet": {
+      "type": "number"
+    },
+    "thirdColumnWidthTablet": {
+      "type": "number"
+    },
+    "fourthColumnWidthTablet": {
+      "type": "number"
+    },
+    "fifthColumnWidthTablet": {
+      "type": "number"
+    },
+    "sixthColumnWidthTablet": {
+      "type": "number"
+    },
+    "firstColumnWidthMobile": {
+      "type": "number"
+    },
+    "secondColumnWidthMobile": {
+      "type": "number"
+    },
+    "thirdColumnWidthMobile": {
+      "type": "number"
+    },
+    "fourthColumnWidthMobile": {
+      "type": "number"
+    },
+    "fifthColumnWidthMobile": {
+      "type": "number"
+    },
+    "sixthColumnWidthMobile": {
       "type": "number"
     },
     "textColor": {
@@ -843,6 +894,28 @@
         false
       ]
     },
+    "borderRadiusOverflow": {
+      "type": "boolean",
+      "default": true
+    },
+    "displayBoxShadow": {
+      "type": "boolean",
+      "default": false
+    },
+    "boxShadow": {
+      "type": "array",
+      "default": [
+        {
+          "color": "#000000",
+          "opacity": 0.2,
+          "spread": 0,
+          "blur": 14,
+          "hOffset": 0,
+          "vOffset": 0,
+          "inset": false
+        }
+      ]
+    },
     "kbVersion": {
       "type": "number",
       "default": ""
@@ -852,6 +925,7 @@
     "anchor": true,
     "ktdynamic": true,
     "kbcss": true,
-    "html": false
+    "html": false,
+    "kbMetadata": true
   }
 }

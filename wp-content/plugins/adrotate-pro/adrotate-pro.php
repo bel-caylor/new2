@@ -8,18 +8,18 @@ Author URI: https://www.arnan.me/
 Description: AdRotate Pro is the popular choice for monetizing your website with adverts while keeping things simple.
 Text Domain: adrotate-pro
 Domain Path: /languages/
-Version: 5.12.5
+Version: 5.14.3
 License: Limited License
 
 WP requires at least: 4.9
-WP tested up to: 6.2.2
+WP tested up to: 6.4.1
 CP requires at least: 1.0
 CP tested up to: 2.0
 */
 
 /* ------------------------------------------------------------------------------------
 *  COPYRIGHT AND TRADEMARK NOTICE
-*  Copyright 2008-2023 Arnan de Gans. All Rights Reserved.
+*  Copyright 2008-2024 Arnan de Gans. All Rights Reserved.
 *  ADROTATE is a registered trademark of Arnan de Gans.
 
 *  COPYRIGHT NOTICES AND ALL THE COMMENTS SHOULD REMAIN INTACT.
@@ -29,7 +29,7 @@ CP tested up to: 2.0
 
 /*--- AdRotate values ---------------------------------------*/
 define("ADROTATE_VERSION", 402);
-define("ADROTATE_DB_VERSION", 69);
+define("ADROTATE_DB_VERSION", 72);
 $plugin_folder = plugin_dir_path(__FILE__);
 /*-----------------------------------------------------------*/
 
@@ -104,7 +104,7 @@ if($adrotate_config['stats'] == 1){
 if(is_admin()) {
 	/*--- Publisher ---------------------------------------------*/
 	if(isset($_POST['adrotate_generate_submit'])) add_action('init', 'adrotate_generate_input');
-	if(isset($_POST['adrotate_swap_submit'])) add_action('init', 'adrotate_generate_campaign');
+//	if(isset($_POST['adrotate_swap_submit'])) add_action('init', 'adrotate_generate_campaign');
 	if(isset($_POST['adrotate_save_header'])) add_action('init', 'adrotate_save_header');
 	if(isset($_POST['adrotate_ad_submit'])) add_action('init', 'adrotate_insert_input');
 	if(isset($_POST['adrotate_group_submit'])) add_action('init', 'adrotate_insert_group');
@@ -147,10 +147,12 @@ if(is_admin()) {
 	if(isset($_POST['adrotate_license_deactivate'])) add_action('init', 'adrotate_license_deactivate');
 	if(isset($_POST['adrotate_support_submit'])) add_action('init', 'adrotate_support_request');
 
+/*
 	include_once($plugin_folder.'/library/swap-api.php');
 	if(isset($_POST['adrotate_swap_register'])) add_action('init', 'adrotate_swap_register');
 	if(isset($_POST['adrotate_swap_activate'])) add_action('init', 'adrotate_swap_activate');
 	if(isset($_POST['adrotate_swap_deactivate'])) add_action('init', 'adrotate_swap_deactivate');
+*/
 
 	/*--- Multisite --------------------------------------------*/
 	global $blog_id;
@@ -252,7 +254,7 @@ function adrotate_manage_adverts() {
 		<?php
 		$allbanners = $wpdb->get_results("SELECT `id`, `title`, `type`, `tracker`, `weight`, `autodelete`, `desktop`, `mobile`, `tablet`, `budget`, `crate`, `irate` FROM `{$wpdb->prefix}adrotate` WHERE `type` != 'empty' AND `type` != 'a_empty' ORDER BY `id` ASC;");
 
-		$active = $error = $disabled = $queued = $archive = $trash = false;
+		$active = $error = $disabled = $queued = $archive = $trash = array();
 		foreach($allbanners as $singlebanner) {
 			$advertiser = '';
 			$starttime = $stoptime = 0;
@@ -394,9 +396,15 @@ function adrotate_manage_adverts() {
     	<?php
 
     	if($view == "") {
-			if($error) include("dashboard/publisher/adverts-error.php");
+			if(count($error) > 0) {
+				include("dashboard/publisher/adverts-error.php");
+			}
+
 			include("dashboard/publisher/adverts-main.php");
-			if($disabled) include("dashboard/publisher/adverts-disabled.php");
+			
+			if(count($disabled) > 0){
+				include("dashboard/publisher/adverts-disabled.php");
+			}
 	   	} else if($view == "generator") {
 			include("dashboard/publisher/adverts-generator.php");
 	   	} else if($view == "addnew" OR $view == "edit") {
@@ -457,6 +465,9 @@ function adrotate_manage_group() {
 	$today 			= adrotate_date_start('day');
 	$in2days 		= $now + 172800;
 	$in7days 		= $now + 604800;
+
+	$license = adrotate_get_license();
+	$network = get_site_option('adrotate_network_settings');
 	?>
 	<div class="wrap">
 		<h1 class="wp-heading-inline"><?php _e('Groups', 'adrotate-pro'); ?></h1>
@@ -630,7 +641,7 @@ function adrotate_manage_advertisers() {
 		<?php
 		$all_advertisers = get_users(array('fields' => array('ID', 'display_name', 'user_email'), 'meta_key' => 'adrotate_is_advertiser', 'meta_value' => 'Y', 'orderby' => 'ID', 'order' => 'ASC'));
 
-		$advertisers = false;
+		$advertisers = array();
 		foreach($all_advertisers as $advertiser) {
 			$has_adverts = $wpdb->get_var("SELECT COUNT(`{$wpdb->prefix}adrotate_linkmeta`.`id`) as `count` FROM `{$wpdb->prefix}adrotate`, `{$wpdb->prefix}adrotate_linkmeta` WHERE `user` = '{$advertiser->ID}' AND `ad` = `{$wpdb->prefix}adrotate`.`id` AND `type` != 'empty' AND `type` != 'a_empty';");
 
@@ -733,6 +744,7 @@ function adrotate_support() {
  Name:      adrotate_swap
  Purpose:   Promote your website for free
 -------------------------------------------------------------*/
+/*
 function adrotate_swap() {
 	global $wpdb, $adrotate_config;
 
@@ -766,6 +778,7 @@ function adrotate_swap() {
 	</div>
 <?php
 }
+*/
 
 /*-------------------------------------------------------------
  Name:      adrotate_options

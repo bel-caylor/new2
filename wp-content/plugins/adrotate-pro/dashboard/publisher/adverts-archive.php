@@ -1,7 +1,7 @@
 <?php
 /* ------------------------------------------------------------------------------------
 *  COPYRIGHT AND TRADEMARK NOTICE
-*  Copyright 2008-2019 Arnan de Gans. All Rights Reserved.
+*  Copyright 2008-2024 Arnan de Gans. All Rights Reserved.
 *  ADROTATE is a registered trademark of Arnan de Gans.
 
 *  COPYRIGHT NOTICES AND ALL THE COMMENTS SHOULD REMAIN INTACT.
@@ -41,7 +41,7 @@
 		</thead>
 		<tbody>
 	<?php
-	if ($archive) {
+	if (count($archive) > 0) {
 		$class = '';
 		foreach($archive as $banner) {
 			$grouplist = adrotate_ad_is_in_groups($banner['id']);

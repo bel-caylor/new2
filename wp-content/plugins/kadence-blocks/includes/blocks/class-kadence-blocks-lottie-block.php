@@ -179,6 +179,10 @@ class Kadence_Blocks_Lottie_Block extends Kadence_Blocks_Abstract_Block {
 
 			if( $attributes['loop'] ){
 				$playerProps['loop'] = 'true';
+
+				if( !empty( $attributes['loopLimit'] ) ){
+					$playerProps['count'] = ( $attributes['loopLimit'] - 1);
+				}
 			}
 
 			if( $attributes['playbackSpeed'] ){
@@ -207,12 +211,21 @@ class Kadence_Blocks_Lottie_Block extends Kadence_Blocks_Abstract_Block {
 				$playerProps['intermission'] = 1000 * $attributes['delay'];
 			}
 
-			$align = '';
-			if( !empty( $attributes['align'] ) ) {
-				$align = 'align' . $attributes['align'];
+			$classes = array(
+				'kb-lottie-container',
+				'kb-lottie-container' . esc_attr( $unique_id ),
+			);
+
+			if ( ! empty( $attributes['align'] ) ) {
+				$classes[] = 'align' . $attributes['align'];
 			}
 
-			$content .= '<div class="kb-lottie-container kb-lottie-container' . esc_attr( $unique_id ) . ' '. $align .'">';
+			// Add custom CSS classes to class string.
+			if ( isset( $attributes['className'] ) ) {
+				$classes[] = $attributes['className'];
+			}
+
+			$content .= '<div class="' . esc_attr( implode( ' ', $classes ) ) . '">';
 				if ( isset( $attributes['useRatio'] ) && $attributes['useRatio'] ) {
 					$content .= '<div class="kb-is-ratio-animation">';
 				}
@@ -223,7 +236,7 @@ class Kadence_Blocks_Lottie_Block extends Kadence_Blocks_Abstract_Block {
 					}
 
 				$content .= 'src="' . $this->getAnimationUrl( $attributes ) . '"
-							id="kb-lottie-player' . $unique_id .'"
+							id="kb-lottie-player' . esc_attr( $unique_id ) .'"
 						></dotlottie-player>';
 				if ( isset( $attributes['useRatio'] ) && $attributes['useRatio'] ) {
 					$content .= '</div>';
@@ -239,9 +252,9 @@ class Kadence_Blocks_Lottie_Block extends Kadence_Blocks_Abstract_Block {
 		$rest_url = get_rest_url();
 
 		if ( $attributes['fileSrc'] === 'url' ) {
-			$url = $attributes['fileUrl'];
+			$url = esc_attr( $attributes['fileUrl'] );
 		} else {
-			$url = $rest_url . 'kb-lottieanimation/v1/animations/' . $attributes['localFile'][0]['value'] . '.json';
+			$url = $rest_url . 'kb-lottieanimation/v1/animations/' . esc_attr( $attributes['localFile'][0]['value'] ) . '.json';
 		}
 
 		if ( $url === '' || $url === $rest_url . 'kb-lottieanimation/v1/animations/' ) {

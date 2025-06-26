@@ -18,9 +18,8 @@
 namespace Google\Site_Kit_Dependencies\Google\Http;
 
 use Google\Site_Kit_Dependencies\Google\Auth\HttpHandler\HttpHandlerFactory;
-use Google\Site_Kit_Dependencies\Google\Client;
-use Google\Site_Kit_Dependencies\Google\Task\Runner;
 use Google\Site_Kit_Dependencies\Google\Service\Exception as GoogleServiceException;
+use Google\Site_Kit_Dependencies\Google\Task\Runner;
 use Google\Site_Kit_Dependencies\GuzzleHttp\ClientInterface;
 use Google\Site_Kit_Dependencies\GuzzleHttp\Exception\RequestException;
 use Google\Site_Kit_Dependencies\GuzzleHttp\Psr7\Response;
@@ -35,18 +34,19 @@ class REST
      * Executes a Psr\Http\Message\RequestInterface and (if applicable) automatically retries
      * when errors occur.
      *
-     * @param Client $client
-     * @param RequestInterface $req
-     * @param string $expectedClass
+     * @template T
+     * @param ClientInterface $client
+     * @param RequestInterface $request
+     * @param class-string<T>|false|null $expectedClass
      * @param array $config
      * @param array $retryMap
-     * @return mixed decoded result
+     * @return mixed|T|null
      * @throws \Google\Service\Exception on server side error (ie: not authenticated,
      *  invalid or malformed post body, invalid url)
      */
-    public static function execute(\Google\Site_Kit_Dependencies\GuzzleHttp\ClientInterface $client, \Google\Site_Kit_Dependencies\Psr\Http\Message\RequestInterface $request, $expectedClass = null, $config = array(), $retryMap = null)
+    public static function execute(\Google\Site_Kit_Dependencies\GuzzleHttp\ClientInterface $client, \Google\Site_Kit_Dependencies\Psr\Http\Message\RequestInterface $request, $expectedClass = null, $config = [], $retryMap = null)
     {
-        $runner = new \Google\Site_Kit_Dependencies\Google\Task\Runner($config, \sprintf('%s %s', $request->getMethod(), (string) $request->getUri()), array(\get_class(), 'doExecute'), array($client, $request, $expectedClass));
+        $runner = new \Google\Site_Kit_Dependencies\Google\Task\Runner($config, \sprintf('%s %s', $request->getMethod(), (string) $request->getUri()), [self::class, 'doExecute'], [$client, $request, $expectedClass]);
         if (null !== $retryMap) {
             $runner->setRetryMap($retryMap);
         }
@@ -55,10 +55,11 @@ class REST
     /**
      * Executes a Psr\Http\Message\RequestInterface
      *
-     * @param Client $client
+     * @template T
+     * @param ClientInterface $client
      * @param RequestInterface $request
-     * @param string $expectedClass
-     * @return array decoded result
+     * @param class-string<T>|false|null $expectedClass
+     * @return mixed|T|null
      * @throws \Google\Service\Exception on server side error (ie: not authenticated,
      *  invalid or malformed post body, invalid url)
      */
@@ -74,7 +75,7 @@ class REST
             }
             $response = $e->getResponse();
             // specific checking for Guzzle 5: convert to PSR7 response
-            if ($response instanceof \Google\Site_Kit_Dependencies\GuzzleHttp\Message\ResponseInterface) {
+            if (\interface_exists('Google\\Site_Kit_Dependencies\\GuzzleHttp\\Message\\ResponseInterface') && $response instanceof \Google\Site_Kit_Dependencies\GuzzleHttp\Message\ResponseInterface) {
                 $response = new \Google\Site_Kit_Dependencies\GuzzleHttp\Psr7\Response($response->getStatusCode(), $response->getHeaders() ?: [], $response->getBody(), $response->getProtocolVersion(), $response->getReasonPhrase());
             }
         }
@@ -83,13 +84,15 @@ class REST
     /**
      * Decode an HTTP Response.
      * @static
-     * @throws \Google\Service\Exception
+     *
+     * @template T
      * @param RequestInterface $response The http response to be decoded.
      * @param ResponseInterface $response
-     * @param string $expectedClass
-     * @return mixed|null
+     * @param class-string<T>|false|null $expectedClass
+     * @return mixed|T|null
+     * @throws \Google\Service\Exception
      */
-    public static function decodeHttpResponse(\Google\Site_Kit_Dependencies\Psr\Http\Message\ResponseInterface $response, \Google\Site_Kit_Dependencies\Psr\Http\Message\RequestInterface $request = null, $expectedClass = null)
+    public static function decodeHttpResponse(\Google\Site_Kit_Dependencies\Psr\Http\Message\ResponseInterface $response, ?\Google\Site_Kit_Dependencies\Psr\Http\Message\RequestInterface $request = null, $expectedClass = null)
     {
         $code = $response->getStatusCode();
         // retry strategy
@@ -108,7 +111,7 @@ class REST
         }
         return $response;
     }
-    private static function decodeBody(\Google\Site_Kit_Dependencies\Psr\Http\Message\ResponseInterface $response, \Google\Site_Kit_Dependencies\Psr\Http\Message\RequestInterface $request = null)
+    private static function decodeBody(\Google\Site_Kit_Dependencies\Psr\Http\Message\ResponseInterface $response, ?\Google\Site_Kit_Dependencies\Psr\Http\Message\RequestInterface $request = null)
     {
         if (self::isAltMedia($request)) {
             // don't decode the body, it's probably a really long string
@@ -116,7 +119,7 @@ class REST
         }
         return (string) $response->getBody();
     }
-    private static function determineExpectedClass($expectedClass, \Google\Site_Kit_Dependencies\Psr\Http\Message\RequestInterface $request = null)
+    private static function determineExpectedClass($expectedClass, ?\Google\Site_Kit_Dependencies\Psr\Http\Message\RequestInterface $request = null)
     {
         // "false" is used to explicitly prevent an expected class from being returned
         if (\false === $expectedClass) {
@@ -137,7 +140,7 @@ class REST
         }
         return null;
     }
-    private static function isAltMedia(\Google\Site_Kit_Dependencies\Psr\Http\Message\RequestInterface $request = null)
+    private static function isAltMedia(?\Google\Site_Kit_Dependencies\Psr\Http\Message\RequestInterface $request = null)
     {
         if ($request && ($qs = $request->getUri()->getQuery())) {
             \parse_str($qs, $query);

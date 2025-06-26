@@ -1,9 +1,10 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
-  "apiVersion": 2,
-  "title": "Spacer/Divider",
+  "apiVersion": 3,
   "name": "kadence/spacer",
+  "title": "Spacer / Divider",
   "category": "kadence-blocks",
+  "textdomain": "kadence-blocks",
   "attributes": {
     "blockAlignment": {
       "type": "string",
@@ -107,6 +108,7 @@
     }
   },
   "supports": {
-    "anchor": true
+    "anchor": true,
+    "kbMetadata": true
   }
 }

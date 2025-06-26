@@ -23,6 +23,7 @@ class Layers {
 		$stamen = esc_html__('Map tiles by', 'mmp') . ' <a href="http://stamen.com" target="_blank">Stamen Design</a>, ' . esc_html__('under', 'mmp') . ' <a href="http://creativecommons.org/licenses/by/3.0" target="_blank">CC BY 3.0</a>. ' . esc_html__('Data by', 'mmp') . ' <a href="http://openstreetmap.org" target="_blank">OpenStreetMap</a>, ' . esc_html__('under', 'mmp') . ' <a href="http://www.openstreetmap.org/copyright" target="_blank">ODbL</a>.';
 		$stamen_watercolor = esc_html__('Map tiles by', 'mmp') . ' <a href="http://stamen.com" target="_blank">Stamen Design</a>, ' . esc_html__('under', 'mmp') . ' <a href="http://creativecommons.org/licenses/by/3.0" target="_blank">CC BY 3.0</a>. ' . esc_html__('Data by', 'mmp') . ' <a href="http://openstreetmap.org" target="_blank">OpenStreetMap</a>, ' . esc_html__('under', 'mmp') . ' <a href="http://creativecommons.org/licenses/by-sa/3.0" target="_blank">CC BY SA</a>.';
 		$basemap_at = esc_html__('Map', 'mmp') . ': &copy; <a href="https://www.basemap.at" target="_blank">basemap.at</a>';
+		$locationiq = esc_html__('Map', 'mmp') . ': &copy; <a href="https://locationiq.com/?ref=maps" target="_blank">LocationIQ</a> &amp; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap ' . esc_html__('contributors', 'mmp') . '</a>';
 
 		$basemaps['osm'] = array(
 			'id'      => 'osm',
@@ -247,6 +248,48 @@ class Layers {
 				'attribution'   => $basemap_at
 			)
 		);
+
+		if ($all || MMP::$settings['locationIqApiKey']) {
+			$basemaps['locationIqStreets'] = array(
+				'id'      => 'locationIqStreets',
+				'type'    => 1,
+				'wms'     => 0,
+				'name'    => 'LocationIQ Streets',
+				'url'     => 'https://{s}-tiles.locationiq.com/v3/streets/r/{z}/{x}/{y}.png?key=' . MMP::$settings['locationIqApiKey'],
+				'options' => array(
+					'subdomains'    => 'abc',
+					'minNativeZoom' => 0,
+					'maxNativeZoom' => 18,
+					'attribution'   => $locationiq
+				)
+			);
+			$basemaps['locationIqDark'] = array(
+				'id'      => 'locationIqDark',
+				'type'    => 1,
+				'wms'     => 0,
+				'name'    => 'LocationIQ Dark',
+				'url'     => 'https://{s}-tiles.locationiq.com/v3/dark/r/{z}/{x}/{y}.png?key=' . MMP::$settings['locationIqApiKey'],
+				'options' => array(
+					'subdomains'    => 'abc',
+					'minNativeZoom' => 0,
+					'maxNativeZoom' => 18,
+					'attribution'   => $locationiq
+				)
+			);
+			$basemaps['locationIqStreetsLight'] = array(
+				'id'      => 'locationIqStreetsLight',
+				'type'    => 1,
+				'wms'     => 0,
+				'name'    => 'LocationIQ Light',
+				'url'     => 'https://{s}-tiles.locationiq.com/v3/light/r/{z}/{x}/{y}.png?key=' . MMP::$settings['locationIqApiKey'],
+				'options' => array(
+					'subdomains'    => 'abc',
+					'minNativeZoom' => 0,
+					'maxNativeZoom' => 18,
+					'attribution'   => $locationiq
+				)
+			);
+		}
 
 		if ($all || MMP::$settings['googleApiKey']) {
 			$basemaps['googleRoadmap'] = array(

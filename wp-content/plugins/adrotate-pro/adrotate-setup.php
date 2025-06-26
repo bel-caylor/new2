@@ -1,7 +1,7 @@
 <?php
 /* ------------------------------------------------------------------------------------
 *  COPYRIGHT AND TRADEMARK NOTICE
-*  Copyright 2008-2023 Arnan de Gans. All Rights Reserved.
+*  Copyright 2008-2024 Arnan de Gans. All Rights Reserved.
 *  ADROTATE is a registered trademark of Arnan de Gans.
 
 *  COPYRIGHT NOTICES AND ALL THE COMMENTS SHOULD REMAIN INTACT.
@@ -41,9 +41,9 @@ function adrotate_activate($network_wide) {
 function adrotate_activate_setup() {
 	global $wpdb, $userdata;
 
-	if(version_compare(PHP_VERSION, '5.6.0', '<') == -1) {
+	if(version_compare(PHP_VERSION, '7.4.0', '<') == -1) {
 		deactivate_plugins('/adrotate-pro/adrotate-pro.php');
-		wp_die('AdRotate 5.0 and newer requires PHP 5.6 or higher. Your server reports version '.PHP_VERSION.'. Contact your hosting provider about upgrading your server!<br /><a href="'. get_option('siteurl').'/wp-admin/plugins.php">Back to dashboard</a>.');
+		wp_die('AdRotate 5.13 and newer requires PHP 7.4 or higher. Your server reports version '.PHP_VERSION.'. Contact your hosting provider about upgrading your server!<br /><a href="'. get_option('siteurl').'/wp-admin/plugins.php">Back to dashboard</a>.');
 	} else {
 		if(!current_user_can('activate_plugins')) {
 			deactivate_plugins('/adrotate-pro/adrotate-pro.php');
@@ -408,7 +408,7 @@ function adrotate_dummy_data() {
 
 	if(is_null($no_ads) AND is_null($no_schedules) AND is_null($no_linkmeta)) {
 		// Demo ad 1
-	    $wpdb->insert("{$wpdb->prefix}adrotate", array('title' => 'Demo banner 468x60', 'bannercode' => '&lt;a href=\&quot;http:\/\/ajdg.net/landing.php?src=adrotatepro\&quot;&gt;&lt;img src=\&quot;http://ajdg.solutions/assets/banners/adrotate-468x60.jpg\&quot; width=&quot;468&quot; height=&quot;60&quot; /&gt;&lt;/a&gt;', 'thetime' => $now, 'updated' => $now, 'author' => $current_user->user_login, 'imagetype' => '', 'image' => '', 'tracker' => 'N', 'show_everyone' => 'Y', 'desktop' => 'Y', 'mobile' => 'Y', 'tablet' => 'Y', 'os_ios' => 'Y', 'os_android' => 'Y', 'os_other' => 'Y', 'type' => 'active', 'weight' => 6, 'budget' => 0, 'crate' => 0, 'irate' => 0, 'state_req' => 'N', 'cities' => serialize(array()), 'states' => serialize(array()), 'countries' => serialize(array())));
+	    $wpdb->insert("{$wpdb->prefix}adrotate", array('title' => 'Demo banner 468x60', 'bannercode' => '&lt;a href=\&quot;http:\/\/ajdg.net/landing.php?src=adrotatepro\&quot;&gt;&lt;img src=\&quot;http://ajdg.solutions/assets/banners/adrotate-468x60.jpg\&quot; width=&quot;468&quot; height=&quot;60&quot; /&gt;&lt;/a&gt;', 'thetime' => $now, 'updated' => $now, 'author' => $current_user->user_login, 'imagetype' => '', 'image' => '', 'tracker' => 'N', 'show_everyone' => 'Y', 'desktop' => 'Y', 'mobile' => 'Y', 'tablet' => 'Y', 'os_ios' => 'Y', 'os_android' => 'Y', 'type' => 'active', 'weight' => 6, 'budget' => 0, 'crate' => 0, 'irate' => 0, 'state_req' => 'N', 'cities' => serialize(array()), 'states' => serialize(array()), 'countries' => serialize(array())));
 	    $ad_id = $wpdb->insert_id;
 
 		$wpdb->insert("{$wpdb->prefix}adrotate_schedule", array('name' => 'Schedule for ad '.$ad_id, 'starttime' => $now, 'stoptime' => $in84days, 'maxclicks' => 0, 'maximpressions' => 0, 'spread' => 'N', 'spread_all' => 'N', 'daystarttime' => '0000', 'daystoptime' => '0000', 'day_mon' => 'Y', 'day_tue' => 'Y', 'day_wed' => 'Y', 'day_thu' => 'Y', 'day_fri' => 'Y', 'day_sat' => 'Y', 'day_sun' => 'Y'));
@@ -418,7 +418,7 @@ function adrotate_dummy_data() {
 		unset($ad_id, $schedule_id);
 
 		// Demo ad 2
-	    $wpdb->insert("{$wpdb->prefix}adrotate", array('title' => 'Demo banner 728x90', 'bannercode' => '&lt;a href=\&quot;http:\/\/ajdg.net/landing.php?src=adrotatepro\&quot;&gt;&lt;img src=\&quot;http://ajdg.solutions/assets/banners/adrotate-728x90.jpg\&quot; width=&quot;468&quot; height=&quot;60&quot; /&gt;&lt;/a&gt;', 'thetime' => $now, 'updated' => $now, 'author' => $current_user->user_login, 'imagetype' => '', 'image' => '', 'tracker' => 'Y', 'show_everyone' => 'Y', 'desktop' => 'Y', 'mobile' => 'Y', 'tablet' => 'Y', 'os_ios' => 'Y', 'os_android' => 'Y', 'os_other' => 'Y', 'type' => 'active', 'weight' => 6, 'budget' => 0, 'crate' => 0, 'irate' => 0, 'state_req' => 'N', 'cities' => serialize(array()), 'states' => serialize(array()), 'countries' => serialize(array())));
+	    $wpdb->insert("{$wpdb->prefix}adrotate", array('title' => 'Demo banner 728x90', 'bannercode' => '&lt;a href=\&quot;http:\/\/ajdg.net/landing.php?src=adrotatepro\&quot;&gt;&lt;img src=\&quot;http://ajdg.solutions/assets/banners/adrotate-728x90.jpg\&quot; width=&quot;468&quot; height=&quot;60&quot; /&gt;&lt;/a&gt;', 'thetime' => $now, 'updated' => $now, 'author' => $current_user->user_login, 'imagetype' => '', 'image' => '', 'tracker' => 'Y', 'show_everyone' => 'Y', 'desktop' => 'Y', 'mobile' => 'Y', 'tablet' => 'Y', 'os_ios' => 'Y', 'os_android' => 'Y', 'type' => 'active', 'weight' => 6, 'budget' => 0, 'crate' => 0, 'irate' => 0, 'state_req' => 'N', 'cities' => serialize(array()), 'states' => serialize(array()), 'countries' => serialize(array())));
 	    $ad_id = $wpdb->insert_id;
 
 		$wpdb->insert("{$wpdb->prefix}adrotate_schedule", array('name' => 'Schedule for ad '.$ad_id, 'starttime' => $now, 'stoptime' => $in84days, 'maxclicks' => 0, 'maximpressions' => 0, 'spread' => 'N', 'spread_all' => 'N', 'daystarttime' => '0000', 'daystoptime' => '0000', 'day_mon' => 'Y', 'day_tue' => 'Y', 'day_wed' => 'Y', 'day_thu' => 'Y', 'day_fri' => 'Y', 'day_sat' => 'Y', 'day_sun' => 'Y'));
@@ -471,7 +471,6 @@ function adrotate_database_install() {
 	  	`tablet` char(1) NOT NULL default 'Y',
 	  	`os_ios` char(1) NOT NULL default 'Y',
 	  	`os_android` char(1) NOT NULL default 'Y',
-	  	`os_other` char(1) NOT NULL default 'Y',
 	  	`type` varchar(10) NOT NULL default '0',
 	  	`weight` int(3) NOT NULL default '6',
 	  	`autodelete` char(1) NOT NULL default 'N',
@@ -491,6 +490,7 @@ function adrotate_database_install() {
 		`modus` tinyint(1) NOT NULL default '0',
 		`swap` tinyint(1) NOT NULL default '0',
 		`fallback` varchar(5) NOT NULL default '0',
+		`network` mediumint(8) NOT NULL default '0',
 		`cat` longtext NOT NULL,
 		`cat_loc` tinyint(1) NOT NULL default '0',
 		`cat_par` tinyint(2) NOT NULL default '0',
@@ -593,9 +593,9 @@ function adrotate_database_install() {
  Since:		3.7.3
 -------------------------------------------------------------*/
 function adrotate_check_upgrade() {
-	if(version_compare(PHP_VERSION, '5.6.0', '<') == -1) {
+	if(version_compare(PHP_VERSION, '7.4.0', '<') == -1) {
 		deactivate_plugins(plugin_basename('adrotate-pro/adrotate-pro.php'));
-		wp_die('AdRotate 5.0 and newer requires PHP 5.6 or higher. Your server reports version '.PHP_VERSION.'. Contact your hosting provider about upgrading your server!<br /><a href="'. get_option('siteurl').'/wp-admin/plugins.php">Back to dashboard</a>.');
+		wp_die('AdRotate 5.13 and newer requires PHP 7.4 or higher. Your server reports version '.PHP_VERSION.'. Contact your hosting provider about upgrading your server!<br /><a href="'. get_option('siteurl').'/wp-admin/plugins.php">Back to dashboard</a>.');
 	} else {
 		$adrotate_db_version = get_option("adrotate_db_version");
 		$adrotate_version = get_option("adrotate_version");
@@ -652,7 +652,6 @@ function adrotate_database_upgrade() {
 		adrotate_add_column("{$wpdb->prefix}adrotate", 'paid', 'char(1) NOT NULL default \'U\' AFTER `image`');
 		adrotate_add_column("{$wpdb->prefix}adrotate", 'os_ios', 'char(1) NOT NULL default \'Y\' AFTER `tablet`');
 		adrotate_add_column("{$wpdb->prefix}adrotate", 'os_android', 'char(1) NOT NULL default \'Y\' AFTER `os_ios`');
-		adrotate_add_column("{$wpdb->prefix}adrotate", 'os_other', 'char(1) NOT NULL default \'Y\' AFTER `os_android`');
 		adrotate_del_column("{$wpdb->prefix}adrotate", 'sortorder');
 		adrotate_del_column("{$wpdb->prefix}adrotate_groups", 'sortorder');
 
@@ -755,6 +754,13 @@ function adrotate_database_upgrade() {
 		adrotate_add_column("{$wpdb->prefix}adrotate_groups", 'woo_loc', 'tinyint(1) NOT NULL default \'0\' AFTER `woo_cat`');
 		adrotate_add_column("{$wpdb->prefix}adrotate_groups", 'bbpress', 'longtext NOT NULL AFTER `woo_loc`');
 		adrotate_add_column("{$wpdb->prefix}adrotate_groups", 'bbpress_loc', 'tinyint(1) NOT NULL default \'0\' AFTER `bbpress`');
+	}
+
+	// Database: 	72
+	// AdRotate:	5.14
+	if($adrotate_db_version['current'] < 72) {
+		adrotate_add_column("{$wpdb->prefix}adrotate_groups", 'network', 'mediumint(8) NOT NULL AFTER `fallback`');
+		adrotate_del_column("{$wpdb->prefix}adrotate", 'os_other');
 	}
 
 	update_option("adrotate_db_version", array('current' => ADROTATE_DB_VERSION, 'previous' => $adrotate_db_version['current']));

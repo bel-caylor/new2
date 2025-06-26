@@ -299,6 +299,28 @@ class KBP_Active_Campaign {
 		}
 	}
 	/**
+	 * Add contact to an automation.
+	 *
+	 * @param array $contact
+	 * @param number $automation
+	 *
+	 * @return array
+	 */
+	public function add_contact_to_automation( $contact, $automation ) {
+		$args = array(
+			'contact' => $contact['id'],
+			'tag'     => $automation,
+		);
+		$response = $this->make_request( 'POST', 'contactAutomations', null, array( 'contactAutomation' => $args ) );
+		if ( ! $response ) {
+			return false;
+		} elseif ( ! isset( $response['contactAutomation'] ) ) {
+			return false;
+		} elseif ( ! empty( $response['contactAutomation'] ) ) {
+			return $response['contactAutomation'];
+		}
+	}
+	/**
 	 * Get all lists.
 	 *
 	 * @param number $limit the amount to limit in response.
@@ -363,6 +385,30 @@ class KBP_Active_Campaign {
 			return false;
 		} elseif ( ! empty( $response['fields'] ) ) {
 			return $response['fields'];
+		}
+	}
+	/**
+	 * Get all lists.
+	 *
+	 * @param number $limit the amount to limit in response.
+	 * @param string/null $search a keyword to use for search.
+	 *
+	 * @return array
+	 */
+	public function get_all_automations( $limit = 20, $search = null ) {
+		$args = array(
+			'limit' => $limit,
+		);
+		if ( ! empty( $search ) ) {
+			$args['filters[name]'] = $search;
+		}
+		$response = $this->make_request( 'GET', 'automations', $args );
+		if ( ! $response ) {
+			return false;
+		} elseif ( ! isset( $response['automations'] ) ) {
+			return false;
+		} elseif ( ! empty( $response['automations'] ) ) {
+			return $response['automations'];
 		}
 	}
 }

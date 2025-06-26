@@ -497,17 +497,7 @@ class GF_Confirmation {
 		$form_id         = absint( rgget( 'id' ) );
 		$confirmation_id = rgpost( 'confirmation_id' ) ? rgpost( 'confirmation_id' ) : rgget( 'cid' );
 
-		/**
-		 * Filters to form meta being used within the confirmations edit page.
-		 *
-		 * @since Unknown
-		 *
-		 * @param array $form The Form Object.
-		 */
-		$form = gf_apply_filters( array(
-			'gform_admin_pre_render',
-			$form_id
-		), GFFormsModel::get_form_meta( $form_id ) );
+		$form = GFCommon::gform_admin_pre_render( GFFormsModel::get_form_meta( $form_id ) );
 
 		// Get confirmation object.
 		$confirmation = self::get_confirmation( $confirmation_id, $form );
@@ -525,7 +515,11 @@ class GF_Confirmation {
 		// Add warning if confirmation message is unsafe.
 		if ( ! empty( $confirmation['message'] ) && self::confirmation_looks_unsafe( $confirmation['message'] ) ) {
 			$dismissible_message = esc_html__( 'Your confirmation message appears to contain a merge tag as the value for an HTML attribute. Depending on the attribute and field type, this might be a security risk. %sFurther details%s', 'gravityforms' );
-			$dismissible_message = sprintf( $dismissible_message, '<a href="https://docs.gravityforms.com/security-warning-merge-tags-html-attribute-values/" target="_blank">', '</a>' );
+			$dismissible_message = sprintf(
+				$dismissible_message,
+				'<a href="https://docs.gravityforms.com/security-warning-merge-tags-html-attribute-values/" target="_blank">',
+				'<span class="screen-reader-text">' . esc_html__( '(opens in a new tab)', 'gravityforms' ) . '</span>&nbsp;<span class="gform-icon gform-icon--external-link"></span></a>'
+			);
 			GFCommon::add_dismissible_message( $dismissible_message, 'confirmation_unsafe_' . $form_id );
 		}
 
@@ -1067,9 +1061,15 @@ class GFConfirmationTable extends WP_List_Table {
 			$text  = esc_html__( 'Inactive', 'gravityforms' );
 		}
 		?>
-		<button type="button" class="gform-status-indicator <?php echo esc_attr( $class ); ?>" onclick="ToggleActive( this, '<?php echo esc_js( $item['id'] ); ?>' );" onkeypress="ToggleActive( this, '<?php echo esc_js( $item['id'] ); ?>' );">
-			<svg role="presentation" focusable="false"  viewBox="0 0 6 6" xmlns="http://www.w3.org/2000/svg"><circle cx="3" cy="2" r="1" stroke-width="2"/></svg>
-			<span class="gform-status-indicator-status"><?php echo esc_html( $text ); ?></span>
+		<button
+			type="button"
+			class="gform-status-indicator gform-status-indicator--size-sm gform-status-indicator--theme-cosmos <?php echo esc_attr( $class ); ?>"
+			onclick="ToggleActive( this, '<?php echo esc_js( $item['id'] ); ?>' );"
+			onkeypress="ToggleActive( this, '<?php echo esc_js( $item['id'] ); ?>' );"
+		>
+			<span class="gform-status-indicator-status gform-typography--weight-medium gform-typography--size-text-xs">
+				<?php echo esc_html( $text ); ?>
+			</span>
 		</button>
 		<?php
 
@@ -1098,10 +1098,14 @@ class GFConfirmationTable extends WP_List_Table {
 			unset( $actions['delete'] );
 		}
 
-
+		$aria_label = sprintf(
+			/* translators: %s: Confirmation name */
+			__( '%s (Edit)', 'gravityforms' ),
+			$item['name']
+		);
 		?>
 
-		<a href="<?php echo esc_url( $edit_url ); ?>"><strong><?php echo esc_html( rgar( $item, 'name' ) ); ?></strong></a>
+		<a href="<?php echo esc_url( $edit_url ); ?>" aria-label="<?php echo esc_attr( $aria_label ); ?>"><strong><?php echo esc_html( rgar( $item, 'name' ) ); ?></strong></a>
 		<div class="row-actions">
 
 			<?php

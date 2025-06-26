@@ -1,6 +1,6 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
-  "apiVersion": 2,
+  "apiVersion": 3,
   "title": "Testimonial",
   "name": "kadence/testimonial",
   "parent": [
@@ -110,6 +110,10 @@
     "useBlockQuoteTags": {
       "type": "boolean",
       "default": true
+    },
+    "anchor": {
+      "type": "string",
+      "default": ""
     }
   },
   "usesContext": [
@@ -133,6 +137,8 @@
   ],
   "supports": {
     "anchor": true,
-    "html": false
+    "html": false,
+    "kbMetadata": true,
+    "kbContentLabel": "title"
   }
 }

@@ -216,11 +216,11 @@ class GF_Field_Number extends GF_Field {
 		$id       = intval( $this->id );
 		$field_id = $is_entry_detail || $is_form_editor || $form_id == 0 ? "input_$id" : 'input_' . $form_id . "_$id";
 
-		$size          = $this->size;
-		$disabled_text = $is_form_editor ? "disabled='disabled'" : '';
-		$class_suffix  = $is_entry_detail ? '_admin' : '';
-		$class         = $size . $class_suffix;
-		$class         = esc_attr( $class );
+		$size            = $this->size;
+		$disabled_text   = $is_form_editor ? "disabled='disabled'" : '';
+		$class_suffix    = $is_entry_detail ? '_admin' : '';
+		$class_read_only = ( ! $is_entry_detail && ! $is_form_editor ) && $this->has_calculation() ? ' gform-text-input-reset' : '';
+		$class           = esc_attr( $size . $class_suffix . $class_read_only );
 
 		$instruction = '';
 		$read_only   = '';
@@ -231,7 +231,6 @@ class GF_Field_Number extends GF_Field {
 
 				// calculation-enabled fields should be read only
 				$read_only = 'readonly="readonly"';
-
 			} else {
 
 				$message          = $this->get_range_message();
@@ -245,15 +244,14 @@ class GF_Field_Number extends GF_Field {
 			$value = GFCommon::format_number( $value, $this->numberFormat, rgar( $entry, 'currency' ) );
 		}
 
-		$is_html5        = RGFormsModel::is_html5_enabled();
-		$html_input_type = $is_html5 && ! $this->has_calculation() && ( $this->numberFormat != 'currency' && $this->numberFormat != 'decimal_comma' ) ? 'number' : 'text'; // chrome does not allow number fields to have commas, calculations and currency values display numbers with commas
-		$step_attr       = $is_html5 ? "step='any'" : '';
+		$html_input_type = ! $this->has_calculation() && ( $this->numberFormat != 'currency' && $this->numberFormat != 'decimal_comma' ) ? 'number' : 'text'; // chrome does not allow number fields to have commas, calculations and currency values display numbers with commas
+		$step_attr       = "step='any'";
 
 		$min = $this->rangeMin;
 		$max = $this->rangeMax;
 
-		$min_attr = $is_html5 && is_numeric( $min ) ? "min='{$min}'" : '';
-		$max_attr = $is_html5 && is_numeric( $max ) ? "max='{$max}'" : '';
+		$min_attr = is_numeric( $min ) ? "min='{$min}'" : '';
+		$max_attr = is_numeric( $max ) ? "max='{$max}'" : '';
 
 		$include_thousands_sep = apply_filters( 'gform_include_thousands_sep_pre_format_number', $html_input_type == 'text', $this );
 		$value                 = GFCommon::format_number( $value, $this->numberFormat, rgar( $entry, 'currency' ), $include_thousands_sep );
@@ -261,9 +259,8 @@ class GF_Field_Number extends GF_Field {
 		$placeholder_attribute = $this->get_field_placeholder_attribute();
 		$required_attribute    = $this->isRequired ? 'aria-required="true"' : '';
 		$invalid_attribute     = $this->failed_validation ? 'aria-invalid="true"' : 'aria-invalid="false"';
-
-		$range_message        = $this->get_range_message();
-		$describedby_extra_id = empty( $range_message ) ? array() : array( "gfield_instruction_{$this->formId}_{$this->id}" );
+		
+		$describedby_extra_id = '' == $instruction ? array() : array( "gfield_instruction_{$this->formId}_{$this->id}" );
 		$aria_describedby     = $this->get_aria_describedby( $describedby_extra_id );
 
 		$autocomplete_attribute = $this->enableAutocomplete ? $this->get_field_autocomplete_attribute() : '';

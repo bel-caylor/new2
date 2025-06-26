@@ -94,6 +94,7 @@ class Resources {
 	 */
 	private function get_google_maps_url() {
 		$params['key'] = MMP::$settings['googleApiKey'];
+		$params['callback'] = "Function.prototype";
 
 		if (MMP::$settings['googleLanguage'] === 'wordpress_setting') {
 			$params['language'] = substr(get_locale(), 0, 2);

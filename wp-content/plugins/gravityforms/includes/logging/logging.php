@@ -437,7 +437,7 @@ class GFLogging extends GFAddOn {
 			if ( $this->log_file_exists( $plugin_slug ) ) {
 				$delete_url = add_query_arg( array( 'delete_log' => $plugin_slug, $this->_nonce_action => $nonce ), admin_url( 'admin.php?page=gf_settings&subview=gravityformslogging' ) );
 				$after_select  = '<br />';
-				$after_select .= '<span style="font-size:85%"><a href="' . esc_attr( $this->get_log_file_url( $plugin_slug ) ) . '" target="_blank">' . esc_html__( 'view log', 'gravityforms' ) . '</a>';
+				$after_select .= '<span style="font-size:85%"><a href="' . esc_attr( $this->get_log_file_url( $plugin_slug ) ) . '" target="_blank">' . esc_html__( 'view log', 'gravityforms' ) . '<span class="screen-reader-text">' . esc_html__( '(opens in a new tab)', 'gravityforms' ) . '</span>&nbsp;<span class="gform-icon gform-icon--external-link"></span></a>';
 				$after_select .= '&nbsp;&nbsp;<a href="' . $delete_url . '">' . esc_html__( 'delete log', 'gravityforms' ) . '</a>';
 				$after_select .= '&nbsp;&nbsp;(' . $this->get_log_file_size( $plugin_slug ) . ')</span>';
 			}
@@ -722,18 +722,20 @@ class GFLogging extends GFAddOn {
 	}
 
 	/**
-	 * Get log file size for plugin
+	 * Get log file size by plugin slug or file path.
 	 *
 	 * @since 1.2.1
-	 * @access public
-	 * @param  string $plugin_name Plugin slug.
+	 * @since 2.8.3 Updated params.
+	 *
+	 * @param string $plugin_name_or_path The plugin slug or log file path.
+	 * @param bool   $is_path             Indicates if the file path is being provided instead of the plugin slug.
 	 *
 	 * @return string File size with unit of measurement.
 	 */
-	public function get_log_file_size( $plugin_name ) {
+	public function get_log_file_size( $plugin_name_or_path, $is_path = false ) {
 
 		// Get log file name.
-		$file = $this->get_log_file_name( $plugin_name );
+		$file = $is_path ? $plugin_name_or_path : $this->get_log_file_name( $plugin_name_or_path );
 
 		// Get log file size.
 		$size = filesize( $file );
@@ -997,7 +999,7 @@ class GFLogging extends GFAddOn {
 				}
 
 				// Save new settings.
-				update_blog_option( $blog_id, 'gravityformsaddon_' . $this->_slug . '_settings', $new_settings );
+				update_blog_option( $blog_id, 'gravityformsaddon_' . $this->get_slug() . '_settings', $new_settings );
 
 				// Delete old settings.
 				delete_blog_option( $blog_id, 'gf_logging_settings' );
@@ -1075,7 +1077,7 @@ class GFLogging extends GFAddOn {
 
 	public function delete_settings() {
 		delete_option( 'gform_enable_logging' );
-		delete_option( 'gravityformsaddon_' . $this->_slug . '_settings' );
+		delete_option( 'gravityformsaddon_' . $this->get_slug() . '_settings' );
 	}
 
 	/**

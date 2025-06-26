@@ -7,11 +7,28 @@
 		</gutenberg-block>
 		<gutenberg-block type="kadence/icon" translate="0"/>
 		<gutenberg-block type="kadence/single-icon" translate="1">
-			<key name="link" />
+			<xpath>//div/a/@href</xpath>
+			<xpath>//div/a/@aria-label</xpath>
+			<xpath>//div/a/span/@data-title</xpath>
+		</gutenberg-block>
+		<gutenberg-block type="kadence/progress-bar" translate="1">
+			<key name="label" />
+			<key name="numberPrefix" />
+			<key name="numberSuffix" />
+		</gutenberg-block>
+		<gutenberg-block type="kadence/countdown" translate="1">
+			<key name="preLabel" />
+			<key name="postLabel" />
+			<key name="daysLabel" />
+			<key name="hoursLabel" />
+			<key name="minutesLabel" />
+			<key name="secondsLabel" />
+		</gutenberg-block>
+		<gutenberg-block type="kadence/countup" translate="1">
 			<key name="title" />
 		</gutenberg-block>
 		<gutenberg-block type="kadence/advancedheading" translate="1">
-			<xpath>//div//*[self::h1 or self::h2 or self::h3 or self::h4 or self::h5 or self::h6 or self::p or self::div]</xpath>
+			<xpath>//div//*[self::h1 or self::h2 or self::h3 or self::h4 or self::h5 or self::h6 or self::p or self::div or self::span.wp-block-kadence-advancedheading]</xpath>
 		</gutenberg-block>
 		<gutenberg-block type="kadence/tabs" translate="1">
 			<xpath>//span[@class="kt-title-text"]</xpath>
@@ -20,7 +37,7 @@
 		<gutenberg-block type="kadence/infobox" translate="1">
 			<xpath>//div/a/@href</xpath>
 			<xpath>//*[@class="kt-blocks-info-box-title"]</xpath>
-			<xpath>//div[@class="kt-infobox-textcontent"]</xpath>
+			<xpath>//*[@class="kt-blocks-info-box-text"]</xpath>
 			<xpath>//span[@class="kt-blocks-info-box-learnmore"]</xpath>
 		</gutenberg-block>
 		<gutenberg-block type="kadence/pane" translate="1">
@@ -42,6 +59,12 @@
 			<key name="content"/>
 			<key name="name"/>
 			<key name="occupation"/>
+		</gutenberg-block>
+		<gutenberg-block type="kadence/posts" translate="1">
+			<key name="readmoreLabel" />
+		</gutenberg-block>
+		<gutenberg-block type="kadence/image" translate="1">
+			<key name="id" type="post-ids" sub-type="attachment" />
 		</gutenberg-block>
 		<gutenberg-block type="kadence/form" translate="1">
 			<xpath>//form[contains(@class, "kb-form")]/@*[name()='data-error-message']</xpath>
@@ -74,10 +97,21 @@
 				</key>
 			</key>
 		</gutenberg-block>
+		<gutenberg-block type="kadence/advanced-form" translate="1">
+			<key name="id" type="post-ids" sub-type="kadence_form" />
+		</gutenberg-block>
 		<gutenberg-block type="kadence/spacer" translate="0"/>
 		<gutenberg-block type="kadence/rowlayout" translate="0"/>
 		<gutenberg-block type="kadence/column" translate="0"/>
 		<gutenberg-block type="kadence/tab" translate="0"/>
 		<gutenberg-block type="kadence/accordion" translate="0"/>
+		<gutenberg-block type="kadence/advancedgallery" translate="1">
+			<key name="imagesDynamic">
+				<key name="*">
+					<key name="alt" />
+					<key name="caption" />
+				</key>
+			</key>
+		</gutenberg-block>		
 	</gutenberg-blocks>
 </wpml-config>

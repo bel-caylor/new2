@@ -152,13 +152,21 @@ class Notice {
 				'level' => 'info',
 				'msg'   => esc_html__('Installation finished - you can now start creating maps!', 'mmp') . ' (<a href="https://www.mapsmarker.com/starter-guide/" target="_blank">' . esc_html__('open starter guide', 'mmp') . '</a>)<br />' . sprintf($l10n->kses__('We recommend using OpenStreetMap, but if you also want to use Google Maps, you need to register a <a href="%1$s" target="_blank">Google Maps Javascript API key</a>.', 'mmp'), 'https://www.mapsmarker.com/google-maps-javascript-api/')
 			),
-			'migration_ok' => array(
+			'migration_ok_pro' => array(
 				'level' => 'info',
-				'msg'   => sprintf(esc_html__('An installation of Maps Marker Pro %1$s was detected.', 'mmp'), '3.1.1') . '<br />' . sprintf($l10n->kses__('You can copy your existing maps to this version using the <a href="%1$s">data migration tool</a>.', 'mmp'), get_admin_url(null, 'admin.php?page=mapsmarkerpro_tools#migration'))
+				'msg'   => sprintf(esc_html__('An installation of Maps Marker Pro %1$s or later was detected.', 'mmp'), '3.1.1') . '<br />' . sprintf($l10n->kses__('You can copy your existing maps to this version using the <a href="%1$s">data migration tool</a>.', 'mmp'), get_admin_url(null, 'admin.php?page=mapsmarkerpro_tools#migration'))
 			),
-			'migration_update' => array(
+			'migration_update_pro' => array(
 				'level' => 'info',
-				'msg'   => esc_html__('An older installation of Maps Marker Pro was detected.', 'mmp') . '<br />' . sprintf($l10n->kses__('If you want to copy your existing maps to this version, you need to update the old Maps Marker Pro installation to version %1$s first. For more information, please see the <a href="%2$s">data migration tool</a>.', 'mmp'), '3.1.1', get_admin_url(null, 'admin.php?page=mapsmarkerpro_tools#migration'))
+				'msg'   => esc_html__('An older installation of Maps Marker Pro was detected.', 'mmp') . '<br />' . sprintf($l10n->kses__('If you want to copy your existing maps to this version, you need to update the old Maps Marker Pro installation to version %1$s or later first. For more information, please see the <a href="%2$s">data migration tool</a>.', 'mmp'), '3.1.1', get_admin_url(null, 'admin.php?page=mapsmarkerpro_tools#migration'))
+			),
+			'migration_ok_free' => array(
+				'level' => 'info',
+				'msg'   => sprintf(esc_html__('An installation of Leaflet Maps Marker %1$s or later was detected.', 'mmp'), '3.12.7') . '<br />' . sprintf($l10n->kses__('You can copy your existing maps to this version using the <a href="%1$s">data migration tool</a>.', 'mmp'), get_admin_url(null, 'admin.php?page=mapsmarkerpro_tools#migration'))
+			),
+			'migration_update_free' => array(
+				'level' => 'info',
+				'msg'   => esc_html__('An older installation of Leaflet Maps Marker was detected.', 'mmp') . '<br />' . sprintf($l10n->kses__('If you want to copy your existing maps to this version, you need to update the old Leaflet Maps Marker installation to version %1$s or later first. For more information, please see the <a href="%2$s">data migration tool</a>.', 'mmp'), '3.12.7', get_admin_url(null, 'admin.php?page=mapsmarkerpro_tools#migration'))
 			),
 			'algolia_removed' => array(
 				'level' => 'warning',

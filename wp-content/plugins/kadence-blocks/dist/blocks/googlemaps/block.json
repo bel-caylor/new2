@@ -1,10 +1,10 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
-  "apiVersion": 2,
+  "apiVersion": 3,
   "name": "kadence/googlemaps",
   "title": "Google Maps",
   "category": "kadence-blocks",
-  "textdomain": "kadence-google-maps",
+  "textdomain": "kadence-blocks",
   "attributes": {
     "uniqueID": {
       "type": "string"
@@ -174,5 +174,9 @@
       "type": "number",
       "default": ""
     }
+  },
+  "supports": {
+    "kbMetadata": true,
+    "ktdynamic": true
   }
 }

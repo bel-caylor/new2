@@ -1,7 +1,7 @@
 <?php
 /* ------------------------------------------------------------------------------------
 *  COPYRIGHT AND TRADEMARK NOTICE
-*  Copyright 2008-2019 Arnan de Gans. All Rights Reserved.
+*  Copyright 2008-2024 Arnan de Gans. All Rights Reserved.
 *  ADROTATE is a registered trademark of Arnan de Gans.
 
 *  COPYRIGHT NOTICES AND ALL THE COMMENTS SHOULD REMAIN INTACT.
@@ -24,7 +24,7 @@
 		</thead>
 		<tbody>
 	<?php
-	if ($advertisers) {
+	if (count($advertisers) > 0) {
 		$class = '';
 		foreach($advertisers as $user_id => $user) {			
 			$errorclass = '';

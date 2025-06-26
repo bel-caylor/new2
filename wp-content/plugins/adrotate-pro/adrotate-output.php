@@ -1,7 +1,7 @@
 <?php
 /* ------------------------------------------------------------------------------------
 *  COPYRIGHT AND TRADEMARK NOTICE
-*  Copyright 2008-2023 Arnan de Gans. All Rights Reserved.
+*  Copyright 2008-2024 Arnan de Gans. All Rights Reserved.
 *  ADROTATE is a registered trademark of Arnan de Gans.
 
 *  COPYRIGHT NOTICES AND ALL THE COMMENTS SHOULD REMAIN INTACT.
@@ -24,6 +24,8 @@ function adrotate_ad($banner_id, $opt = null) {
 			'site' => 'no' // Network site (yes|no)
 		);
 		$options = wp_parse_args($opt, $defaults);
+		$available = true;
+		$advert_network = 0;
 
 		$license = adrotate_get_license();
 		$network = get_site_option('adrotate_network_settings');
@@ -31,31 +33,40 @@ function adrotate_ad($banner_id, $opt = null) {
 		if($options['site'] == 'yes' AND adrotate_is_networked() AND $license['type'] == 'Developer') {
 			$current_blog = $wpdb->blogid;
 			switch_to_blog($network['primary']);
+			$advert_network = 1;
 		}
 
-		$banner = $wpdb->get_row($wpdb->prepare("SELECT `id`, `title`, `bannercode`, `tracker`, `show_everyone`, `image`, `crate`, `irate`, `budget` FROM `{$wpdb->prefix}adrotate` WHERE `id` = %d AND (`type` = 'active' OR `type` = '2days' OR `type` = '7days');", $banner_id));
+		$banner = $wpdb->get_row($wpdb->prepare("SELECT `id`, `title`, `bannercode`, `tracker`, `show_everyone`, `image`, `crate`, `irate`, `budget` FROM `{$wpdb->prefix}adrotate` WHERE `id` = %d AND (`type` = 'active' OR `type` = '2days' OR `type` = '7days');", $banner_id), ARRAY_A);
 
 		if($banner) {
-			$selected = array($banner->id => 0);
-			$selected = adrotate_filter_show_everyone($selected, $banner);
-			$selected = adrotate_filter_schedule($selected, $banner);
+			$banner['network'] = $advert_network;
 
-			if($adrotate_config['enable_advertisers'] == 'Y' AND ($banner->crate > 0 OR $banner->irate > 0)) {
-				$selected = adrotate_filter_budget($selected, $banner);
+			if(adrotate_filter_show_everyone($banner)) {
+				$available = false;
+			}
+
+			if(adrotate_filter_schedule($banner)) {
+				$available = false;
+			}
+
+			if($adrotate_config['enable_advertisers'] == 'Y' AND ($banner['crate'] > 0 OR $banner['irate'] > 0)) {
+				if(adrotate_filter_budget($banner)) {
+					$available = false;
+				}
 			}
 		} else {
-			$selected = false;
+			$available = false;
 		}
 
-		if($selected) {
-			$image = str_replace('%folder%', $adrotate_config['banner_folder'], $banner->image);
+		if($available) {
+			$image = str_replace('%folder%', $adrotate_config['banner_folder'], $banner['image']);
 
-			if($options['wrapper'] == 'yes') $output .= '<div class="a'.$adrotate_config['adblock_disguise'].'-single a'.$adrotate_config['adblock_disguise'].'-'.$banner->id.'">';
-			$output .= adrotate_ad_output($banner->id, 0, $banner->title, $banner->bannercode, $banner->tracker, $image);
+			if($options['wrapper'] == 'yes') $output .= '<div class="a'.$adrotate_config['adblock_disguise'].'-single a'.$adrotate_config['adblock_disguise'].'-'.$banner['id'].'">';
+			$output .= adrotate_ad_output($banner['id'], 0, $banner['title'], $banner['bannercode'], $banner['tracker'], $image);
 			if($options['wrapper'] == 'yes') $output .= '</div>';
 
-			if($adrotate_config['stats'] == 1 AND ($banner->tracker == "Y" OR $banner->tracker == "I")) {
-				adrotate_count_impression($banner->id, 0, $options['site']);
+			if($adrotate_config['stats'] == 1 AND ($banner['tracker'] == "Y" OR $banner['tracker'] == "I")) {
+				adrotate_count_impression($banner['id'], 0, $options['site']);
 			}
 		} else {
 			$output .= adrotate_error('ad_expired', array('banner_id' => $banner_id));
@@ -82,22 +93,15 @@ function adrotate_group($group_ids, $opt = null) {
 
 	$output = $group_select = $weightoverride = $mobileoverride = $mobileosoverride = $showoverride = '';
 	if($group_ids) {
-
 		$defaults = array(
 			'fallback' => 0, // Fallback group ID
 			'weight' => 0, // Minimum weight (0, 1-10)
-			'site' => 'no' // Network site (yes|no)
+			'site' => 'no' // Network site (yes|no) OBSOLETE/UNUSED [v5.14]
 		);
 		$options = wp_parse_args($opt, $defaults);
 
 		$license = adrotate_get_license();
 		$network = get_site_option('adrotate_network_settings');
-
-		if($options['site'] == 'yes' AND adrotate_is_networked() AND $license['type'] == 'Developer') {
-			$current_blog = $wpdb->blogid;
-			switch_to_blog($network['primary']);
-		}
-
 		$now = current_time('timestamp');
 
 		$group_array = (preg_match('/,/is', $group_ids)) ? explode(",", $group_ids) : array($group_ids);
@@ -114,23 +118,23 @@ function adrotate_group($group_ids, $opt = null) {
 		if($group) {
 			if($group->mobile == 1) {
 				if(!adrotate_is_mobile() AND !adrotate_is_tablet()) { // Desktop
-					$mobileoverride = "AND `{$wpdb->prefix}adrotate`.`desktop` = 'Y'";
+					$mobileoverride = "AND `{$wpdb->prefix}adrotate`.`desktop` = 'Y' ";
 				} else if(adrotate_is_mobile()) { // Phones
-					$mobileoverride = "AND `{$wpdb->prefix}adrotate`.`mobile` = 'Y'";
+					$mobileoverride = "AND `{$wpdb->prefix}adrotate`.`mobile` = 'Y' ";
 				} else if(adrotate_is_tablet()) { // Tablets
-					$mobileoverride = "AND `{$wpdb->prefix}adrotate`.`tablet` = 'Y'";
+					$mobileoverride = "AND `{$wpdb->prefix}adrotate`.`tablet` = 'Y' ";
 				}
 
-				if(!adrotate_is_ios() AND !adrotate_is_android()) { // Other OS
-					$mobileosoverride = "AND `{$wpdb->prefix}adrotate`.`os_other` = 'Y'";
-				} else if(adrotate_is_ios()) { // iOS
-					$mobileosoverride = "AND `{$wpdb->prefix}adrotate`.`os_ios` = 'Y'";
-				} else if(adrotate_is_android()) { // Android
-					$mobileosoverride = "AND `{$wpdb->prefix}adrotate`.`os_android` = 'Y'";
+				if(adrotate_is_mobile() OR adrotate_is_tablet()) {
+					if(adrotate_is_ios()) { // iOS
+						$mobileosoverride = "AND `{$wpdb->prefix}adrotate`.`os_ios` = 'Y' ";
+					} else if(adrotate_is_android()) { // Android
+						$mobileosoverride = "AND `{$wpdb->prefix}adrotate`.`os_android` = 'Y' ";
+					}
 				}
 			}
 
-			$weightoverride = ($options['weight'] > 0) ? "AND `{$wpdb->prefix}adrotate`.`weight` >= {$options['weight']} " : '';
+			$weightoverride = ($options['weight'] > 0) ? "AND `{$wpdb->prefix}adrotate`.`weight` >= {$options['weight']} " : "";
 			$options['fallback'] = ($options['fallback'] == 0) ? $group->fallback : $options['fallback'];
 
 			// Get all ads in all selected groups
@@ -152,14 +156,60 @@ function adrotate_group($group_ids, $opt = null) {
 						OR `{$wpdb->prefix}adrotate`.`type` = '2days'
 						OR `{$wpdb->prefix}adrotate`.`type` = '7days')
 				GROUP BY `{$wpdb->prefix}adrotate`.`id`
-				ORDER BY `{$wpdb->prefix}adrotate`.`id`;");
+				ORDER BY `{$wpdb->prefix}adrotate`.`id`;"
+			, ARRAY_A);
+
+			foreach($ads as &$value) {
+				$value['network'] = 0;
+			}
+			
+			if(adrotate_is_networked() AND $license['type'] == 'Developer' AND $group->network > 0) {
+				$current_blog = $wpdb->blogid;
+				$prefix = $wpdb->prefix;
+				switch_to_blog($network['primary']);
+				
+				// Make sure queries work...
+				$mobileoverride = str_ireplace($prefix, $wpdb->prefix, $mobileoverride);
+				$mobileosoverride = str_ireplace($prefix, $wpdb->prefix, $mobileosoverride);
+				$weightoverride = str_ireplace($prefix, $wpdb->prefix, $weightoverride);
+
+				// Get all network ads
+				$ads_network = $wpdb->get_results(
+					"SELECT
+						`{$wpdb->prefix}adrotate`.`id`, `title`, `bannercode`, `image`, `tracker`, `show_everyone`, `weight`,
+						`crate`, `irate`, `budget`, `state_req`, `cities`, `states`, `countries`, `{$wpdb->prefix}adrotate_linkmeta`.`group`
+					FROM
+						`{$wpdb->prefix}adrotate`,
+						`{$wpdb->prefix}adrotate_linkmeta`
+					WHERE
+						`{$wpdb->prefix}adrotate_linkmeta`.`group` = {$wpdb->prepare('%d', $group->network)}
+						AND `{$wpdb->prefix}adrotate_linkmeta`.`user` = 0
+						AND `{$wpdb->prefix}adrotate`.`id` = `{$wpdb->prefix}adrotate_linkmeta`.`ad`
+						{$mobileoverride}
+						{$mobileosoverride}
+						{$weightoverride}
+						AND (`{$wpdb->prefix}adrotate`.`type` = 'active'
+							OR `{$wpdb->prefix}adrotate`.`type` = '2days'
+							OR `{$wpdb->prefix}adrotate`.`type` = '7days')
+					GROUP BY `{$wpdb->prefix}adrotate`.`id`
+					ORDER BY `{$wpdb->prefix}adrotate`.`id`;"
+				, ARRAY_A);
+
+				foreach($ads_network as &$value) {
+					$value['network'] = 1;
+				}
+
+				// Merge network ads with local ads
+				$ads = array_merge($ads, $ads_network);
+
+				unset($ads_network);
+
+				switch_to_blog($current_blog);
+			}
 
 			if($ads) {
-				foreach($ads as $ad) {
-					$selected[$ad->id] = $ad;
-
+				foreach($ads as $key => $ad) {
 					if($adrotate_config['duplicate_adverts_filter'] == 'Y') {
-
 						if (is_home() AND !in_the_loop()) {
 					    	$session_page = get_option('page_for_posts');
 						} elseif (is_post_type_archive() OR is_category()){
@@ -168,23 +218,40 @@ function adrotate_group($group_ids, $opt = null) {
 							$session_page = get_the_ID();
 						}
 
+						// Remove advert if it's in session data
 						$session_page = 'adrotate-post-'.$session_page;
-						$selected = adrotate_filter_duplicates($selected, $ad->id, $session_page);
+						if(adrotate_filter_duplicates($ad['id'], $session_page)) {
+							unset($ads[$key]);
+							continue;
+						}
 					}
 
-					$selected = adrotate_filter_show_everyone($selected, $ad);
-					$selected = adrotate_filter_schedule($selected, $ad);
+					if(adrotate_filter_show_everyone($ad)) {
+						unset($ads[$key]);
+						continue;
+					}
 
-					if($adrotate_config['enable_advertisers'] == 'Y' AND ($ad->crate > 0 OR $ad->irate > 0)) {
-						$selected = adrotate_filter_budget($selected, $ad);
+					if(adrotate_filter_schedule($ad)) {
+						unset($ads[$key]);
+						continue;
+					}
+					
+					if($adrotate_config['enable_advertisers'] == 'Y' AND ($ad['crate'] > 0 OR $ad['irate'] > 0)) {
+						if(adrotate_filter_budget($ad)) {
+							unset($ads[$key]);
+							continue;
+						}
 					}
 
 					if($adrotate_config['enable_geo'] > 0 AND $group->geo == 1) {
-						$selected = adrotate_filter_location($selected, $ad);
+						if(adrotate_filter_location($ad)) {
+							unset($ads[$key]);
+							continue;
+						}
 					}
 				}
 
-				$array_count = count($selected);
+				$array_count = count($ads);
 				if($array_count > 0) {
 					$before = $after = '';
 					$before = str_replace('%id%', $group_array[0], stripslashes(html_entity_decode($group->wrapper_before, ENT_QUOTES)));
@@ -199,22 +266,20 @@ function adrotate_group($group_ids, $opt = null) {
 
 					if($group->modus == 1) { // Dynamic ads
 						$i = 1;
-
-						// Limit group to save resources
+						// Limit number of ads to save resources
 						$amount = ($group->adspeed >= 10000) ? 10 : 20;
 
-						// Randomize and trim output
-						$selected = adrotate_shuffle($selected);
-						foreach($selected as $key => $banner) {
-							if($i <= $amount) {
-								$image = str_replace('%folder%', $adrotate_config['banner_folder'], $banner->image);
-								$hide = ($i > 1) ? ' style="display: none;"' : '';
+						// Randomize and slice array
+						$ads = adrotate_shuffle($ads);
+						$ads = array_slice($ads, 0, $amount, 1);
 
-								$output .= '<div class="g'.$adrotate_config['adblock_disguise'].'-dyn a'.$adrotate_config['adblock_disguise'].'-'.$banner->id.' c-'.$i.'"'.$hide.'>';
-								$output .= $before.adrotate_ad_output($banner->id, $group->id, $banner->title, $banner->bannercode, $banner->tracker, $image).$after;
-								$output .= '</div>';
-								$i++;
-							}
+						foreach($ads as $key => $banner) {
+							$image = str_replace('%folder%', $adrotate_config['banner_folder'], $banner['image']);
+
+							$output .= '<div class="g'.$adrotate_config['adblock_disguise'].'-dyn a'.$adrotate_config['adblock_disguise'].'-'.$banner['id'].' c-'.$i.'">';
+							$output .= $before.adrotate_ad_output($banner['id'], $group->id, $banner['title'], $banner['bannercode'], $banner['tracker'], $image).$after;
+							$output .= '</div>';
+							$i++;
 						}
 					} else if($group->modus == 2) { // Block of ads
 						$block_count = $group->gridcolumns * $group->gridrows;
@@ -222,12 +287,14 @@ function adrotate_group($group_ids, $opt = null) {
 						$columns = 1;
 
 						for($i=1;$i<=$block_count;$i++) {
-							$banner_id = adrotate_pick_weight($selected);
+							// Reset keys, must be here or adrotate_pick_weight won't work
+							$ads = array_values($ads);
+							$array_key = adrotate_pick_weight($ads);
 
-							$image = str_replace('%folder%', $adrotate_config['banner_folder'], $selected[$banner_id]->image);
+							$image = str_replace('%folder%', $adrotate_config['banner_folder'], $ads[$array_key]['image']);
 
-							$output .= '<div class="g'.$adrotate_config['adblock_disguise'].'-col b'.$adrotate_config['adblock_disguise'].'-'.$group->id.' a'.$adrotate_config['adblock_disguise'].'-'.$selected[$banner_id]->id.'">';
-							$output .= $before.adrotate_ad_output($selected[$banner_id]->id, $group->id, $selected[$banner_id]->title, $selected[$banner_id]->bannercode, $selected[$banner_id]->tracker, $image).$after;
+							$output .= '<div class="g'.$adrotate_config['adblock_disguise'].'-col b'.$adrotate_config['adblock_disguise'].'-'.$group->id.' a'.$adrotate_config['adblock_disguise'].'-'.$ads[$array_key]['id'].'">';
+							$output .= $before.adrotate_ad_output($ads[$array_key]['id'], $group->id, $ads[$array_key]['title'], $ads[$array_key]['bannercode'], $ads[$array_key]['tracker'], $image).$after;
 							$output .= '</div>';
 
 							if($columns == $group->gridcolumns AND $i != $block_count) {
@@ -237,59 +304,51 @@ function adrotate_group($group_ids, $opt = null) {
 								$columns++;
 							}
 
-							if($adrotate_config['stats'] == 1 AND ($selected[$banner_id]->tracker == "Y" OR $selected[$banner_id]->tracker == "I")) {
-								adrotate_count_impression($selected[$banner_id]->id, $group->id, $options['site']);
+							if($adrotate_config['stats'] == 1 AND ($ads[$array_key]['tracker'] == "Y" OR $ads[$array_key]['tracker'] == "I")) {
+								adrotate_count_impression($ads[$array_key]['id'], $group->id, $group->network);
 							}
 
 							// Store advert ID's in session
 							if($adrotate_config['duplicate_adverts_filter'] == 'Y') {
-								$_SESSION['adrotate-duplicate-ads'][$session_page]['adverts'][] = $banner_id;
+								$_SESSION['adrotate-duplicate-ads'][$session_page]['adverts'][] = $ads[$array_key]['id'];
 							}
-
-							unset($selected[$banner_id]);
+							
+							// Remove the advert so it cannot be picked again
+							unset($ads[$array_key]);
 						}
 					} else { // Default (single ad)
-						$banner_id = adrotate_pick_weight($selected);
+						// Reset keys, must be here or adrotate_pick_weight won't work
+						$ads = array_values($ads);
+						$array_key = adrotate_pick_weight($ads);
 
-						$image = str_replace('%folder%', $adrotate_config['banner_folder'], $selected[$banner_id]->image);
+						$image = str_replace('%folder%', $adrotate_config['banner_folder'], $ads[$array_key]['image']);
 
-						$output .= '<div class="g'.$adrotate_config['adblock_disguise'].'-single a'.$adrotate_config['adblock_disguise'].'-'.$selected[$banner_id]->id.'">';
-						$output .= $before.adrotate_ad_output($selected[$banner_id]->id, $group->id, $selected[$banner_id]->title, $selected[$banner_id]->bannercode, $selected[$banner_id]->tracker, $image).$after;
+						$output .= '<div class="g'.$adrotate_config['adblock_disguise'].'-single a'.$adrotate_config['adblock_disguise'].'-'.$ads[$array_key]['id'].'">';
+						$output .= $before.adrotate_ad_output($ads[$array_key]['id'], $group->id, $ads[$array_key]['title'], $ads[$array_key]['bannercode'], $ads[$array_key]['tracker'], $image).$after;
 						$output .= '</div>';
 
-						if($adrotate_config['stats'] == 1 AND ($selected[$banner_id]->tracker == "Y" OR $selected[$banner_id]->tracker == "I")) {
-							adrotate_count_impression($selected[$banner_id]->id, $group->id, $options['site']);
+						if($adrotate_config['stats'] == 1 AND ($ads[$array_key]['tracker'] == "Y" OR $ads[$array_key]['tracker'] == "I")) {
+							adrotate_count_impression($ads[$array_key]['id'], $group->id, $ads[$array_key]['network']);
 						}
 
 						// Store advert ID's in session
 						if($adrotate_config['duplicate_adverts_filter'] == 'Y') {
-							$_SESSION['adrotate-duplicate-ads'][$session_page]['adverts'][] = $banner_id;
+							$_SESSION['adrotate-duplicate-ads'][$session_page]['adverts'][] = $ads[$array_key]['id'];
 						}
 					}
 
 					$output .= '</div>';
 
-					unset($selected, $banner_id);
+					unset($banner_id);
 				} else {
-					if($options['site'] == 'yes' AND adrotate_is_networked() AND $license['type'] == 'Developer') {
-						switch_to_blog($current_blog);
-					}
-					$output .= adrotate_fallback($options['fallback'], 'expired', $options['site']);
+					$output .= adrotate_fallback($options['fallback'], 'expired');
 				}
 			} else {
-				if($options['site'] == 'yes' AND adrotate_is_networked() AND $license['type'] == 'Developer') {
-					switch_to_blog($current_blog);
-				}
-				$output .= adrotate_fallback($options['fallback'], 'unqualified', $options['site']);
+				$output .= adrotate_fallback($options['fallback'], 'unqualified');
 			}
 		} else {
 			$output .= adrotate_error('group_not_found', array('group_id' => $group_array[0]));
 		}
-
-		if($options['site'] == 'yes' AND adrotate_is_networked() AND $license['type'] == 'Developer') {
-			switch_to_blog($current_blog);
-		}
-
 	} else {
 		$output .= adrotate_error('group_no_id');
 	}
@@ -738,11 +797,11 @@ function adrotate_ad_output($id, $group, $name, $bannercode, $tracker, $image) {
  Name:      adrotate_fallback
  Purpose:   Fall back to the set group or show an error if no fallback is set
 -------------------------------------------------------------*/
-function adrotate_fallback($group, $case, $site = 'no') {
+function adrotate_fallback($group, $case) {
 
 	$fallback_output = '';
 	if($group > 0) {
-		$fallback_output = adrotate_group($group, array('site' => $site));
+		$fallback_output = adrotate_group($group, array('site' => 'no'));
 	} else {
 		if($case == 'expired') {
 			$fallback_output = adrotate_error('ad_expired', array('banner_id' => 'n/a'));
@@ -1141,6 +1200,14 @@ function adrotate_dashboard_error() {
 		$error['geo_ipstack_details'] = __('Geo Targeting is not working because your ipstack account API key is missing.', 'adrotate-pro').' <a href="'.admin_url('/admin.php?page=adrotate-settings&tab=geo').'">'.__('Enter API key', 'adrotate-pro').'</a>.';
 	}
 
+	// Advertiser Related
+	if($adrotate_config['enable_advertisers'] == "Y" ) {
+		$queue_count = $wpdb->get_var("SELECT count(`type`) FROM `{$wpdb->prefix}adrotate` WHERE `type` = 'queue';");
+		if($queue_count > 0) {
+			$error['advertiser_queue'] = __('One or more adverts are awaiting moderation.', 'adrotate-pro'). ' <a href="'.admin_url('/admin.php?page=adrotate&view=queue').'">'.__('Check queue', 'adrotate-pro').'</a>.';
+		}
+	}
+
 	// Misc
 	if(!is_writable(WP_CONTENT_DIR.'/'.$adrotate_config['banner_folder'])) {
 		$error['banners_folder'] = __('Your AdRotate Banner folder is not writable or does not exist.', 'adrotate-pro').' <a href="https://ajdg.solutions/support/adrotate-manuals/manage-banner-images/" target="_blank">'.__('Set up your banner folder', 'adrotate-pro').'</a>.';
@@ -1246,21 +1313,15 @@ function adrotate_welcome_pointer() {
 	$plugin_version = $plugin_version['adrotate-pro/adrotate-pro.php']['Version'];
 
     $pointer_content = '<h3>AdRotate Professional '.$plugin_version.'</h3>';
-    $pointer_content .= '<p>'.__('Thanks for choosing AdRotate Professional. Everything related to AdRotate is in this menu. If you need help getting started take a look at the', 'adrotate-pro').' <a href="http:\/\/ajdg.solutions\/support\/adrotate-manuals\/" target="_blank">'.__('manuals', 'adrotate-pro').'</a> '.__('and', 'adrotate-pro').' <a href="https:\/\/ajdg.solutions\/forums\/forum\/adrotate-for-wordpress\/" target="_blank">'.__('forums', 'adrotate-pro').'</a>. '.__('You can also ask questions via', 'adrotate-pro').' <a href="admin.php?page=adrotate-support">'.__('email', 'adrotate-pro').'</a> '.__('if you have a valid license.', 'adrotate-pro').' These links and more are also available in the help tab in the top right.</p>';
-
-    $pointer_content .= '<p><strong>Ad blockers</strong><br />Disable your ad blocker in your browser so your adverts and dashboard show up correctly. Take a look at this manual to <a href="https://ajdg.solutions/support/adrotate-manuals/configure-adblockers-for-your-own-website/" target="_blank">whitelist your site</a>.</p>';
+    $pointer_content .= '<p>'.__('Thanks for choosing AdRotate Professional. Everything related to AdRotate is in this menu. If you need help getting started take a look at the', 'adrotate-pro').' <a href="http:\/\/ajdg.solutions\/support\/adrotate-manuals\/" target="_blank">'.__('manuals', 'adrotate-pro').'</a> '.__('and', 'adrotate-pro').' <a href="https:\/\/ajdg.solutions\/forums\/forum\/adrotate-for-wordpress\/" target="_blank">'.__('forums', 'adrotate-pro').'</a>. '.__('You can also ask questions via', 'adrotate-pro').' <a href="admin.php?page=adrotate-support">'.__('tickets', 'adrotate-pro').'</a> '.__('if you have a valid license.', 'adrotate-pro').' '.__('These links and more are also available on the support page.', 'adrotate-pro').'</p>';
+    $pointer_content .= '<p><strong>'.__('Ad blockers', 'adrotate-pro').'</strong><br />'.__('Please whitelist your website in your content blocker so your adverts and dashboard show up correctly. Take a look at this manual to', 'adrotate-pro').' <a href="https://ajdg.solutions/support/adrotate-manuals/configure-adblockers-for-your-own-website/" target="_blank">'.__('see how that works', 'adrotate-pro').'</a>.</p>';
 ?>
 	<script type="text/javascript">
 		jQuery(document).ready(function($) {
 			$('#toplevel_page_adrotate').pointer({
-				'content':'<?php echo $pointer_content; ?>',
-				'position':{ 'edge':'left', 'align':'middle'	},
-				close: function() {
-	                $.post(ajaxurl, {
-	                    pointer:'adrotate_pro',
-	                    action:'dismiss-wp-pointer'
-	                });
-				}
+				content:'<?php echo $pointer_content; ?>',
+				position:{ edge:'left', align:'middle' },
+				close: function() { $.post(ajaxurl, { pointer:'adrotate_pro', action:'dismiss-wp-pointer' }); }
 			}).pointer("open");
 		});
 	</script>

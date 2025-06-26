@@ -6,6 +6,10 @@
  * @package Kadence Blocks
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Class for pulling in template database and saving locally
  */
@@ -178,6 +182,8 @@ class Kadence_Blocks_Prebuilt_Library {
 			add_action( 'wp_ajax_kadence_import_get_prebuilt_pages_data', array( $this, 'prebuilt_pages_data_ajax_callback' ) );
 			add_action( 'wp_ajax_kadence_import_reload_prebuilt_pages_data', array( $this, 'prebuilt_pages_data_reload_ajax_callback' ) );
 			add_action( 'wp_ajax_kadence_import_process_data', array( $this, 'process_data_ajax_callback' ) );
+			add_action( 'wp_ajax_kadence_import_process_image_data', array( $this, 'process_image_data_ajax_callback' ) );
+			add_action( 'wp_ajax_kadence_import_process_pattern', array( $this, 'process_pattern_ajax_callback' ) );
 			add_action( 'wp_ajax_kadence_subscribe_process_data', array( $this, 'process_subscribe_ajax_callback' ) );
 		}
 
@@ -366,9 +372,7 @@ class Kadence_Blocks_Prebuilt_Library {
 		if ( $this->local_file_exists() ) {
 			return false;
 		}
-		ob_start();
-		include $local_path;
-		return ob_get_clean();
+		return file_get_contents( $local_path );
 	}
 	/**
 	 * Get remote file contents.
@@ -377,13 +381,7 @@ class Kadence_Blocks_Prebuilt_Library {
 	 * @return string Returns the remote URL contents.
 	 */
 	public function get_remote_url_contents() {
-		if ( is_callable( 'network_home_url' ) ) {
-			$site_url = network_home_url( '', 'http' );
-		} else {
-			$site_url = get_bloginfo( 'url' );
-		}
-		$site_url = preg_replace( '/^https/', 'http', $site_url );
-		$site_url = preg_replace( '|/$|', '', $site_url );
+		$site_url = \KadenceWP\KadenceBlocks\StellarWP\Uplink\get_original_domain();
 		$args = array(
 			'key'  => $this->key,
 			'site' => $site_url,
@@ -392,6 +390,7 @@ class Kadence_Blocks_Prebuilt_Library {
 			$args['api_email'] = $this->api_email;
 			$args['api_key']   = $this->api_key;
 			$args['product_id']   = $this->product_id;
+			$args['site_url'] = $site_url;
 			if ( 'iThemes' === $this->api_email ) {
 				if ( is_callable( 'network_home_url' ) ) {
 					$site_url = network_home_url( '', 'http' );
@@ -408,8 +407,7 @@ class Kadence_Blocks_Prebuilt_Library {
 		}
 		// Get the response.
 		$api_url  = add_query_arg( $args, $this->url );
-
-		$response = wp_remote_get(
+		$response = wp_safe_remote_get(
 			$api_url,
 			array(
 				'timeout' => 20,
@@ -463,9 +461,9 @@ class Kadence_Blocks_Prebuilt_Library {
 	public function get_local_template_data_filename() {
 		$kb_api = 'free';
 		if ( class_exists( 'Kadence_Blocks_Pro' ) ) {
-			$kbp_data = kadence_blocks_get_pro_license_data();
-			if ( $kbp_data && isset( $kbp_data['api_key'] ) && ! empty( $kbp_data['api_key'] ) ) {
-				$kb_api = $kbp_data['api_key'];
+			$kbp_data = kadence_blocks_get_current_license_key();
+			if ( ! empty( $kbp_data ) ) {
+				$kb_api = $kbp_data;
 			}
 		}
 		if ( 'templates' !== $this->package && 'section' !== $this->package && ! $this->is_template && $this->key ) {
@@ -495,7 +493,17 @@ class Kadence_Blocks_Prebuilt_Library {
 			// Send JSON Error response to the AJAX call.
 			wp_send_json( esc_html__( 'No Connection data', 'kadence-blocks' ) );
 		} else {
-			wp_send_json( $get_data );
+			// Sanitize the connection data.
+			$temp_data  = json_decode( $get_data, true );
+			$final_data = array();
+			$final_data['name']    = ! empty( $temp_data['name'] ) ? sanitize_text_field( $temp_data['name'] ) : '';
+			$final_data['slug']    = ! empty( $temp_data['slug'] ) ? sanitize_text_field( $temp_data['slug'] ) : '';
+			$final_data['refresh'] = ! empty( $temp_data['refresh'] ) ? sanitize_text_field( $temp_data['refresh'] ) : '';
+			$final_data['expires'] = ! empty( $temp_data['expires'] ) ? sanitize_text_field( $temp_data['expires'] ) : '';
+			if ( ! empty( $final_data['name'] ) ) {
+				wp_send_json( $final_data );
+			}
+			wp_send_json( esc_html__( 'No Connection data available', 'kadence-blocks' ) );
 		}
 		die;
 	}
@@ -506,20 +514,14 @@ class Kadence_Blocks_Prebuilt_Library {
 	 * @return string
 	 */
 	public function get_connection_data( $skip_local = false ) {
-		if ( is_callable( 'network_home_url' ) ) {
-			$site_url = network_home_url( '', 'http' );
-		} else {
-			$site_url = get_bloginfo( 'url' );
-		}
-		$site_url = preg_replace( '/^https/', 'http', $site_url );
-		$site_url = preg_replace( '|/$|', '', $site_url );
+		$site_url = \KadenceWP\KadenceBlocks\StellarWP\Uplink\get_original_domain();
 		$args = array(
 			'key'  => $this->key,
 			'site' => $site_url,
 		);
 		// Get the response.
 		$api_url  = add_query_arg( $args, $this->url );
-		$response = wp_remote_get(
+		$response = wp_safe_remote_get(
 			$api_url,
 			array(
 				'timeout' => 20,
@@ -707,7 +709,7 @@ class Kadence_Blocks_Prebuilt_Library {
 			);
 			// Get the response.
 			$api_url  = add_query_arg( $args, 'https://www.kadencewp.com/kadence-blocks/wp-json/kadence-subscribe/v1/subscribe/' );
-			$response = wp_remote_get(
+			$response = wp_safe_remote_get(
 				$api_url,
 				array(
 					'timeout' => 20,
@@ -737,6 +739,100 @@ class Kadence_Blocks_Prebuilt_Library {
 	/**
 	 * Ajax function for processing the import data.
 	 */
+	public function process_pattern_ajax_callback() {
+		// Verify if the AJAX call is valid (checks nonce and current_user_can).
+		$this->verify_ajax_call();
+		$data = empty( $_POST['import_content'] ) ? '' : stripslashes( $_POST['import_content'] );
+		$data = $this->process_pattern_content( $data );
+		if ( ! $data ) {
+			// Send JSON Error response to the AJAX call.
+			wp_send_json( esc_html__( 'No data', 'kadence-blocks' ) );
+		} else {
+			wp_send_json( $data );
+		}
+		die;
+	}
+	public function process_image_data_ajax_callback() {
+		// Verify if the AJAX call is valid (checks nonce and current_user_can).
+		$this->verify_ajax_call();
+
+		$content        = empty( $_POST['import_content'] ) ? '' : stripslashes( $_POST['import_content'] );
+		$image_library  = empty( $_POST['image_library'] ) ? '' : json_decode( $_POST['image_library'], true );
+		$data           = $this->process_image_content( $content, $image_library );
+		if ( ! $data ) {
+			// Send JSON Error response to the AJAX call.
+			wp_send_json( esc_html__( 'No data', 'kadence-blocks' ) );
+		} else {
+			wp_send_json( $data );
+		}
+		die;
+	}
+	/**
+	 * Download and Replace images
+	 *
+	 * @param  string $content the import post content.
+	 */
+	public function process_image_content( $content = '', $image_library = '' ) {
+		// error_log( print_r( $image_library, true ) );
+		// Find all urls.
+		preg_match_all( '/https?:\/\/[^\'" ]+/i', $content, $match );
+		// preg_match_all( '#\bhttps?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#', $content, $match );
+		$all_urls = array_unique( $match[0] );
+
+		if ( empty( $all_urls ) ) {
+			return $content;
+		}
+
+		$map_urls    = array();
+		$image_urls  = array();
+		// Find all the images.
+		foreach ( $all_urls as $key => $link ) {
+			if ( $this->check_for_image( $link ) ) {
+				// Avoid srcset images.
+				if (
+					false === strpos( $link, '-150x' ) &&
+					false === strpos( $link, '-300x' ) &&
+					false === strpos( $link, '-1024x' )
+				) {
+					$image_urls[] = $link;
+				}
+			}
+		}
+		// Process images.
+		if ( ! empty( $image_urls ) ) {
+			foreach ( $image_urls as $key => $image_url ) {
+				// Download remote image.
+				$image            = array(
+					'url' => $image_url,
+					'id'  => 0,
+				);
+				if ( substr( $image_url, 0, strlen( 'https://images.pexels.com' ) ) === 'https://images.pexels.com' ) {
+					$image_data = $this->get_image_info( $image_library, $image_url );
+					if ( $image_data ) {
+						$image['alt']  = $image_data['alt'];
+						$image['photographer']  = $image_data['photographer'];
+						$image['photographer_url']  = $image_data['photographer_url'];
+						$image['alt']  = $image_data['alt'];
+						$image['title'] = __( 'Photo by', 'kadence-blocks' ) . ' ' . $image_data['photographer'];
+					}
+				}
+				$downloaded_image       = $this->import_image( $image );
+				$map_urls[ $image_url ] = $downloaded_image['url'];
+			}
+		}
+		// Replace images in content.
+		foreach ( $map_urls as $old_url => $new_url ) {
+			$content = str_replace( $old_url, $new_url, $content );
+			// Replace the slashed URLs if any exist.
+			$old_url = str_replace( '/', '/\\', $old_url );
+			$new_url = str_replace( '/', '/\\', $new_url );
+			$content = str_replace( $old_url, $new_url, $content );
+		}
+		return $content;
+	}
+	/**
+	 * Ajax function for processing the import data.
+	 */
 	public function process_data_ajax_callback() {
 		// Verify if the AJAX call is valid (checks nonce and current_user_can).
 		$this->verify_ajax_call();
@@ -757,6 +853,57 @@ class Kadence_Blocks_Prebuilt_Library {
 			wp_send_json( $data );
 		}
 		die;
+	}
+	/**
+	 * Download and Replace images
+	 *
+	 * @param  string $content the import post content.
+	 */
+	public function process_pattern_content( $content = '' ) {
+		// Find all urls.
+		preg_match_all( '#\bhttps?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#', $content, $match );
+		$all_urls = array_unique( $match[0] );
+
+		if ( empty( $all_urls ) ) {
+			return $content;
+		}
+
+		$map_urls    = array();
+		$image_urls  = array();
+		// Find all the images.
+		foreach ( $all_urls as $key => $link ) {
+			if ( $this->check_for_image( $link ) ) {
+				// Avoid srcset images.
+				if (
+					false === strpos( $link, '-150x' ) &&
+					false === strpos( $link, '-300x' ) &&
+					false === strpos( $link, '-1024x' )
+				) {
+					$image_urls[] = $link;
+				}
+			}
+		}
+		// Process images.
+		if ( ! empty( $image_urls ) ) {
+			foreach ( $image_urls as $key => $image_url ) {
+				// Download remote image.
+				$image            = array(
+					'url' => $image_url,
+					'id'  => 0,
+				);
+				$downloaded_image       = $this->import_image( $image );
+				$map_urls[ $image_url ] = $downloaded_image['url'];
+			}
+		}
+		// Replace images in content.
+		foreach ( $map_urls as $old_url => $new_url ) {
+			$content = str_replace( $old_url, $new_url, $content );
+			// Replace the slashed URLs if any exist.
+			$old_url = str_replace( '/', '/\\', $old_url );
+			$new_url = str_replace( '/', '/\\', $new_url );
+			$content = str_replace( $old_url, $new_url, $content );
+		}
+		return $content;
 	}
 	/**
 	 * Download and Replace images
@@ -820,6 +967,20 @@ class Kadence_Blocks_Prebuilt_Library {
 		if ( $local_image['status'] ) {
 			return $local_image['image'];
 		}
+		$filename   = basename( $image_data['url'] );
+		$image_path = $image_data['url'];
+		// Check if the image is from Pexels and get the filename.
+		if ( substr( $image_data['url'], 0, strlen( 'https://images.pexels.com' ) ) === 'https://images.pexels.com' ) {
+			$image_path = parse_url( $image_data['url'], PHP_URL_PATH );
+			$filename = basename( $image_path );
+		}
+		$info = wp_check_filetype( $image_path );
+		$ext  = empty( $info['ext'] ) ? '' : $info['ext'];
+		$type = empty( $info['type'] ) ? '' : $info['type'];
+		// If we don't allow uploading the file type or ext, return.
+		if ( ! $type || ! $ext ) {
+			return $image_data;
+		}
 
 		$file_content = wp_remote_retrieve_body(
 			wp_safe_remote_get(
@@ -834,25 +995,30 @@ class Kadence_Blocks_Prebuilt_Library {
 		if ( empty( $file_content ) ) {
 			return $image_data;
 		}
-
-		$filename = basename( $image_data['url'] );
-
 		$upload = wp_upload_bits( $filename, null, $file_content );
 		$post = array(
-			'post_title' => $filename,
+			'post_title' => ( ! empty( $image_data['title'] ) ? $image_data['title'] : $filename ),
 			'guid'       => $upload['url'],
 		);
-		$info = wp_check_filetype( $upload['file'] );
-		if ( $info ) {
-			$post['post_mime_type'] = $info['type'];
-		} else {
-			return $image_data;
+
+		$post['post_mime_type'] = $type;
+		if ( ! function_exists( 'wp_generate_attachment_metadata' ) ) {
+			include( ABSPATH . 'wp-admin/includes/image.php' );
 		}
 		$post_id = wp_insert_attachment( $post, $upload['file'] );
 		wp_update_attachment_metadata(
 			$post_id,
 			wp_generate_attachment_metadata( $post_id, $upload['file'] )
 		);
+		if ( ! empty( $image_data['alt'] ) ) {
+			update_post_meta( $post_id, '_wp_attachment_image_alt', $image_data['alt'] );
+		}
+		if ( ! empty( $image_data['photographer'] ) ) {
+			update_post_meta( $post_id, '_pexels_photographer', $image_data['photographer'] );
+		}
+		if ( ! empty( $image_data['photographer_url'] ) ) {
+			update_post_meta( $post_id, '_pexels_photographer_url', $image_data['photographer_url'] );
+		}
 		update_post_meta( $post_id, '_kadence_blocks_image_hash', sha1( $image_data['url'] ) );
 
 		return array(
@@ -901,7 +1067,36 @@ class Kadence_Blocks_Prebuilt_Library {
 	 * @param string $link url possibly to an image.
 	 */
 	public function check_for_image( $link = '' ) {
+		if ( empty( $link ) ) {
+			return false;
+		}
+		if ( substr( $link, 0, strlen( 'https://images.pexels.com' ) ) === 'https://images.pexels.com' ) {
+			return true;
+		}
 		return preg_match( '/^((https?:\/\/)|(www\.))([a-z0-9-].?)+(:[0-9]+)?\/[\w\-]+\.(jpg|png|gif|webp|jpeg)\/?$/i', $link );
+	}
+	/**
+	 * Get information for our image.
+	 *
+	 * @param array $images the image url.
+	 * @param string $target_src the image url.
+	 */
+	public function get_image_info( $images, $target_src ) {
+		foreach ( $images['data'] as $image_group ) {
+			foreach ( $image_group['images'] as $image ) {
+				foreach ( $image['sizes'] as $size ) {
+					if ( $size['src'] === $target_src ) {
+						return array(
+							'alt' => $image['alt'],
+							'photographer' => $image['photographer'],
+							'photographer_url' => $image['photographer_url'],
+						);
+						break;
+					}
+				}
+			}
+		}
+		return false;
 	}
 	/**
 	 * Ajax function for processing the import data.
@@ -917,7 +1112,7 @@ class Kadence_Blocks_Prebuilt_Library {
 			);
 			// Get the response.
 			$api_url  = add_query_arg( $args, 'https://patterns.startertemplatecloud.com/wp-json/kadence-cloud/v1/single/' );
-			$response = wp_remote_get(
+			$response = wp_safe_remote_get(
 				$api_url,
 				array(
 					'timeout' => 20,
@@ -937,7 +1132,7 @@ class Kadence_Blocks_Prebuilt_Library {
 				// Send JSON Error response to the AJAX call.
 				return $content;
 			} else {
-				return $content;
+				return $contents;
 			}
 		}
 		return $content;
@@ -970,6 +1165,7 @@ class Kadence_Blocks_Prebuilt_Library {
 		$this->package   = empty( $_POST['package'] ) ? 'section' : sanitize_text_field( $_POST['package'] );
 		$this->url       = empty( $_POST['url'] ) ? $this->remote_url : rtrim( sanitize_text_field( $_POST['url'] ), '/' ) . '/wp-json/kadence-cloud/v1/get/';
 		$this->key       = empty( $_POST['key'] ) ? 'section' : sanitize_text_field( $_POST['key'] );
+		$this->is_template   = isset( $_POST['is_template'] ) && ! empty( $_POST['is_template'] ) ? true : false;
 
 		// $removed = $this->delete_block_library_folder();
 		// if ( ! $removed ) {
@@ -1131,7 +1327,8 @@ class Kadence_Blocks_Prebuilt_Library {
 			if ( ! function_exists( 'WP_Filesystem' ) ) {
 				require_once wp_normalize_path( ABSPATH . '/wp-admin/includes/file.php' );
 			}
-			WP_Filesystem();
+			$wpfs_creds = apply_filters( 'kadence_wpfs_credentials', false );
+			WP_Filesystem( $wpfs_creds );
 		}
 		return $wp_filesystem;
 	}

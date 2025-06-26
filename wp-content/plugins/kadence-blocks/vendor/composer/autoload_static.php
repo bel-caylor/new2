@@ -4,28 +4,9 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInite053523a98b312c581da12e6a08c3949
+class ComposerStaticInite01c39b8216ae47b7ba0a0c330678b0f
 {
-    public static $files = array (
-        '877aa62ef7bb84390b9ed4124d954939' => __DIR__ . '/..' . '/lucatume/di52/aliases.php',
-    );
-
     public static $prefixLengthsPsr4 = array (
-        'l' => 
-        array (
-            'lucatume\\DI52\\' => 14,
-        ),
-        'S' => 
-        array (
-            'StellarWP\\Telemetry\\Views_Dir\\' => 30,
-            'StellarWP\\Telemetry\\Assets_Dir\\' => 31,
-            'StellarWP\\Telemetry\\' => 20,
-            'StellarWP\\ContainerContract\\' => 28,
-        ),
-        'P' => 
-        array (
-            'Psr\\Container\\' => 14,
-        ),
         'K' => 
         array (
             'KadenceWP\\KadenceBlocks\\' => 24,
@@ -33,46 +14,46 @@ class ComposerStaticInite053523a98b312c581da12e6a08c3949
     );
 
     public static $prefixDirsPsr4 = array (
-        'lucatume\\DI52\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/lucatume/di52/src',
-        ),
-        'StellarWP\\Telemetry\\Views_Dir\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/stellarwp/telemetry/src/views',
-        ),
-        'StellarWP\\Telemetry\\Assets_Dir\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/stellarwp/telemetry/src/resources',
-        ),
-        'StellarWP\\Telemetry\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/stellarwp/telemetry/src/Telemetry',
-        ),
-        'StellarWP\\ContainerContract\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/stellarwp/container-contract/src',
-        ),
-        'Psr\\Container\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/container/src',
-        ),
         'KadenceWP\\KadenceBlocks\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/includes/vendor',
+            0 => __DIR__ . '/../..' . '/includes/resources',
         ),
     );
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'KadenceWP\\KadenceBlocks\\App' => __DIR__ . '/../..' . '/includes/resources/App.php',
+        'KadenceWP\\KadenceBlocks\\Cache\\Ai_Cache' => __DIR__ . '/../..' . '/includes/resources/Cache/Ai_Cache.php',
+        'KadenceWP\\KadenceBlocks\\Cache\\Block_Library_Cache' => __DIR__ . '/../..' . '/includes/resources/Cache/Block_Library_Cache.php',
+        'KadenceWP\\KadenceBlocks\\Cache\\Cache_Provider' => __DIR__ . '/../..' . '/includes/resources/Cache/Cache_Provider.php',
+        'KadenceWP\\KadenceBlocks\\Cache\\Config' => __DIR__ . '/../..' . '/includes/resources/Cache/Config.php',
+        'KadenceWP\\KadenceBlocks\\Container' => __DIR__ . '/../..' . '/includes/resources/Container.php',
+        'KadenceWP\\KadenceBlocks\\Hasher' => __DIR__ . '/../..' . '/includes/resources/Hasher.php',
+        'KadenceWP\\KadenceBlocks\\Health\\Health_Provider' => __DIR__ . '/../..' . '/includes/resources/Health/Health_Provider.php',
+        'KadenceWP\\KadenceBlocks\\Health\\Required_Function_Verifier' => __DIR__ . '/../..' . '/includes/resources/Health/Required_Function_Verifier.php',
+        'KadenceWP\\KadenceBlocks\\Image_Downloader\\Cache_Primer' => __DIR__ . '/../..' . '/includes/resources/Image_Downloader/Cache_Primer.php',
+        'KadenceWP\\KadenceBlocks\\Image_Downloader\\Image_Downloader' => __DIR__ . '/../..' . '/includes/resources/Image_Downloader/Image_Downloader.php',
+        'KadenceWP\\KadenceBlocks\\Image_Downloader\\Image_Downloader_Provider' => __DIR__ . '/../..' . '/includes/resources/Image_Downloader/Image_Downloader_Provider.php',
+        'KadenceWP\\KadenceBlocks\\Image_Downloader\\Image_Editor' => __DIR__ . '/../..' . '/includes/resources/Image_Downloader/Image_Editor.php',
+        'KadenceWP\\KadenceBlocks\\Image_Downloader\\Meta' => __DIR__ . '/../..' . '/includes/resources/Image_Downloader/Meta.php',
+        'KadenceWP\\KadenceBlocks\\Image_Downloader\\Pexels_ID_Registry' => __DIR__ . '/../..' . '/includes/resources/Image_Downloader/Pexels_ID_Registry.php',
+        'KadenceWP\\KadenceBlocks\\Image_Downloader\\WordPress_Importer' => __DIR__ . '/../..' . '/includes/resources/Image_Downloader/WordPress_Importer.php',
+        'KadenceWP\\KadenceBlocks\\Notice\\Notice_Handler' => __DIR__ . '/../..' . '/includes/resources/Notice/Notice_Handler.php',
+        'KadenceWP\\KadenceBlocks\\Shutdown\\Contracts\\Terminable' => __DIR__ . '/../..' . '/includes/resources/Shutdown/Contracts/Terminable.php',
+        'KadenceWP\\KadenceBlocks\\Shutdown\\Shutdown_Collection' => __DIR__ . '/../..' . '/includes/resources/Shutdown/Shutdown_Collection.php',
+        'KadenceWP\\KadenceBlocks\\Shutdown\\Shutdown_Handler' => __DIR__ . '/../..' . '/includes/resources/Shutdown/Shutdown_Handler.php',
+        'KadenceWP\\KadenceBlocks\\Shutdown\\Shutdown_Provider' => __DIR__ . '/../..' . '/includes/resources/Shutdown/Shutdown_Provider.php',
+        'KadenceWP\\KadenceBlocks\\Traits\\Image_Size_Trait' => __DIR__ . '/../..' . '/includes/resources/Traits/Image_Size_Trait.php',
+        'KadenceWP\\KadenceBlocks\\Traits\\Rest\\Image_Trait' => __DIR__ . '/../..' . '/includes/resources/Traits/Rest/Image_Trait.php',
+        'KadenceWP\\KadenceBlocks\\Uplink\\Uplink_Provider' => __DIR__ . '/../..' . '/includes/resources/Uplink/Uplink_Provider.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInite053523a98b312c581da12e6a08c3949::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInite053523a98b312c581da12e6a08c3949::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInite053523a98b312c581da12e6a08c3949::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInite01c39b8216ae47b7ba0a0c330678b0f::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInite01c39b8216ae47b7ba0a0c330678b0f::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInite01c39b8216ae47b7ba0a0c330678b0f::$classMap;
 
         }, null, ClassLoader::class);
     }

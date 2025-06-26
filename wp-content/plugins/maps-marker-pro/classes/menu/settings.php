@@ -291,6 +291,7 @@ class Settings extends Menu {
 							<span><?= esc_html__('Layers', 'mmp') ?></span>
 							<ul>
 								<li id="layers_general_link" class="mmp-tablink"><?= esc_html__('General', 'mmp') ?></li>
+								<li id="layers_locationiq_link" class="mmp-tablink">LocationIQ</li>
 								<li id="layers_google_link" class="mmp-tablink">Google Maps</li>
 								<li id="layers_bing_link" class="mmp-tablink">Bing Maps</li>
 								<li id="layers_here_link" class="mmp-tablink">HERE Maps</li>
@@ -369,6 +370,17 @@ class Settings extends Menu {
 									</div>
 								</div>
 							<?php endforeach; ?>
+						</div>
+						<div id="layers_locationiq_tab" class="mmp-settings-tab">
+							<h2>LocationIQ</h2>
+							<p>
+								<a href="https://www.mapsmarker.com/locationiq/" target="_blank"><img src="<?= plugins_url('images/options/locationiq-logo.png', MMP::$path) ?>" /></a><br />
+								<?= sprintf(esc_html__('If you want to use LocationIQ, you have to register a personal LocationIQ account. For a tutorial, terms of services, pricing, usage limits and more, please visit %1$s.', 'mmp'), '<a href="https://www.mapsmarker.com/locationiq/" target="_blank">https://www.mapsmarker.com/locationiq/</a>') ?>
+							</p>
+							<div class="mmp-settings-setting">
+								<div class="mmp-settings-desc"><?= esc_html__('LocationIQ API key', 'mmp') ?></div>
+								<div class="mmp-settings-input"><input type="text" name="locationIqApiKey" value="<?= $settings['locationIqApiKey'] ?>" /></div>
+							</div>
 						</div>
 						<div id="layers_google_tab" class="mmp-settings-tab">
 							<h2>Google Maps</h2>

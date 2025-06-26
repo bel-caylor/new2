@@ -178,13 +178,28 @@ class Setup {
 
 		// Show data migration notice if a version prior to 4.0 exists
 		if (!$db->count_maps() && !$db->count_markers()) {
-			$old = get_option('leafletmapsmarker_version_pro');
-			if ($old === '3.1.1') {
-				$notice->add_admin_notice('migration_ok');
-				$notice->remove_admin_notice('migration_update');
-			} else if ($old !== false) {
-				$notice->add_admin_notice('migration_update');
-				$notice->remove_admin_notice('migration_ok');
+			$old_pro = get_option('leafletmapsmarker_version_pro');
+			$old_free = get_option('leafletmapsmarker_version');
+			if (version_compare($old_pro, '3.1.1', '>=')) {
+				$notice->remove_admin_notice('migration_update_pro');
+				$notice->remove_admin_notice('migration_update_free');
+				$notice->remove_admin_notice('migration_ok_free');
+				$notice->add_admin_notice('migration_ok_pro');
+			} else if ($old_pro !== false) {
+				$notice->remove_admin_notice('migration_ok_pro');
+				$notice->remove_admin_notice('migration_ok_free');
+				$notice->remove_admin_notice('migration_update_free');
+				$notice->add_admin_notice('migration_update_pro');
+			} else if (version_compare($old_free, '3.12.7', '>=')) {
+				$notice->remove_admin_notice('migration_update_pro');
+				$notice->remove_admin_notice('migration_update_free');
+				$notice->remove_admin_notice('migration_ok_pro');
+				$notice->add_admin_notice('migration_ok_free');
+			} else if ($old_free !== false) {
+				$notice->remove_admin_notice('migration_ok_pro');
+				$notice->remove_admin_notice('migration_ok_free');
+				$notice->remove_admin_notice('migration_update_pro');
+				$notice->add_admin_notice('migration_update_free');
 			}
 		}
 

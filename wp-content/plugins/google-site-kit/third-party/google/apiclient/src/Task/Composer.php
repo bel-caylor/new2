@@ -18,16 +18,16 @@
 namespace Google\Site_Kit_Dependencies\Google\Task;
 
 use Google\Site_Kit_Dependencies\Composer\Script\Event;
+use InvalidArgumentException;
 use Google\Site_Kit_Dependencies\Symfony\Component\Filesystem\Filesystem;
 use Google\Site_Kit_Dependencies\Symfony\Component\Finder\Finder;
-use InvalidArgumentException;
 class Composer
 {
     /**
      * @param Event $event Composer event passed in for any script method
      * @param Filesystem $filesystem Optional. Used for testing.
      */
-    public static function cleanup(\Google\Site_Kit_Dependencies\Composer\Script\Event $event, \Google\Site_Kit_Dependencies\Symfony\Component\Filesystem\Filesystem $filesystem = null)
+    public static function cleanup(\Google\Site_Kit_Dependencies\Composer\Script\Event $event, ?\Google\Site_Kit_Dependencies\Symfony\Component\Filesystem\Filesystem $filesystem = null)
     {
         $composer = $event->getComposer();
         $extra = $composer->getPackage()->getExtra();

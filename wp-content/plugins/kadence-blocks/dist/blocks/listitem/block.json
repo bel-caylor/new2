@@ -1,12 +1,13 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
-  "apiVersion": 2,
+  "apiVersion": 3,
   "parent": [
     "kadence/iconlist"
   ],
   "title": "List item",
   "name": "kadence/listitem",
   "category": "kadence-blocks",
+  "textdomain": "kadence-blocks",
   "attributes": {
     "uniqueID": {
       "type": "string",
@@ -25,6 +26,14 @@
       "default": "",
       "__experimentalRole": "content"
     },
+    "linkNoFollow": {
+      "type": "boolean",
+      "default": false
+    },
+    "linkSponsored": {
+      "type": "boolean",
+      "default": false
+    },
     "target": {
       "type": "string",
       "default": "_self",
@@ -40,7 +49,8 @@
     },
     "text": {
       "type": "string",
-      "default": "",
+      "source": "html",
+      "selector": ".kt-svg-icon-list-text",
       "__experimentalRole": "content"
     },
     "color": {
@@ -74,6 +84,28 @@
     "level": {
       "type": "number",
       "default": 0
+    },
+    "iconTitle": {
+      "type": "string",
+      "default": ""
+    },
+    "tooltip": {
+      "type": "string",
+      "source": "html",
+      "selector": ".kb-tooltip-hidden-content",
+      "__experimentalRole": "content"
+    },
+    "tooltipPlacement": {
+      "type": "string",
+      "default": ""
+    },
+    "tooltipSelection": {
+      "type": "string",
+      "default": "both"
+    },
+    "tooltipDash": {
+      "type": "boolean",
+      "default": true
     }
   },
   "usesContext": [
@@ -83,6 +115,8 @@
   "supports": {
     "ktdynamic": true,
     "html": false,
-    "reusable": false
+    "reusable": false,
+    "kbMetadata": true,
+    "kbContentLabel": "text"
   }
 }

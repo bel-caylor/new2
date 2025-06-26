@@ -34,8 +34,8 @@ Description: The most comprehensive & easy-to-use maps plugin for WordPress
 Author: MapsMarker.com e.U.
 Author URI: https://www.mapsmarker.com
 
-Version: 4.24.1
-Tested up to: 6.1.1
+Version: 4.25
+Tested up to: 6.2.2
 Requires at least: 4.5
 Requires PHP: 5.6
 

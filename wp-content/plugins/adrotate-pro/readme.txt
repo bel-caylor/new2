@@ -1,9 +1,9 @@
 === AdRotate Professional ===
 Contributors: Arnan de Gans
+Stable tag: 5.14.3
+Tested up to: 6.4.2
 Requires at least: 4.9
-Requires PHP: 5.6
-Tested up to: 6.2.2
-Stable tag: 5.12.5
+Requires PHP: 7.4
 
 == Description ==
 
@@ -11,8 +11,8 @@ Get the most intuitive ad manager and start making money with your website.
 
 == COPYRIGHT AND TRADEMARK NOTICE ==
 
-Copyright 2008-2023 Arnan de Gans. All Rights Reserved.
-ADROTATE is a registered trademark of Arnan de Gans.
+Copyright 2008-2024 Arnan de Gans. All Rights Reserved.
+ADROTATE is a trademark owned by Arnan de Gans.
 
 AdRotate Professional may be used as long as you own and register a valid license key.
 COPYRIGHT NOTICES AND ALL THE COMMENTS SHOULD REMAIN INTACT.

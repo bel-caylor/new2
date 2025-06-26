@@ -110,12 +110,7 @@ class GFEntryDetail {
 			return  self::$_form;
 		}
 
-		$form = GFFormsModel::get_form_meta( absint( $_GET['id'] ) );
-
-		$form_id = absint( $form['id'] );
-
-		$form    = apply_filters( 'gform_admin_pre_render', $form );
-		$form    = apply_filters( 'gform_admin_pre_render_' . $form_id, $form );
+		$form = GFCommon::gform_admin_pre_render( GFFormsModel::get_form_meta( absint( $_GET['id'] ) ) );
 
 		self::set_current_form( $form );
 
@@ -447,13 +442,7 @@ class GFEntryDetail {
 
 		$mode = empty( $_POST['screen_mode'] ) ? 'view' : $_POST['screen_mode'];
 
-		if ( $mode === 'edit' ) {
-			wp_print_styles( 'gform_admin_theme' );
-		}
-
 		$screen = get_current_screen();
-
-		$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || isset( $_GET['gform_debug'] ) ? '' : '.min';
 
 		?>
 		<script type="text/javascript">
@@ -560,6 +549,7 @@ class GFEntryDetail {
 						formId                 : '<?php echo absint( $form['id'] ); ?>'
 					},
 					function (response) {
+						response = response.trim();
 						if (response) {
 							displayMessage(response, "error", "#notifications");
 						} else {
@@ -735,7 +725,7 @@ class GFEntryDetail {
 				<label for="name"><?php esc_html_e( 'Details', 'gravityforms' ); ?></label>
 			</h3>
 
-			<div class="inside gform_wrapper gravity-theme">
+			<div class="inside gform_wrapper gravity-theme gform_wrapper_edit_form_entry">
 				<table class="form-table entry-details">
 					<tbody>
 					<?php
@@ -1328,7 +1318,7 @@ class GFEntryDetail {
 				}
 
 				esc_html_e( 'Embed Url', 'gravityforms' ); ?>:
-				<a href="<?php echo esc_url( $entry['source_url'] ) ?>" target="_blank">.../<?php echo esc_html( GFCommon::truncate_url( $entry['source_url'] ) ) ?></a>
+				<a href="<?php echo esc_url( $entry['source_url'] ) ?>" target="_blank">.../<?php echo esc_html( GFCommon::truncate_url( $entry['source_url'] ) ) ?><span class="screen-reader-text"><?php echo esc_html__('(opens in a new tab)', 'gravityforms'); ?></span>&nbsp;<span class="gform-icon gform-icon--external-link"></span></a>
 				<br /><br />
 				<?php
 				if ( ! empty( $entry['post_id'] ) ) {
@@ -1355,10 +1345,12 @@ class GFEntryDetail {
 					<?php
 					switch ( $entry['status'] ) {
 						case 'spam' :
-							?>
-							<a onclick="jQuery('#action').val('unspam'); jQuery('#entry_form').submit()" href="#"><?php esc_html_e( 'Not Spam', 'gravityforms' ) ?></a>
-							<?php
-							echo GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ? '|' : '';
+							if ( GFCommon::current_user_can_any( 'gravityforms_edit_entries' ) ) {
+								?>
+								<a onclick="jQuery('#action').val('unspam'); jQuery('#entry_form').submit()" href="#"><?php esc_html_e( 'Not Spam', 'gravityforms' ) ?></a>
+								<?php
+								echo GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ? '|' : '';
+							}
 							if ( GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ) {
 								?>
 								<a class="submitdelete deletion" onclick="if ( confirm('<?php echo esc_js( __( "You are about to delete this entry. 'Cancel' to stop, 'OK' to delete.", 'gravityforms' ) ); ?>') ) {jQuery('#action').val('delete'); jQuery('#entry_form').submit(); return true;} return false;" href="#"><?php esc_html_e( 'Delete Permanently', 'gravityforms' ) ?></a>
@@ -1383,9 +1375,9 @@ class GFEntryDetail {
 								?>
 								<a class="submitdelete deletion" onclick="jQuery('#action').val('trash'); jQuery('#entry_form').submit()" href="#"><?php esc_html_e( 'Move to Trash', 'gravityforms' ) ?></a>
 								<?php
-								echo GFCommon::spam_enabled( $form['id'] ) ? '|' : '';
+								echo GFCommon::spam_enabled( $form['id'] ) && GFCommon::current_user_can_any( 'gravityforms_edit_entries' ) ? '|' : '';
 							}
-							if ( GFCommon::spam_enabled( $form['id'] ) ) {
+							if ( GFCommon::spam_enabled( $form['id'] ) && GFCommon::current_user_can_any( 'gravityforms_edit_entries' ) ) {
 								?>
 								<a class="submitdelete deletion" onclick="jQuery('#action').val('spam'); jQuery('#entry_form').submit()" href="#"><?php esc_html_e( 'Mark as Spam', 'gravityforms' ) ?></a>
 								<?php

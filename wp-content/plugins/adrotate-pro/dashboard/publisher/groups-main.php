@@ -1,7 +1,7 @@
 <?php
 /* ------------------------------------------------------------------------------------
 *  COPYRIGHT AND TRADEMARK NOTICE
-*  Copyright 2008-2019 Arnan de Gans. All Rights Reserved.
+*  Copyright 2008-2024 Arnan de Gans. All Rights Reserved.
 *  ADROTATE is a registered trademark of Arnan de Gans.
 
 *  COPYRIGHT NOTICES AND ALL THE COMMENTS SHOULD REMAIN INTACT.
@@ -45,8 +45,10 @@
 
 		<tbody>
 
-		<?php $groups = $wpdb->get_results("SELECT * FROM `{$wpdb->prefix}adrotate_groups` WHERE `name` != '' ORDER BY `id` ASC;");
-		if($groups) {
+		<?php 
+		$groups = $wpdb->get_results("SELECT * FROM `{$wpdb->prefix}adrotate_groups` WHERE `name` != '' ORDER BY `id` ASC;");
+
+		if(count($groups) > 0) {
 			$class = '';
 			$modus = array();
 			foreach($groups as $group) {
@@ -63,14 +65,30 @@
 		        if($group->modus == 0) $modus[] = __('Default', 'adrotate-pro');
 		        if($group->modus == 1) $modus[] = __('Dynamic', 'adrotate-pro').' ('.$adspeed.' '. __('second rotation', 'adrotate-pro').')';
 		        if($group->modus == 2) $modus[] = __('Block', 'adrotate-pro').' ('.$group->gridrows.' x '.$group->gridcolumns.' '. __('grid', 'adrotate-pro').')';
-				if($group->adwidth > 0 AND $group->adheight > 0) $modus[] = $group->adwidth.'x'.$group->adheight.'px';
+				if(is_numeric($group->adwidth) AND is_numeric($group->adheight) AND $group->adwidth > 0 AND $group->adheight > 0) $modus[] = $group->adwidth.'x'.$group->adheight.'px';
 		        if($group->cat_loc > 0 OR $group->page_loc > 0 OR $group->woo_loc > 0 OR $group->bbpress_loc > 0) $modus[] = __('Post Injection', 'adrotate-pro');
 		        if($group->geo == 1 AND $adrotate_config['enable_geo'] > 0) $modus[] = __('Geolocation', 'adrotate-pro');
 		        if($group->mobile == 1) $modus[] = __('Mobile', 'adrotate-pro');
 		        if($group->fallback > 0) $modus[] = __('Fallback', 'adrotate-pro').' ('.__('Group', 'adrotate-pro').' '.$group->fallback.')';
+		        if($group->network > 0) $modus[] = __('Network', 'adrotate-pro').' ('.__('Group', 'adrotate-pro').' '.$group->network.')';
 
-				$ads_in_group = $wpdb->get_var("SELECT COUNT(*) FROM `{$wpdb->prefix}adrotate_linkmeta` WHERE `group` = ".$group->id.";");
+				$ads_in_group = $wpdb->get_var("SELECT COUNT(*) FROM `{$wpdb->prefix}adrotate_linkmeta` WHERE `group` = {$group->id};");
 				$active_ads_in_group = $wpdb->get_var("SELECT COUNT(*) FROM  `{$wpdb->prefix}adrotate`, `{$wpdb->prefix}adrotate_linkmeta` WHERE `{$wpdb->prefix}adrotate`.`id` = `{$wpdb->prefix}adrotate_linkmeta`.`ad` AND (`type` = 'active' OR `type` = '2days' OR `type` = '7days') AND `group` = {$group->id};");
+
+				if(adrotate_is_networked() AND $license['type'] == 'Developer' AND $group->network > 0) {
+					$current_blog = $wpdb->blogid;
+					switch_to_blog($network['primary']);
+			
+					$ads_in_network_group = $wpdb->get_var("SELECT COUNT(*) FROM `{$wpdb->prefix}adrotate_linkmeta` WHERE `group` = {$group->network};");
+					$active_ads_in_network_group = $wpdb->get_var("SELECT COUNT(*) FROM  `{$wpdb->prefix}adrotate`, `{$wpdb->prefix}adrotate_linkmeta` WHERE `{$wpdb->prefix}adrotate`.`id` = `{$wpdb->prefix}adrotate_linkmeta`.`ad` AND (`type` = 'active' OR `type` = '2days' OR `type` = '7days') AND `group` = {$group->network};");
+			
+					$ads_in_group += $ads_in_network_group;
+					$active_ads_in_group += $active_ads_in_network_group;
+			
+					unset($ads_in_network_group, $active_ads_in_network_group);
+			
+					switch_to_blog($current_blog);
+				}
 
 				$class = ('alternate' != $class) ? 'alternate' : '';
 				// Errors

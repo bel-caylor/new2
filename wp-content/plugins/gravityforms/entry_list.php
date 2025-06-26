@@ -18,7 +18,7 @@ class GFEntryList {
 			return;
 		}
 
-		$form_id = RGForms::get( 'id' );
+		$form_id = rgget( 'id' );
 		// Verify nonce.
 		check_admin_referer( 'gf_restore_entry' );
 
@@ -36,7 +36,7 @@ class GFEntryList {
 		}
 
 		$forms   = RGFormsModel::get_forms( null, 'title' );
-		$form_id = RGForms::get( 'id' );
+		$form_id = rgget( 'id' );
 
 		// Display restored entry message.
 		if ( rgget( 'restored' ) ) {
@@ -883,7 +883,8 @@ final class GF_Entry_List_Table extends WP_List_Table {
 			'width'     => 620,
 		), admin_url() );
 
-		$table_columns['column_selector'] = '<a title="<div class=\'tb-title\'><div class=\'tb-title__logo\'></div><div class=\'tb-title__text\'><div class=\'tb-title__main\'>' . esc_attr__( 'Select Entry Table Columns', 'gravityforms' ) . '</div><div class=\'tb-title__sub\'>' . esc_attr( 'Drag & drop to order and select which columns are displayed in the entries table.', 'gravityforms' ) . '</div></div></div>" aria-label="' . esc_attr__( 'click to select columns to display', 'gravityforms' ) . '" href="' . esc_url( $column_selector_url ) . '" class="thickbox entries_edit_icon"><i class="gform-icon gform-icon--cog gform-icon--entries-edit"></i></a>';
+		$title = __( 'Click to select columns to display', 'gravityforms' );
+		$table_columns['column_selector'] = '<a name="<div class=\'tb-title\'><div class=\'tb-title__logo\'></div><div class=\'tb-title__text\'><div class=\'tb-title__main\'>' . esc_attr__( 'Select Entry Table Columns', 'gravityforms' ) . '</div><div class=\'tb-title__sub\'>' . esc_attr( 'Drag & drop to order and select which columns are displayed in the entries table.', 'gravityforms' ) . '</div></div></div>" aria-label="' . esc_attr( $title ) . '" href="' . esc_url( $column_selector_url ) . '" class="thickbox entries_edit_icon"><i title="' . esc_attr( $title ) . '" class="gform-icon gform-icon--cog gform-icon--entries-edit"></i></a>';
 
 		/**
 		 * Allow the columns to be displayed in the entry list table to be overridden.
@@ -948,8 +949,9 @@ final class GF_Entry_List_Table extends WP_List_Table {
 	function _column_is_starred( $entry, $classes, $data, $primary ) {
 		echo '<td class="manage-column column-is_starred">';
 		if ( $this->filter !== 'trash' ) {
+			$action = GFCommon::current_user_can_any( 'gravityforms_edit_entries' ) ? "ToggleStar(this, '" . esc_js( $entry['id'] ) . "','" . esc_js( $this->filter ) . "');" : 'return false;';
 			?>
-			<img role="presentation" id="star_image_<?php echo esc_attr( $entry['id'] ) ?>" src="<?php echo GFCommon::get_base_url() ?>/images/star<?php echo intval( $entry['is_starred'] ) ?>.svg" onclick="ToggleStar(this, '<?php echo esc_js( $entry['id'] ); ?>','<?php echo esc_js( $this->filter ); ?>');" />
+			<img role="presentation" id="star_image_<?php echo esc_attr( $entry['id'] ) ?>" src="<?php echo GFCommon::get_base_url() ?>/images/star<?php echo intval( $entry['is_starred'] ) ?>.svg" onclick="<?php echo $action; ?>" />
 			<?php
 		}
 		echo '</td>';
@@ -1023,7 +1025,8 @@ final class GF_Entry_List_Table extends WP_List_Table {
 
 		if ( $column_id == $primary ) {
 			$edit_url = $this->get_detail_url( $entry );
-			$column_value = '<a aria-label="' . esc_attr__( 'View this entry', 'gravityforms' ) . '" href="' . $edit_url . '">' . $value . '</a>';
+			$aria_label = sprintf( esc_html__( 'View entry number %s', 'gravityforms' ), $entry['id'] );
+			$column_value = '<a aria-label="' . esc_attr__( $aria_label ) . '" href="' . $edit_url . '">' . $value . '</a>';
 
 			/**
 			 * Used to inject markup and replace the value of any primary/first column in the entry list grid.
@@ -1038,7 +1041,7 @@ final class GF_Entry_List_Table extends WP_List_Table {
 			 */
 			$column_value = apply_filters( 'gform_entries_primary_column_filter', $column_value, $form_id, $field_id, $entry, $query_string, $edit_url, $value );
 
-			// Warning ignored becuase output is expected to be escaped higher up in the chain.
+			// Warning ignored because output is expected to be escaped higher up in the chain.
 			// phpcs:ignore
 			echo $column_value;
 		} else {
@@ -1187,102 +1190,102 @@ final class GF_Entry_List_Table extends WP_List_Table {
 		$value = rgar( $entry, $field_id );
 
 		$detail_url = $this->get_detail_url( $entry );
+
+		$actions = array();
+		switch ( $this->filter ) {
+			case 'trash':
+				$actions['view'] = array(
+					'class' => 'edit',
+					'link'  => '<a href="' . esc_url( $detail_url ) . '">' . esc_html__( 'View', 'gravityforms' ) . '</a>',
+				);
+				if ( GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ) {
+					$actions['restore'] = array(
+						'class' => 'edit',
+						'link'  => "<a data-wp-lists='delete:the-list:entry_row_" . esc_attr( $entry['id'] ) . '::status=restore&entry=' . esc_attr( $entry['id'] ) . "' href=\"" . wp_nonce_url( '?page=gf_entries', 'gf_delete_entry' ) . '">' . esc_html__( 'Restore', 'gravityforms' ) . '</a>',
+					);
+					$delete_link        = '<a data-wp-lists="delete:the-list:entry_row_' . esc_attr( $entry['id'] ) . '::status=delete&entry=' . esc_attr( $entry['id'] ) . '" href="' . wp_nonce_url( '?page=gf_entries', 'gf_delete_entry' ) . '">' . esc_html__( 'Delete Permanently', 'gravityforms' ) . '</a>';
+
+					/**
+					 * Allows for modification of a Form entry "delete" link
+					 *
+					 * @param string $delete_link The Entry Delete Link (Formatted in HTML)
+					 */
+					$actions['delete'] = array(
+						'class' => 'delete',
+						'link'  => apply_filters( 'gform_delete_entry_link', $delete_link ),
+					);
+				}
+				break;
+			case 'spam':
+				$actions['view'] = array(
+					'class' => 'edit',
+					'link'  => '<a href="' . esc_url( $detail_url ) . '">' . esc_html__( 'View', 'gravityforms' ) . '</a>',
+				);
+				if ( GFCommon::current_user_can_any( 'gravityforms_edit_entries' ) ) {
+					$actions['unspam'] = array(
+						'class' => 'edit',
+						'link' => "<a data-wp-lists='delete:the-list:entry_row_" . esc_attr($entry['id']) . "::status=unspam&entry=" . esc_attr($entry['id']) . "' aria-label=\"" . esc_attr__('Mark this entry as not spam', 'gravityforms') . "\" href=\"" . wp_nonce_url('?page=gf_entries', 'gf_delete_entry') . "\">" . esc_html__('Not Spam', 'gravityforms') . '</a>',
+					);
+				}
+				if ( GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ) {
+					$delete_link = '<a data-wp-lists="delete:the-list:entry_row_' . esc_attr( $entry['id'] ) . '::status=delete&entry=' . esc_attr( $entry['id'] ) . '" href="' . wp_nonce_url( '?page=gf_entries', 'gf_delete_entry' ) . '">' . esc_html__( 'Delete Permanently', 'gravityforms' ) . '</a>';
+
+					/**
+					 * Allows for modification of a Form entry "delete" link
+					 *
+					 * @param string $delete_link The Entry Delete Link (Formatted in HTML)
+					 */
+					$actions['delete'] = array(
+						'class' => 'delete',
+						'link'  => apply_filters( 'gform_delete_entry_link', $delete_link ),
+					);
+				}
+				break;
+			default:
+				$actions['view'] = array(
+					'class' => 'edit',
+					'link'  => '<a href="' . esc_url( $detail_url ) . '">' . esc_html__( 'View', 'gravityforms' ) . '</a>',
+				);
+				if ( GFCommon::current_user_can_any( 'gravityforms_edit_entries' ) ) {
+					$actions['mark_read'] = array(
+						'class' => 'edit',
+						'link'  => '<a id="mark_read_' . esc_attr( $entry['id'] ) . '" aria-label="Mark this entry as read" href="javascript:ToggleRead(\'' . esc_js( $entry['id'] ) . '\', \'' . esc_js( $this->filter ) . '\');" style="display:' . ( $entry['is_read'] ? 'none' : 'inline' ) . '">' . esc_html__( 'Mark read', 'gravityforms' ) . '</a><a id="mark_unread_' . absint( $entry['id'] ) . '" aria-label="' . esc_attr__( 'Mark this entry as unread', 'gravityforms' ) . '" href="javascript:ToggleRead(\'' . esc_js( $entry['id'] ) . '\', \'' . esc_js( $this->filter ) . '\');" style="display:' . ( $entry['is_read'] ? 'inline' : 'none' ) . '">' . esc_html__( 'Mark unread', 'gravityforms' ) . '</a>',
+					);
+				}
+				if ( GFCommon::spam_enabled( $form_id ) && GFCommon::current_user_can_any( 'gravityforms_edit_entries' ) ) {
+					$actions['spam'] = array(
+						'class' => 'spam',
+						'link'  => '<a data-wp-lists="delete:the-list:entry_row_' . esc_attr( $entry['id'] ) . '::status=spam&entry=' . esc_attr( $entry['id'] ) . '" href="' . wp_nonce_url( '?page=gf_entries', 'gf_delete_entry' ) . '">' . esc_html__( 'Mark as Spam', 'gravityforms' ) . '</a>',
+					);
+				}
+				if ( GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ) {
+					$actions['delete'] = array(
+						'class' => 'delete',
+						'link'  => '<a data-wp-lists="delete:the-list:entry_row_' . esc_attr( $entry['id'] ) . '::status=trash&entry=' . esc_attr( $entry['id'] ) . '" href="' . wp_nonce_url( '?page=gf_entries', 'gf_delete_entry' ) . '">' . esc_html__( 'Trash', 'gravityforms' ) . '</a>',
+					);
+				}
+				break;
+		}
 		?>
 		<div class="row-actions">
 			<?php
+			/**
+			 * Allows for modification of an entry action links.
+			 *
+			 * @param array  $actions The action links. It is an associative array where each item is an array containing 'class' and 'link' keys, where 'class' is the CSS class and 'link' is the HTML link.
+			 * @param string $filter The current WP_List_Table filter.
+			 * @param array  $entry The entry of the row being rendered.
+			 */
+			$actions = apply_filters( 'gform_entries_action_links', $actions, $this->filter, $entry, $form_id );
 
-			switch ( $this->filter ) {
-				case 'trash' :
-					?>
-					<span class="edit">
-                        <a href="<?php echo esc_url( $detail_url ) ?>"><?php esc_html_e( 'View', 'gravityforms' ); ?></a>
-						<?php echo GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ? '|' : '' ?>
-                    </span>
-
-					<?php
-					if ( GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ) {
-						?>
-						<span class="edit">
-							<a data-wp-lists='delete:the-list:entry_row_<?php echo esc_attr( $entry['id'] );?>::status=restore&entry=<?php echo esc_attr( $entry['id'] ); ?>' href="<?php echo wp_nonce_url( '?page=gf_entries', 'gf_delete_entry' ) ?>"><?php esc_html_e( 'Restore', 'gravityforms' ); ?></a>
-							|
-						</span>
-
-						<span class="delete">
-                            <?php
-							$delete_link = '<a data-wp-lists="delete:the-list:entry_row_' . esc_attr( $entry['id'] ) . '::status=delete&entry=' . esc_attr( $entry['id'] ) . '" href="' . wp_nonce_url( '?page=gf_entries', 'gf_delete_entry' ) . '">' . esc_html__( 'Delete Permanently', 'gravityforms' ) . '</a>';
-
-							/**
-							 * Allows for modification of a Form entry "delete" link
-							 *
-							 * @param string $delete_link The Entry Delete Link (Formatted in HTML)
-							 */
-							echo apply_filters( 'gform_delete_entry_link', $delete_link );
-							?>
-                        </span>
-						<?php
-					}
-					break;
-
-				case 'spam' :
-					?>
-					<span class="edit">
-                        <a href="<?php echo esc_url( $detail_url ) ?>"><?php esc_html_e( 'View', 'gravityforms' ); ?></a>
-                        |
-                    </span>
-
-					<span class="unspam">
-                        <a data-wp-lists='delete:the-list:entry_row_<?php echo esc_attr( $entry['id'] ); ?>::status=unspam&entry=<?php echo esc_attr( $entry['id'] ); ?>' aria-label="<?php esc_attr_e( 'Mark this entry as not spam', 'gravityforms' ) ?>" href="<?php echo wp_nonce_url( '?page=gf_entries', 'gf_delete_entry' ) ?>"><?php esc_html_e( 'Not Spam', 'gravityforms' ); ?></a>
-						<?php echo GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ? '|' : '' ?>
-                    </span>
-
-					<?php
-					if ( GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ) {
-						?>
-						<span class="delete">
-                            <?php
-							$delete_link = '<a data-wp-lists="delete:the-list:entry_row_' . esc_attr( $entry['id'] ) . '::status=delete&entry=' . esc_attr( $entry['id'] ) . '" href="' . wp_nonce_url( '?page=gf_entries', 'gf_delete_entry' ) . '">' . esc_html__( 'Delete Permanently', 'gravityforms' ) . '</a>';
-
-							/**
-							 * Allows for modification of a Form entry "delete" link
-							 *
-							 * @param string $delete_link The Entry Delete Link (Formatted in HTML)
-							 */
-							echo apply_filters( 'gform_delete_entry_link', $delete_link );
-							?>
-                        </span>
-						<?php
-					}
-
-					break;
-
-				default:
-					?>
-					<span class="edit">
-                        <a href="<?php echo esc_url( $detail_url ) ?>"><?php esc_html_e( 'View', 'gravityforms' ); ?></a>
-                        |
-                    </span>
-					<span class="edit">
-                        <a id="mark_read_<?php echo esc_attr( $entry['id'] ); ?>" aria-label="Mark this entry as read" href="javascript:ToggleRead('<?php echo esc_js( $entry['id'] ); ?>', '<?php echo esc_js( $this->filter ); ?>');" style="display:<?php echo $entry['is_read'] ? 'none' : 'inline' ?>;"><?php esc_html_e( 'Mark read', 'gravityforms' ); ?></a><a id="mark_unread_<?php echo absint( $entry['id'] ); ?>" aria-label="<?php esc_attr_e( 'Mark this entry as unread', 'gravityforms' ); ?>" href="javascript:ToggleRead('<?php echo esc_js( $entry['id'] ); ?>', '<?php echo esc_js( $this->filter ); ?>');" style="display:<?php echo $entry['is_read'] ? 'inline' : 'none' ?>;"><?php esc_html_e( 'Mark unread', 'gravityforms' ); ?></a>
-						<?php echo GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) || GFCommon::akismet_enabled( $form_id ) ? '|' : '' ?>
-                    </span>
-					<?php
-					if ( GFCommon::spam_enabled( $form_id ) ) {
-						?>
-						<span class="spam">
-                            <a data-wp-lists='delete:the-list:entry_row_<?php echo esc_attr( $entry['id'] ) ?>::status=spam&entry=<?php echo esc_attr( $entry['id'] ); ?>' aria-label="<?php esc_attr_e( 'Mark this entry as spam', 'gravityforms' ) ?>" href="<?php echo wp_nonce_url( '?page=gf_entries', 'gf_delete_entry' ) ?>"><?php esc_html_e( 'Spam', 'gravityforms' ); ?></a>
-							<?php echo GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ? '|' : '' ?>
-                        </span>
-
-						<?php
-					}
-					if ( GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ) {
-						?>
-						<span class="trash">
-	                        <a data-wp-lists='delete:the-list:entry_row_<?php echo esc_attr( $entry['id'] ); ?>::status=trash&entry=<?php echo esc_attr( $entry['id'] ); ?>' aria-label="<?php esc_attr_e( 'Move this entry to the trash', 'gravityforms' ) ?>" href="<?php echo wp_nonce_url( '?page=gf_entries', 'gf_delete_entry' ) ?>"><?php esc_html_e( 'Trash', 'gravityforms' ); ?></a>
-	                    </span>
-						<?php
-					}
-					break;
+			$index = 0;
+			foreach ( $actions as $action ) {
+				if ( $index++ > 0 ) echo '|';
+				?>
+				<span class="<?php echo esc_attr( $action['class'] ); ?>">
+					<?php echo $action['link']; ?>
+				</span>
+				<?php
 			}
 
 			$query_string = $this->get_detail_query_string( $entry );
@@ -1342,21 +1345,25 @@ final class GF_Entry_List_Table extends WP_List_Table {
 				}
 				break;
 			case 'spam' :
-				$actions['unspam'] = esc_html__( 'Not Spam', 'gravityforms' );
+				if ( GFCommon::current_user_can_any( 'gravityforms_edit_entries' ) ) {
+					$actions['unspam'] = esc_html__( 'Not Spam', 'gravityforms' );
+				}
 				if ( GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ) {
 					$actions['delete'] = esc_html__( 'Delete Permanently', 'gravityforms' );
 				}
 				break;
 
 			default:
-				$actions['mark_read']            = esc_html__( 'Mark as Read', 'gravityforms' );
-				$actions['mark_unread']          = esc_html__( 'Mark as Unread', 'gravityforms' );
-				$actions['add_star']             = esc_html__( 'Add Star', 'gravityforms' );
-				$actions['remove_star']          = esc_html__( 'Remove Star', 'gravityforms' );
+				if ( GFCommon::current_user_can_any( 'gravityforms_edit_entries' ) ) {
+					$actions['mark_read']            = esc_html__( 'Mark as Read', 'gravityforms' );
+					$actions['mark_unread']          = esc_html__( 'Mark as Unread', 'gravityforms' );
+					$actions['add_star']             = esc_html__( 'Add Star', 'gravityforms' );
+					$actions['remove_star']          = esc_html__( 'Remove Star', 'gravityforms' );
+				}
 				$actions['resend_notifications'] = esc_html__( 'Resend Notifications', 'gravityforms' );
 				$actions['print']                = esc_html__( 'Print', 'gravityforms' );
 
-				if ( GFCommon::spam_enabled( $this->get_form_id() ) ) {
+				if ( GFCommon::spam_enabled( $this->get_form_id() ) && GFCommon::current_user_can_any( 'gravityforms_edit_entries' ) ) {
 					$actions['spam'] = esc_html__( 'Spam', 'gravityforms' );
 				}
 				if ( GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ) {
@@ -1389,19 +1396,17 @@ final class GF_Entry_List_Table extends WP_List_Table {
 
 		$filter = $this->filter;
 
-		if ( 'trash' === $filter && ! GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ) {
+		if ( ! in_array( $filter, array( 'trash', 'spam' ) ) || ! GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ) {
 			return;
 		}
 
-		if ( in_array( $filter, array( 'trash', 'spam' ) ) ) {
-			$message      = $filter == 'trash' ? esc_html__( "WARNING! This operation cannot be undone. Empty trash? 'Ok' to empty trash. 'Cancel' to abort.", 'gravityforms' ) : esc_html__( "WARNING! This operation cannot be undone. Permanently delete all spam? 'Ok' to delete. 'Cancel' to abort.", 'gravityforms' );
-			$button_label = $filter == 'trash' ? __( 'Empty Trash', 'gravityforms' ) : __( 'Delete All Spam', 'gravityforms' );
-			?>
-			<input type="submit" class="button" name="button_delete_permanently"
-			       value="<?php echo esc_attr( $button_label ); ?>"
-			       onclick="return confirm('<?php echo esc_js( $message ) ?>');"/>
-			<?php
-		}
+		$message      = $filter == 'trash' ? esc_html__( "WARNING! This operation cannot be undone. Empty trash? 'Ok' to empty trash. 'Cancel' to abort.", 'gravityforms' ) : esc_html__( "WARNING! This operation cannot be undone. Permanently delete all spam? 'Ok' to delete. 'Cancel' to abort.", 'gravityforms' );
+		$button_label = $filter == 'trash' ? __( 'Empty Trash', 'gravityforms' ) : __( 'Delete All Spam', 'gravityforms' );
+		?>
+		<input type="submit" class="button" name="button_delete_permanently"
+			   value="<?php echo esc_attr( $button_label ); ?>"
+			   onclick="return confirm('<?php echo esc_js( $message ) ?>');"/>
+		<?php
 	}
 
 	/**
@@ -1446,6 +1451,7 @@ final class GF_Entry_List_Table extends WP_List_Table {
 					$columns = GFCommon::json_decode( stripslashes( $_POST['grid_columns'] ), true );
 					RGFormsModel::update_grid_column_meta( $form_id, $columns );
 					$this->_grid_columns = null;
+					$this->primary_column_name = null;
 					$this->set_columns();
 					break;
 
@@ -1484,7 +1490,7 @@ final class GF_Entry_List_Table extends WP_List_Table {
 
 				case 'trash':
 					if ( GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ) {
-						GFFormsModel::update_entries_property( $entries, 'status', 'trash' );
+						GFFormsModel::change_entries_status( $entries, 'trash' );
 						$message = sprintf( esc_html__( '%s moved to Trash.', 'gravityforms' ), $entry_count );
 					} else {
 						$message       = esc_html__( "You don't have adequate permissions to trash entries.", 'gravityforms' );
@@ -1494,7 +1500,7 @@ final class GF_Entry_List_Table extends WP_List_Table {
 
 				case 'restore':
 					if ( GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ) {
-						GFFormsModel::update_entries_property( $entries, 'status', 'active' );
+						GFFormsModel::restore_entries_status( $entries );
 						$message = sprintf( esc_html__( '%s restored from the Trash.', 'gravityforms' ), $entry_count );
 					} else {
 						$message       = esc_html__( "You don't have adequate permissions to restore entries.", 'gravityforms' );
@@ -1503,12 +1509,12 @@ final class GF_Entry_List_Table extends WP_List_Table {
 					break;
 
 				case 'unspam':
-					GFFormsModel::update_entries_property( $entries, 'status', 'active' );
+					GFFormsModel::restore_entries_status( $entries );
 					$message = sprintf( esc_html__( '%s restored from the spam.', 'gravityforms' ), $entry_count );
 					break;
 
 				case 'spam':
-					GFFormsModel::update_entries_property( $entries, 'status', 'spam' );
+					GFFormsModel::change_entries_status( $entries, 'spam' );
 					$message = sprintf( esc_html__( '%s marked as spam.', 'gravityforms' ), $entry_count );
 					break;
 
@@ -1674,7 +1680,7 @@ final class GF_Entry_List_Table extends WP_List_Table {
 				mysack.setVar("name", name);
 				mysack.setVar("value", value);
 				mysack.onError = function () {
-					alert(<?php echo json_encode( __( 'Ajax error while setting lead property', 'gravityforms' ) ); ?>)
+					alert(<?php echo json_encode( __( 'Ajax error while setting entry property', 'gravityforms' ) ); ?>)
 				};
 				mysack.runAJAX();
 
@@ -2015,15 +2021,6 @@ final class GF_Entry_List_Table extends WP_List_Table {
 					} );
 				};
 			}
-
-			// deprecated. remove in 2.8
-			String.prototype.format = function() {
-				var args = arguments;
-				console.warn( 'String.format will be replaced with String.gformFormat in Gravity Forms version 2.8.' );
-				return this.replace( /{(\d+)}/g, function( match, number ) {
-					return typeof args[ number ] != 'undefined' ? args[ number ] : match;
-				} );
-			};
 
 			// end Select All
 

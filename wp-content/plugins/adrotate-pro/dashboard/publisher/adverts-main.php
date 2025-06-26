@@ -1,7 +1,7 @@
 <?php
 /* ------------------------------------------------------------------------------------
 *  COPYRIGHT AND TRADEMARK NOTICE
-*  Copyright 2008-2019 Arnan de Gans. All Rights Reserved.
+*  Copyright 2008-2024 Arnan de Gans. All Rights Reserved.
 *  ADROTATE is a registered trademark of Arnan de Gans.
 
 *  COPYRIGHT NOTICES AND ALL THE COMMENTS SHOULD REMAIN INTACT.
@@ -62,7 +62,7 @@
 		</thead>
 		<tbody>
 	<?php
-	if($active) {
+	if(count($active) > 0) {
 		$tick = '<img src="'.plugins_url('../../images/tick.png', __FILE__).'" width="10" height"10" />';
 		$cross = '<img src="'.plugins_url('../../images/cross.png', __FILE__).'" width="10" height"10" />';
 
@@ -97,35 +97,32 @@
 				<td>
 					<strong><a class="row-title" href="<?php echo admin_url('/admin.php?page=adrotate&view=edit&ad='.$banner['id']);?>" title="<?php _e('Edit', 'adrotate-pro'); ?>"><?php echo stripslashes($banner['title']);?></a></strong> <?php if($adrotate_config['stats'] == 1 AND $banner['tracker'] != 'N') { ?>- <a href="<?php echo admin_url('/admin.php?page=adrotate-statistics&view=advert&id='.$banner['id']);?>" title="<?php _e('Stats', 'adrotate-pro'); ?>"><?php _e('Stats', 'adrotate-pro'); ?></a><?php } ?>
 					<span style="color:#999;">
-						<br /><strong><?php echo __('Devices:', 'adrotate-pro'); ?></strong> <?php echo $mobile; ?>, <strong><?php echo __('Weight:', 'adrotate-pro'); ?></strong> <?php echo $banner['weight']; ?>, <?php _e('Auto Delete:', 'adrotate-pro'); ?> <?php echo ($banner['autodelete'] == 'Y') ? $tick : $cross; ?>
+						<br /><strong><?php echo __('Devices:', 'adrotate-pro'); ?></strong> <?php echo $mobile; ?>, <strong><?php echo __('Weight:', 'adrotate-pro'); ?></strong> <?php echo $banner['weight']; ?>, <strong><?php _e('Auto Delete:', 'adrotate-pro'); ?></strong> <?php echo ($banner['autodelete'] == 'Y') ? $tick : $cross; ?>
 						<?php if(strlen($grouplist) > 0) echo '<br /><span style="font-weight:bold;">'.__('Groups:', 'adrotate-pro').'</span> '.$grouplist; ?>
-						<?php if(strlen($banner['advertiser']) > 0 AND $adrotate_config['enable_advertisers'] == 'Y') echo '<br /><span style="font-weight:bold;">'.__('Advertiser:', 'adrotate-pro').'</span> '.$banner['advertiser'];
+						<?php if(!empty($banner['advertiser']) > 0 AND $adrotate_config['enable_advertisers'] == 'Y') echo '<br /><span style="font-weight:bold;">'.__('Advertiser:', 'adrotate-pro').'</span> '.$banner['advertiser'];
 						if($banner['crate'] > 0 OR $banner['irate'] > 0) { echo ' <span style="font-weight:bold;">'.__('Budget:', 'adrotate-pro').'</span> '.number_format($banner['budget'], 2, '.', '').' - '.__('CPC:', 'adrotate-pro').' '.number_format($banner['crate'], 2, '.', '').' - '.__('CPM:', 'adrotate-pro').' '.number_format($banner['irate'], 2, '.', ''); } ?>
 				</td>
-				<?php if($adrotate_config['stats'] == 1) { ?>
-					<?php if($banner['tracker'] != "N") { ?>
+				<?php if($adrotate_config['stats'] == 1 AND $banner['tracker'] != "N") { ?>
 					<td><center><?php echo $stats['impressions']; ?></center></td>
 					<td><center><?php echo $stats_today['impressions']; ?></center></td>
 					<td><center><?php echo $stats['clicks']; ?></center></td>
 					<td><center><?php echo $stats_today['clicks']; ?></center></td>
 					<td><center><?php echo $ctr; ?> %</center></td>
-					<?php } else { ?>
-					<td><center>&hellip;</center></td>
-					<td><center>&hellip;</center></td>
-					<td><center>&hellip;</center></td>
-					<td><center>&hellip;</center></td>
-					<td><center>&hellip;</center></td>
-					<?php } ?>
-				<?php } ?>
-				<?php if($adrotate_config['stats'] > 1) { ?>
+				<?php } else if($adrotate_config['stats'] > 1) { ?>
 					<td><center><?php echo ($banner['tracker'] != 'N') ? $tick : $cross; ?></center></td>
+				<?php } else { ?>
+					<td><center>&hellip;</center></td>
+					<td><center>&hellip;</center></td>
+					<td><center>&hellip;</center></td>
+					<td><center>&hellip;</center></td>
+					<td><center>&hellip;</center></td>
 				<?php } ?>
 			</tr>
 		<?php } ?>
 	<?php } else { ?>
 		<tr id='no-adverts'>
 			<th class="check-column">&nbsp;</th>
-			<td colspan="<?php echo ($adrotate_config['stats'] == 1) ? '10' : '5'; ?>"><em><?php _e('No adverts created yet!', 'adrotate-pro'); ?></em></td>
+			<td colspan="<?php echo ($adrotate_config['stats'] == 1) ? '8' : '4'; ?>"><em><?php _e('No adverts created yet!', 'adrotate-pro'); ?></em></td>
 		</tr>
 	<?php } ?>
 	</tbody>

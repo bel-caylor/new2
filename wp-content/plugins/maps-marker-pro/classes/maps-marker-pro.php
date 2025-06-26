@@ -123,7 +123,7 @@ class Maps_Marker_Pro {
 	 * @param string $path Absolute path to the main plugin file
 	 */
 	public function __construct($path) {
-		self::$version = '4.24.1';
+		self::$version = '4.25';
 
 		self::$path = $path;
 		self::$dir  = plugin_dir_path($path);

@@ -11,12 +11,14 @@
  * @author   Rocketgenius
  */
 
+use Gravity_Forms\Gravity_Forms\Async\GF_Background_Process;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'GF_Background_Process' ) ) {
-	require_once GF_PLUGIN_DIR_PATH . 'includes/libraries/gf-background-process.php';
+if ( ! class_exists( 'Gravity_Forms\Gravity_Forms\Async\GF_Background_Process' ) ) {
+	require_once GF_PLUGIN_DIR_PATH . 'includes/async/class-gf-background-process.php';
 }
 
 /**
@@ -76,7 +78,6 @@ class GF_Background_Upgrader extends GF_Background_Process {
 		}
 
 		if ( is_callable( $callback ) ) {
-			remove_filter( 'query', array( 'GFForms', 'filter_query' ) );
 			GFCommon::log_debug( sprintf( '%s(): Running callback: %s', __METHOD__, print_r( $callback, 1 ) ) );
 			$needs_more_time = call_user_func( $callback );
 			if ( $needs_more_time ) {

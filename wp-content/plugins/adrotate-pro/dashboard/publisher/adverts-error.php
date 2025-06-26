@@ -1,7 +1,7 @@
 <?php
 /* ------------------------------------------------------------------------------------
 *  COPYRIGHT AND TRADEMARK NOTICE
-*  Copyright 2008-2019 Arnan de Gans. All Rights Reserved.
+*  Copyright 2008-2024 Arnan de Gans. All Rights Reserved.
 *  ADROTATE is a registered trademark of Arnan de Gans.
 
 *  COPYRIGHT NOTICES AND ALL THE COMMENTS SHOULD REMAIN INTACT.
@@ -73,7 +73,7 @@
 				<td><strong><a class="row-title" href="<?php echo admin_url("/admin.php?page=adrotate&view=edit&ad=".$banner['id']);?>" title="<?php _e('Edit', 'adrotate-pro'); ?>"><?php echo stripslashes($banner['title']);?></a></strong> <?php if($adrotate_config['stats'] == 1 AND $banner['type'] != 'error' AND $banner['type'] != 'a_error') { ?>- <a href="<?php echo admin_url('/admin.php?page=adrotate-statistics&view=advert&id='.$banner['id']);?>" title="<?php _e('Stats', 'adrotate-pro'); ?>"><?php _e('Stats', 'adrotate-pro'); ?></a><?php } ?>
 					<span style="color:#999;">
 						<br /><strong><?php echo __('Devices:', 'adrotate-pro'); ?></strong> <?php echo $mobile; ?>, <strong><?php echo __('Weight:', 'adrotate-pro'); ?></strong> <?php echo $banner['weight']; ?>
-						<?php if(strlen($banner['advertiser']) > 0) echo '<span style="font-weight:bold;">'.__('Advertiser:', 'adrotate-pro').'</span> '.$banner['advertiser']; ?>
+						<?php if(!empty($banner['advertiser']) > 0) echo '<span style="font-weight:bold;">'.__('Advertiser:', 'adrotate-pro').'</span> '.$banner['advertiser']; ?>
 						<?php if(strlen($grouplist) > 0) echo '<br /><span style="font-weight:bold;">'.__('Groups:', 'adrotate-pro').'</span> '.$grouplist; ?>
 					</span>
 				</td>

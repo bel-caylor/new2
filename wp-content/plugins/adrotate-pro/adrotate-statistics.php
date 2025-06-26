@@ -1,7 +1,7 @@
 <?php
 /* ------------------------------------------------------------------------------------
 *  COPYRIGHT AND TRADEMARK NOTICE
-*  Copyright 2008-2022 Arnan de Gans. All Rights Reserved.
+*  Copyright 2008-2024 Arnan de Gans. All Rights Reserved.
 *  ADROTATE is a registered trademark of Arnan de Gans.
 
 *  COPYRIGHT NOTICES AND ALL THE COMMENTS SHOULD REMAIN INTACT.
@@ -453,7 +453,7 @@ function adrotate_archive_stats($id) {
  Purpose:   Count Impressions where needed
  Since:		3.11.3
 -------------------------------------------------------------*/
-function adrotate_count_impression($ad, $group = 0, $blog_id = 0) { 
+function adrotate_count_impression($ad_id, $group = 0, $ad_network = 0) { 
 	global $wpdb, $adrotate_config;
 
 	if(($adrotate_config['enable_loggedin_impressions'] == 'Y' AND is_user_logged_in()) OR ($adrotate_config['enable_admin_stats'] == 'Y' AND is_admin()) OR !is_user_logged_in()) {
@@ -461,28 +461,29 @@ function adrotate_count_impression($ad, $group = 0, $blog_id = 0) {
 		$today = adrotate_date_start('day');
 		$remote_ip 	= adrotate_get_remote_ip();
 
-		if($blog_id > 0 AND adrotate_is_networked()) {
+		if($ad_network === 1 AND adrotate_is_networked()) {
+			$network = get_site_option('adrotate_network_settings');
 			$current_blog = $wpdb->blogid;
-			switch_to_blog($blog_id);
+			switch_to_blog($network['primary']);
 		}
 
 		$impression_timer = $now - $adrotate_config['impression_timer'];
 
 		if($remote_ip != "unknown" AND !empty($remote_ip)) {
-			$saved_timer = $wpdb->get_var($wpdb->prepare("SELECT `timer` FROM `{$wpdb->prefix}adrotate_tracker` WHERE `ipaddress` = '%s' AND `stat` = 'i' AND `bannerid` = %d ORDER BY `timer` DESC LIMIT 1;", $remote_ip, $ad));
+			$saved_timer = $wpdb->get_var($wpdb->prepare("SELECT `timer` FROM `{$wpdb->prefix}adrotate_tracker` WHERE `ipaddress` = '%s' AND `stat` = 'i' AND `bannerid` = %d ORDER BY `timer` DESC LIMIT 1;", $remote_ip, $ad_id));
 			if($saved_timer < $impression_timer AND adrotate_is_human()) {
-				$stats = $wpdb->get_var($wpdb->prepare("SELECT `id` FROM `{$wpdb->prefix}adrotate_stats` WHERE `ad` = %d AND `group` = %d AND `thetime` = {$today};", $ad, $group));
+				$stats = $wpdb->get_var($wpdb->prepare("SELECT `id` FROM `{$wpdb->prefix}adrotate_stats` WHERE `ad` = %d AND `group` = %d AND `thetime` = {$today};", $ad_id, $group));
 				if($stats > 0) {
 					$wpdb->query("UPDATE `{$wpdb->prefix}adrotate_stats` SET `impressions` = `impressions` + 1 WHERE `id` = {$stats};");
 				} else {
-					$wpdb->insert($wpdb->prefix.'adrotate_stats', array('ad' => $ad, 'group' => $group, 'thetime' => $today, 'clicks' => 0, 'impressions' => 1));
+					$wpdb->insert($wpdb->prefix.'adrotate_stats', array('ad' => $ad_id, 'group' => $group, 'thetime' => $today, 'clicks' => 0, 'impressions' => 1));
 				}
 	
-				$wpdb->insert($wpdb->prefix."adrotate_tracker", array('ipaddress' => $remote_ip, 'timer' => $now, 'bannerid' => $ad, 'stat' => 'i'));
+				$wpdb->insert($wpdb->prefix."adrotate_tracker", array('ipaddress' => $remote_ip, 'timer' => $now, 'bannerid' => $ad_id, 'stat' => 'i'));
 			}
 		}
 
-		if($blog_id > 0 AND adrotate_is_networked()) {
+		if($ad_network === 1 AND adrotate_is_networked()) {
 			switch_to_blog($current_blog);
 		}
 	}
@@ -496,7 +497,7 @@ function adrotate_count_impression($ad, $group = 0, $blog_id = 0) {
 function adrotate_impression_callback() {
 	if(!defined('DONOTCACHEPAGE')) define('DONOTCACHEPAGE', true);
 	if(!defined('DONOTCACHEDB')) define('DONOTCACHEDB', true);
-	if(!defined('DONOTCACHCEOBJECT')) define('DONOTCACHCEOBJECT', true);
+	if(!defined('DONOTCACHEOBJECT')) define('DONOTCACHEOBJECT', true);
 
 	$meta = $_POST['track'];
 	$meta = base64_decode($meta);
@@ -519,7 +520,7 @@ function adrotate_impression_callback() {
 function adrotate_click_callback() {
 	if(!defined('DONOTCACHEPAGE')) define('DONOTCACHEPAGE', true);
 	if(!defined('DONOTCACHEDB')) define('DONOTCACHEDB', true);
-	if(!defined('DONOTCACHCEOBJECT')) define('DONOTCACHCEOBJECT', true);
+	if(!defined('DONOTCACHEOBJECT')) define('DONOTCACHEOBJECT', true);
 
 	global $wpdb, $adrotate_config;
 

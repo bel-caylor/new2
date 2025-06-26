@@ -1,7 +1,7 @@
 <?php
 /* ------------------------------------------------------------------------------------
 *  COPYRIGHT AND TRADEMARK NOTICE
-*  Copyright 2008-2023 Arnan de Gans. All Rights Reserved.
+*  Copyright 2008-2024 Arnan de Gans. All Rights Reserved.
 *  ADROTATE is a registered trademark of Arnan de Gans.
 
 *  COPYRIGHT NOTICES AND ALL THE COMMENTS SHOULD REMAIN INTACT.
@@ -12,7 +12,7 @@
 if(!$ad_edit_id) {
 	$edit_id = $wpdb->get_var("SELECT `id` FROM `{$wpdb->prefix}adrotate` WHERE `type` = 'empty' ORDER BY `id` DESC LIMIT 1;");
 	if($edit_id == 0) {
-	    $wpdb->insert($wpdb->prefix."adrotate", array('title' => '', 'bannercode' => '', 'thetime' => $now, 'updated' => $now, 'author' => $userdata->user_login, 'imagetype' => 'dropdown', 'image' => '', 'tracker' => 'N', 'show_everyone' => 'Y', 'desktop' => 'Y', 'mobile' => 'Y', 'tablet' => 'Y', 'os_ios' => 'Y', 'os_android' => 'Y', 'os_other' => 'Y', 'type' => 'empty', 'weight' => 6, 'autodelete' => 'N', 'budget' => 0, 'crate' => 0, 'irate' => 0, 'state_req' => 'N', 'cities' => serialize(array()), 'states' => serialize(array()), 'countries' => serialize(array())));
+	    $wpdb->insert($wpdb->prefix."adrotate", array('title' => '', 'bannercode' => '', 'thetime' => $now, 'updated' => $now, 'author' => $userdata->user_login, 'imagetype' => 'dropdown', 'image' => '', 'tracker' => 'N', 'show_everyone' => 'Y', 'desktop' => 'Y', 'mobile' => 'Y', 'tablet' => 'Y', 'os_ios' => 'Y', 'os_android' => 'Y', 'type' => 'empty', 'weight' => 6, 'autodelete' => 'N', 'budget' => 0, 'crate' => 0, 'irate' => 0, 'state_req' => 'N', 'cities' => serialize(array()), 'states' => serialize(array()), 'countries' => serialize(array())));
 	    $edit_id = $wpdb->insert_id;
 	}
 	$ad_edit_id = $edit_id;
@@ -76,13 +76,13 @@ if($edit_banner) {
 		if($edit_banner->tracker == 'N' AND ($edit_banner->crate > 0 OR $edit_banner->irate > 0))
 			echo '<div class="error"><p>'. __("CPC and/or CPM is enabled but statistics are not active!", 'adrotate-pro').'</p></div>';
 
-		if(count($group_array) == 0 AND ($edit_banner->desktop == "N" OR $edit_banner->mobile == "N" OR $edit_banner->tablet == "N"))
+		if(count($group_array) == 0 AND ($edit_banner->desktop == "N" OR $edit_banner->mobile == "N" OR $edit_banner->tablet == "N" OR $edit_banner->os_ios == "N" OR $edit_banner->os_android == "N"))
 			echo '<div class="error"><p>'. __("You've selected to show the advert on certain devices but the advert is not in a group!", 'adrotate-pro').'</p></div>';
 
 		if(count($group_array) > 0 AND ($edit_banner->desktop == "N" AND $edit_banner->mobile == "N" AND $edit_banner->tablet == "N"))
 			echo '<div class="error"><p>'. __("The advert needs at least one device type selected!", 'adrotate-pro').'</p></div>';
 
-		if(count($group_array) > 0 AND $edit_banner->os_ios == "N" AND $edit_banner->os_other == "N" AND $edit_banner->os_android == "N")
+		if(count($group_array) > 0 AND $edit_banner->os_ios == "N" AND $edit_banner->os_android == "N")
 			echo '<div class="error"><p>'. __("Advert has no operating systems selected!", 'adrotate-pro').'</p></div>';
 
 		if($edit_banner->state_req == 'Y' AND count(unserialize($edit_banner->cities)) == 0 AND count(unserialize($edit_banner->states)) == 0)
@@ -231,7 +231,7 @@ if($edit_banner) {
 					<?php _e('Banner folder', 'adrotate-pro'); ?> <select tabindex="5" id="adrotate_image_dropdown" name="adrotate_image_dropdown" style="min-width: 200px;">
 						<option value=""><?php _e('No file selected', 'adrotate-pro'); ?></option>
 						<?php
-						$assets = adrotate_dropdown_folder_contents(WP_CONTENT_DIR."/".$adrotate_config['banner_folder'], array('jpg', 'jpeg', 'gif', 'png', 'html', 'htm'));
+						$assets = adrotate_dropdown_folder_contents(WP_CONTENT_DIR."/".$adrotate_config['banner_folder'], array('jpg', 'jpeg', 'gif', 'png', 'html', 'htm', 'mp4'));
 						foreach($assets as $key => $option) {
 							echo "<option value=\"$option\"";
 							if($image_dropdown == WP_CONTENT_URL."/%folder%/".$option) { echo " selected"; }
@@ -262,7 +262,7 @@ if($edit_banner) {
 						<?php if($adrotate_config['stats'] == 1) { ?>
 							<option value="archived" <?php if($edit_banner->type == "archived") { echo 'selected'; } ?>><?php _e('Archive this advert permanently', 'adrotate-pro'); ?></option>
 						<?php } ?>
-						<?php if($adrotate_config['enable_advertisers'] == 'Y' AND $adrotate_config['enable_editing'] == 'Y' AND $saved_user > 0) { ?>
+						<?php if($adrotate_config['enable_advertisers'] == 'Y' AND $saved_user > 0) { ?>
 							<option value="queue" <?php if($edit_banner->type == "queue" OR $edit_banner->type == "a_error") { echo 'selected'; } ?>><?php _e('Maybe, this advert is queued for review', 'adrotate-pro'); ?></option>
 							<option value="reject" <?php if($edit_banner->type == "reject") { echo 'selected'; } ?>><?php _e('No, this advert is rejected (advertiser can make changes)', 'adrotate-pro'); ?></option>
 						<?php } ?>
@@ -346,38 +346,58 @@ if($edit_banner) {
 			</thead>
 
 			<tbody>
-			<?php
-			$tick = '<img src="'.plugins_url('../../images/tick.png', __FILE__).'" width="10" height"10" />';
-			$cross = '<img src="'.plugins_url('../../images/cross.png', __FILE__).'" width="10" height"10" />';
-
-			$class = '';
-			foreach($schedules as $schedule) {
-				if(!in_array($schedule->id, $schedule_array) AND $adrotate_config['hide_schedules'] == "Y") continue;
-				if($adrotate_config['stats'] == 1) {
-					if($schedule->maxclicks == 0) $schedule->maxclicks = '&infin;';
-					if($schedule->maximpressions == 0) $schedule->maximpressions = '&infin;';
-				}
-
-				$class = ('alternate' != $class) ? 'alternate' : '';
-				if(in_array($schedule->id, $schedule_array)) $class = 'row_green';
-				if($schedule->stoptime < $in2days) $class = 'row_orange';
-
-				$sdayhour = substr($schedule->daystarttime, 0, 2);
-				$sdayminute = substr($schedule->daystarttime, 2, 2);
-				$edayhour = substr($schedule->daystoptime, 0, 2);
-				$edayminute = substr($schedule->daystoptime, 2, 2);
-			?>
-	      	<tr id='schedule-<?php echo $schedule->id; ?>' class='<?php echo $class; ?>'>
-				<th class="check-column"><input type="checkbox" name="scheduleselect[]" value="<?php echo $schedule->id; ?>" <?php if(in_array($schedule->id, $schedule_array)) echo "checked"; ?> /></th>
-				<td><center><?php echo $schedule->id; ?></center></td>
-				<td><?php echo date_i18n("F d, Y H:i", $schedule->starttime);?><br /><span style="color: <?php echo adrotate_prepare_color($schedule->stoptime);?>;"><?php echo date_i18n("F d, Y H:i", $schedule->stoptime);?></span></td>
-				<td><a href="<?php echo admin_url('/admin.php?page=adrotate-schedules&view=edit&schedule='.$schedule->id);?>"><?php echo stripslashes($schedule->name); ?></a><span style="color:#999;"><br /><?php _e('Mon:', 'adrotate-pro'); ?> <?php echo ($schedule->day_mon == 'Y') ? $tick : $cross; ?> <?php _e('Tue:', 'adrotate-pro'); ?> <?php echo ($schedule->day_tue == 'Y') ? $tick : $cross; ?> <?php _e('Wed:', 'adrotate-pro'); ?> <?php echo ($schedule->day_wed == 'Y') ? $tick : $cross; ?> <?php _e('Thu:', 'adrotate-pro'); ?> <?php echo ($schedule->day_thu == 'Y') ? $tick : $cross; ?> <?php _e('Fri:', 'adrotate-pro'); ?> <?php echo ($schedule->day_fri == 'Y') ? $tick : $cross; ?> <?php _e('Sat:', 'adrotate-pro'); ?> <?php echo ($schedule->day_sat == 'Y') ? $tick : $cross; ?> <?php _e('Sun:', 'adrotate-pro'); ?> <?php echo ($schedule->day_sun == 'Y') ? $tick : $cross; ?> <?php if($schedule->daystarttime  > 0) { ?><?php _e('Between:', 'adrotate-pro'); ?> <?php echo $sdayhour; ?>:<?php echo $sdayminute; ?> - <?php echo $edayhour; ?>:<?php echo $edayminute; ?> <?php } ?><br /><?php _e('Impression spread:', 'adrotate-pro'); ?> <?php echo ($schedule->spread == 'Y') ? $tick : $cross; ?> <?php echo ($schedule->spread_all == 'Y') ? $tick : $cross; ?></span></td>
-		        <?php if($adrotate_config['stats'] == 1) { ?>
-			        <td><center><?php echo $schedule->maximpressions; ?></center></td>
-			        <td><center><?php echo $schedule->maxclicks; ?></center></td>
-				<?php } ?>
-	      	</tr>
-	      	<?php } ?>
+			<?php 
+			if(count($schedules) > 0) {
+				$tick = plugins_url('../../images/tick.png', __FILE__);
+				$cross = plugins_url('../../images/cross.png', __FILE__);
+	
+				$class = '';
+				foreach($schedules as $schedule) {
+					if(!in_array($schedule->id, $schedule_array) AND $adrotate_config['hide_schedules'] == "Y") continue;
+					if($adrotate_config['stats'] == 1) {
+						if($schedule->maxclicks == 0) $schedule->maxclicks = '&infin;';
+						if($schedule->maximpressions == 0) $schedule->maximpressions = '&infin;';
+					}
+	
+					$class = ('alternate' != $class) ? 'alternate' : '';
+					if(in_array($schedule->id, $schedule_array)) $class = 'row_green';
+					if($schedule->stoptime < $in2days) $class = 'row_orange';
+	
+					$sdayhour = substr($schedule->daystarttime, 0, 2);
+					$sdayminute = substr($schedule->daystarttime, 2, 2);
+					$edayhour = substr($schedule->daystoptime, 0, 2);
+					$edayminute = substr($schedule->daystoptime, 2, 2);
+				?>
+		      	<tr id='schedule-<?php echo $schedule->id; ?>' class='<?php echo $class; ?>'>
+					<th class="check-column"><input type="checkbox" name="scheduleselect[]" value="<?php echo $schedule->id; ?>" <?php if(in_array($schedule->id, $schedule_array)) echo "checked"; ?> /></th>
+					<td><center><?php echo $schedule->id; ?></center></td>
+					<td><?php echo date_i18n("F d, Y H:i", $schedule->starttime);?><br /><span style="color: <?php echo adrotate_prepare_color($schedule->stoptime);?>;"><?php echo date_i18n("F d, Y H:i", $schedule->stoptime);?></span></td>
+					<td>
+						<a href="<?php echo admin_url('/admin.php?page=adrotate-schedules&view=edit&schedule='.$schedule->id);?>"><?php echo stripslashes($schedule->name); ?></a><br />
+						<span style="color:#999;">
+							<?php _e('Mon:', 'adrotate-pro'); ?> <img src="<?php echo ($schedule->day_mon == 'Y') ? $tick : $cross; ?>" width="10" height"10" title="<?php _e("Monday", "adrotate-pro"); ?>" /> 
+							<?php _e('Tue:', 'adrotate-pro'); ?> <img src="<?php echo ($schedule->day_tue == 'Y') ? $tick : $cross; ?>" width="10" height"10" title="<?php _e("Tuesday", "adrotate-pro"); ?>" />
+							<?php _e('Wed:', 'adrotate-pro'); ?> <img src="<?php echo ($schedule->day_wed == 'Y') ? $tick : $cross; ?>" width="10" height"10" title="<?php _e("Wednesday", "adrotate-pro"); ?>" />
+							<?php _e('Thu:', 'adrotate-pro'); ?> <img src="<?php echo ($schedule->day_thu == 'Y') ? $tick : $cross; ?>" width="10" height"10" title="<?php _e("Thursday", "adrotate-pro"); ?>" />
+							<?php _e('Fri:', 'adrotate-pro'); ?> <img src="<?php echo ($schedule->day_fri == 'Y') ? $tick : $cross; ?>" width="10" height"10" title="<?php _e("Friday", "adrotate-pro"); ?>" />
+							<?php _e('Sat:', 'adrotate-pro'); ?> <img src="<?php echo ($schedule->day_sat == 'Y') ? $tick : $cross; ?>" width="10" height"10" title="<?php _e("Saturday", "adrotate-pro"); ?>" />
+							<?php _e('Sun:', 'adrotate-pro'); ?> <img src="<?php echo ($schedule->day_sun == 'Y') ? $tick : $cross; ?>" width="10" height"10" title="<?php _e("Sunday", "adrotate-pro"); ?>" />
+							<?php if($schedule->daystarttime  > 0) { ?><?php _e('Between:', 'adrotate-pro'); ?> <?php echo $sdayhour; ?>:<?php echo $sdayminute; ?> - <?php echo $edayhour; ?>:<?php echo $edayminute; ?> <?php } ?><br />
+							<?php _e('Impression spread:', 'adrotate-pro'); ?> <img src="<?php echo ($schedule->spread == 'Y') ? $tick : $cross; ?>" width="10" height"10" title="<?php _e("Individual adverts", "adrotate-pro"); ?>" /> <img src="<?php echo ($schedule->spread_all == 'Y') ? $tick : $cross; ?>" width="10" height"10" title="<?php _e("All adverts", "adrotate-pro"); ?>" />
+						</span>
+					</td>
+					<?php if($adrotate_config['stats'] == 1) { ?>
+				        <td><center><?php echo $schedule->maximpressions; ?></center></td>
+				        <td><center><?php echo $schedule->maxclicks; ?></center></td>
+					<?php } ?>
+		      	</tr>
+		      	<?php } ?>
+			<?php } else { ?>
+			<tr>
+				<th class="check-column">&nbsp;</th>
+				<td colspan="7"><em><?php _e('No schedules created!', 'adrotate-pro'); ?></em></td>
+			</tr>
+			<?php } ?>
 			</tbody>
 
 		</table>
@@ -455,27 +475,27 @@ if($edit_banner) {
 						</tr>
 					</table>
 				</td>
-		        <td rowspan="2">
-		        	<em><?php _e("Also enable 'Mobile Support' in the group this advert goes in or 'Device' and 'Operating System' are ignored!", 'adrotate-pro'); ?><br /><?php _e("Operating system detection only detects iOS and Android, select 'Others' for everything else. Device type is determined by screensize and user-agent as reported by the device.", 'adrotate-pro'); ?></em>
+		        <td>
+		        	<em><strong><?php _e("Important:", 'adrotate-pro'); ?></strong> <?php _e("Also enable 'Mobile Support' in the group this advert goes in or 'Device' and 'Operating System' are ignored!", 'adrotate-pro'); ?></em>
 		        </td>
 			</tr>
 	     	<tr>
-		        <th width="15%" valign="top"><?php _e('Operating System', 'adrotate-pro'); ?></th>
+		        <th width="15%" valign="top"><?php _e('Mobile Operating System', 'adrotate-pro'); ?></th>
 				<td>
 					<table width="100%">
 						<tr>
-					        <td width="33%">
+					        <td width="50%">
 					        	<label for="adrotate_ios"><center><input tabindex="28" type="checkbox" name="adrotate_ios" id="adrotate_ios" <?php if($edit_banner->os_ios == 'Y') { ?>checked="checked" <?php } ?> /><br /><?php _e('iOS', 'adrotate-pro'); ?></center></label>
 					        </td>
-					        <td width="33%">
+					        <td width="50%">
 					        	<label for="adrotate_android"><center><input tabindex="29" type="checkbox" name="adrotate_android" id="adrotate_android" <?php if($edit_banner->os_android == 'Y') { ?>checked="checked" <?php } ?> /><br /><?php _e('Android', 'adrotate-pro'); ?></center></label>
-					        </td>
-					        <td>
-					        	<label for="adrotate_other"><center><input tabindex="30" type="checkbox" name="adrotate_other" id="adrotate_other" <?php if($edit_banner->os_other == 'Y') { ?>checked="checked" <?php } ?> /><br /><?php _e('Others', 'adrotate-pro'); ?></center></label>
 					        </td>
 						</tr>
 					</table>
 				</td>
+		        <td>
+		        	<em><?php _e("Operating system detection only works for smartphones and tablets and detects iOS and Android. Device type is determined by screensize and user-agent as reported by the device.", 'adrotate-pro'); ?></em>
+		        </td>
 			</tr>
 	     	<tr>
 		        <th width="15%" valign="top"><?php _e('Auto-delete', 'adrotate-pro'); ?></th>
@@ -595,7 +615,7 @@ if($edit_banner) {
 			<a href="admin.php?page=adrotate&view=manage" class="button"><?php _e('Cancel', 'adrotate-pro'); ?></a>
 		</p>
 
-		<?php if($groups) { ?>
+		<?php if(count($groups) > 0) { ?>
 		<h2><?php _e('Select Groups', 'adrotate-pro'); ?></h2>
 		<table class="widefat" style="margin-top: .5em">
 			<thead>

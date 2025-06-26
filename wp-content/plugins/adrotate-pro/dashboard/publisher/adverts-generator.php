@@ -1,7 +1,7 @@
 <?php
 /* ------------------------------------------------------------------------------------
 *  COPYRIGHT AND TRADEMARK NOTICE
-*  Copyright 2008-2019 Arnan de Gans. All Rights Reserved.
+*  Copyright 2008-2024 Arnan de Gans. All Rights Reserved.
 *  ADROTATE is a registered trademark of Arnan de Gans.
 
 *  COPYRIGHT NOTICES AND ALL THE COMMENTS SHOULD REMAIN INTACT.
@@ -12,7 +12,7 @@
 if(!$ad_edit_id) { 
 	$edit_id = $wpdb->get_var("SELECT `id` FROM `{$wpdb->prefix}adrotate` WHERE `type` = 'generator' ORDER BY `id` DESC LIMIT 1;");
 	if($edit_id == 0) {
-	    $wpdb->insert($wpdb->prefix."adrotate", array('title' => '', 'bannercode' => '', 'thetime' => $now, 'updated' => $now, 'author' => $userdata->user_login, 'imagetype' => 'dropdown', 'image' => '', 'tracker' => 'N', 'desktop' => 'Y', 'mobile' => 'Y', 'tablet' => 'Y', 'os_ios' => 'Y', 'os_android' => 'Y', 'os_other' => 'Y', 'type' => 'generator', 'weight' => 6, 'autodelete' => 'N', 'budget' => 0, 'crate' => 0, 'irate' => 0, 'cities' => serialize(array()), 'countries' => serialize(array())));
+	    $wpdb->insert($wpdb->prefix."adrotate", array('title' => '', 'bannercode' => '', 'thetime' => $now, 'updated' => $now, 'author' => $userdata->user_login, 'imagetype' => 'dropdown', 'image' => '', 'tracker' => 'N', 'desktop' => 'Y', 'mobile' => 'Y', 'tablet' => 'Y', 'os_ios' => 'Y', 'os_android' => 'Y', 'type' => 'generator', 'weight' => 6, 'autodelete' => 'N', 'budget' => 0, 'crate' => 0, 'irate' => 0, 'cities' => serialize(array()), 'countries' => serialize(array())));
 	    $edit_id = $wpdb->insert_id;
 	}
 	$ad_edit_id = $edit_id;
@@ -30,9 +30,8 @@ if($edit_banner) {
 		<input type="hidden" name="adrotate_id" value="<?php echo $edit_banner->id;?>" />
 	
 		<h2><?php _e('Generate Advert Code', 'adrotate-pro'); ?></h2>
-		<p><?php _e('Use the Generator if you have received a target url, banner image and/or some separate files with a description on how to use those. The AdRotate Generator will take your bits and pieces and try to generate a working adcode from it.', 'adrotate-pro'); ?></p>
-		<p><?php _e('If you have an advert hash from another AdRotate or AdRotate Professional setup you can enter it in the Portability field. This feature is a bit of an experiment, but the basic function works.', 'adrotate-pro'); ?></p>
-		<p><?php _e('If you have a complete and working ad code / ad tag you do not use the Generator. You can simply paste that code in the AdCode field when creating your advert. For example as provided by Media.net or Google AdSense among others.', 'adrotate-pro'); ?></p>
+		<p><?php _e('Use the Generator if you have received a target url, banner image and/or some separate files with a description on how to use those. The AdRotate Generator will take your bits and pieces and try to generate a working adcode from it. If you have an advert hash from another AdRotate or AdRotate Professional setup you can enter it in the Portability field.', 'adrotate-pro'); ?></p>
+		<p><?php _e('If you have received a complete and working ad code / ad tag you do not use the Generator. You can often simply paste that code in the AdCode field when creating your advert.', 'adrotate-pro'); ?></p>
 	
 		<h2><?php _e('Create your advert', 'adrotate-pro'); ?></h2>
 		<table class="widefat" style="margin-top: .5em">
@@ -51,7 +50,7 @@ if($edit_banner) {
 						<select tabindex="1" id="adrotate_fullsize_dropdown" name="adrotate_fullsize_dropdown" style="min-width: 300px;">
 	   						<option value=""><?php _e('Select advert image', 'adrotate-pro'); ?></option>
 							<?php
-							foreach(adrotate_dropdown_folder_contents(WP_CONTENT_DIR."/".$adrotate_config['banner_folder'], array('jpg', 'jpeg', 'gif', 'png')) as $key => $option) {
+							foreach(adrotate_dropdown_folder_contents(WP_CONTENT_DIR."/".$adrotate_config['banner_folder'], array('jpg', 'jpeg', 'gif', 'png', 'mp4')) as $key => $option) {
 								echo "<option value=\"$option\">$option</option>";
 							}
 							?>
@@ -122,7 +121,42 @@ if($edit_banner) {
 			<tr>
 		        <td colspan="2"><strong><?php _e('Important:', 'adrotate-pro'); ?></strong> <?php _e('All sizes are optional, but it is highly recommended to use at least the small and medium size. Devices with viewports greater than 1280px will use the full sized banner.', 'adrotate-pro'); ?><br /><?php _e('Are your files not listed? Upload them via the AdRotate Media Manager. For your convenience, use easy to use filenames.', 'adrotate-pro'); ?></td>
 			</tr>
+			</tbody>
 	
+			<thead>
+			<tr>
+		        <th colspan="2"><strong><?php _e('Video adverts', 'adrotate-pro'); ?></strong></th>
+			</tr>
+			</thead>
+			
+			<tbody>
+			<tr>
+		        <th valign="top"><?php _e('Aspect Ratio', 'adrotate-pro'); ?></th>
+				<td>
+					<label for="adrotate_video_ratio">
+						<select tabindex="3" id="adrotate_video_ratio" name="adrotate_video_ratio" style="min-width: 300px;">
+	   						<option value="0"><?php _e('This is not a video advert', 'adrotate-pro'); ?></option>
+							<option value="1">7.8 ratio (ex. 468x60)</option>
+							<option value="2">8.1 ratio (ex. 728x90)</option>
+							<option value="3">1:1 ratio (ex. 200x200, 250x250, 300x300)</option>
+							<option value="4">16:9 ratio (ex. 1920x1080, 1280x720 and 854x480)</option>
+							<option value="5">9:16 ratio (ex. 1080x1920, 720x1280 and 480x854)</option>
+							<option value="6">4:3 ratio (ex. 320x240, 640x480, 1280x960)</option>
+						</select> <em><?php _e('If you are making a video advert. Pick your video resolution, this is used to scale the video for smaller or larger screens.', 'adrotate-pro'); ?></em>
+					</label>		
+				</td>
+			</tr>
+			<tr>
+		        <th valign="top"><?php _e('Sound muted', 'adrotate-pro'); ?></th>
+		        <td>
+					<label for="adrotate_video_muted"><input tabindex="6" type="checkbox" name="adrotate_video_muted" id="adrotate_video_muted" checked="1" /> <?php _e('Should the sound be muted?', 'adrotate-pro'); ?> <?php _e('(Guidelines say yes!)', 'adrotate-pro'); ?></label>
+		        </td>
+	 		</tr>
+			<tr>
+		        <td colspan="2"><strong><?php _e('Note:', 'adrotate-pro'); ?></strong> <?php _e('For now, only MP4 files are supported.', 'adrotate-pro'); ?></td>
+			</tr>
+			</tbody>
+
 			<thead>
 			<tr>
 		        <th colspan="2"><strong><?php _e('Optional', 'adrotate-pro'); ?></strong></th>
@@ -136,7 +170,7 @@ if($edit_banner) {
 					<label for="adrotate_newwindow"><input tabindex="6" type="checkbox" name="adrotate_newwindow" id="adrotate_newwindow" checked="1" /> <?php _e('Open the advert in a new window?', 'adrotate-pro'); ?> <?php _e('(Recommended)', 'adrotate-pro'); ?></label>
 		        </td>
 	 		</tr>
-		    	<tr>
+	    	<tr>
 				<th valign="top"><?php _e('NoFollow', 'adrotate-pro'); ?></th>
 		        <td>
 					<label for="adrotate_nofollow"><input tabindex="7" type="checkbox" name="adrotate_nofollow" id="adrotate_nofollow" checked="1" /> <?php _e('Tell crawlers and search engines not to follow the target website url?', 'adrotate-pro'); ?> <?php _e('(Recommended)', 'adrotate-pro'); ?></label><br /><em><?php _e('Letting bots (Such as Googlebot) index paid links may negatively affect your SEO and PageRank.', 'adrotate-pro'); ?></em>
@@ -160,7 +194,7 @@ if($edit_banner) {
 			<tr>
 		        <th valign="top"><?php _e('Advert hash', 'adrotate'); ?></th>
 		        <td>
-					<textarea tabindex="2" id="adrotate_portability" name="adrotate_portability" cols="70" rows="5" class="ajdg-fullwidth" placeholder="<?php _e('To import a ready made advert, enter a advert hash from another AdRotate setup...', 'adrotate'); ?>"></textarea>
+					<textarea tabindex="2" id="adrotate_portability" name="adrotate_portability" cols="70" rows="5" class="ajdg-fullwidth" placeholder="<?php _e('To import a ready made advert paste an advert hash from another AdRotate setup.', 'adrotate'); ?>"></textarea>
 		        </td>
 	 		</tr>
 			</tbody>

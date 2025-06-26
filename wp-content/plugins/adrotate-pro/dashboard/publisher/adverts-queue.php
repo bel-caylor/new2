@@ -1,7 +1,7 @@
 <?php
 /* ------------------------------------------------------------------------------------
 *  COPYRIGHT AND TRADEMARK NOTICE
-*  Copyright 2008-2019 Arnan de Gans. All Rights Reserved.
+*  Copyright 2008-2024 Arnan de Gans. All Rights Reserved.
 *  ADROTATE is a registered trademark of Arnan de Gans.
 
 *  COPYRIGHT NOTICES AND ALL THE COMMENTS SHOULD REMAIN INTACT.
@@ -44,7 +44,7 @@
 		</thead>
 		<tbody>
 	<?php
-	if ($queued) {
+	if (count($queued) > 0) {
 		$class = '';
 		foreach($queued as $queue) {			
 			$advertiser = $wpdb->get_var("SELECT `user` FROM `{$wpdb->prefix}adrotate_linkmeta` WHERE `ad` = '{$queue['id']}' AND `group` = 0 AND `schedule` = 0;");
@@ -69,9 +69,8 @@
 			
 			$errorclass = '';
 			if($queue['type'] == 'error' OR $queue['type'] == 'a_error') $errorclass = ' row_yellow';
-			if($queue['type'] == 'reject') $errorclass = ' row_orange';
-			if($queue['lastactive'] <= $in2days OR $queue['lastactive'] <= $in7days) $errorclass = ' row_red';
-			if($queue['lastactive'] <= $now OR (($queue['crate'] > 0 OR $queue['irate'] > 0) AND $queue['budget'] == 0)) $errorclass = ' row_blue';
+			if($queue['type'] == 'reject') $errorclass = ' row_red';
+			if(($queue['crate'] > 0 OR $queue['irate'] > 0) AND $queue['budget'] == 0) $errorclass = ' row_blue';
 
 			$class = ('alternate' != $class) ? 'alternate' : '';
 			$class = ($errorclass != '') ? $errorclass : $class;
@@ -107,7 +106,7 @@
 </table>
 <p><center>
 	<span style="border: 1px solid #e6db55; height: 12px; width: 12px; background-color: #ffffe0">&nbsp;&nbsp;&nbsp;&nbsp;</span> <?php _e("Configuration errors", "adrotate-pro"); ?>
-	&nbsp;&nbsp;&nbsp;&nbsp;<span style="border: 1px solid #c80; height: 12px; width: 12px; background-color: #fdefc3">&nbsp;&nbsp;&nbsp;&nbsp;</span> <?php _e("Expires soon", "adrotate-pro"); ?>
-	&nbsp;&nbsp;&nbsp;&nbsp;<span style="border: 1px solid #c00; height: 12px; width: 12px; background-color: #ffebe8">&nbsp;&nbsp;&nbsp;&nbsp;</span> <?php _e("Expired", "adrotate-pro"); ?> / <?php _e("Rejected.", "adrotate-pro"); ?>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="border: 1px solid #c00; height: 12px; width: 12px; background-color: #ffebe8">&nbsp;&nbsp;&nbsp;&nbsp;</span> <?php _e("Rejected.", "adrotate-pro"); ?>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="border: 1px solid #466f82; height: 12px; width: 12px; background-color: #ebf3fa">&nbsp;&nbsp;&nbsp;&nbsp;</span> <?php _e("Limit reached", "adrotate-pro"); ?>
 </center></p>
 </form>

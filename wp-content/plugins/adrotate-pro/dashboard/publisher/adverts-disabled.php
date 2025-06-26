@@ -1,7 +1,7 @@
 <?php
 /* ------------------------------------------------------------------------------------
 *  COPYRIGHT AND TRADEMARK NOTICE
-*  Copyright 2008-2019 Arnan de Gans. All Rights Reserved.
+*  Copyright 2008-2024 Arnan de Gans. All Rights Reserved.
 *  ADROTATE is a registered trademark of Arnan de Gans.
 
 *  COPYRIGHT NOTICES AND ALL THE COMMENTS SHOULD REMAIN INTACT.
@@ -48,7 +48,7 @@
 		<?php
 		$class = '';
 		foreach($disabled as $banner) {
-			if($banner['tracker'] != 'N') {
+			if($adrotate_config['stats'] == 1 AND $banner['tracker'] != 'N') {
 				$stats = adrotate_stats($banner['id']);
 				$ctr = adrotate_ctr($stats['clicks'], $stats['impressions']);
 			}

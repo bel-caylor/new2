@@ -3,8 +3,8 @@
 namespace Google\Site_Kit_Dependencies\Google\AuthHandler;
 
 use Google\Site_Kit_Dependencies\Google\Auth\CredentialsLoader;
-use Google\Site_Kit_Dependencies\Google\Auth\HttpHandler\HttpHandlerFactory;
 use Google\Site_Kit_Dependencies\Google\Auth\FetchAuthTokenCache;
+use Google\Site_Kit_Dependencies\Google\Auth\HttpHandler\HttpHandlerFactory;
 use Google\Site_Kit_Dependencies\Google\Auth\Middleware\AuthTokenMiddleware;
 use Google\Site_Kit_Dependencies\Google\Auth\Middleware\ScopedAccessTokenMiddleware;
 use Google\Site_Kit_Dependencies\Google\Auth\Middleware\SimpleMiddleware;
@@ -12,18 +12,18 @@ use Google\Site_Kit_Dependencies\GuzzleHttp\Client;
 use Google\Site_Kit_Dependencies\GuzzleHttp\ClientInterface;
 use Google\Site_Kit_Dependencies\Psr\Cache\CacheItemPoolInterface;
 /**
-* This supports Guzzle 6
-*/
+ * This supports Guzzle 6
+ */
 class Guzzle6AuthHandler
 {
     protected $cache;
     protected $cacheConfig;
-    public function __construct(\Google\Site_Kit_Dependencies\Psr\Cache\CacheItemPoolInterface $cache = null, array $cacheConfig = [])
+    public function __construct(?\Google\Site_Kit_Dependencies\Psr\Cache\CacheItemPoolInterface $cache = null, array $cacheConfig = [])
     {
         $this->cache = $cache;
         $this->cacheConfig = $cacheConfig;
     }
-    public function attachCredentials(\Google\Site_Kit_Dependencies\GuzzleHttp\ClientInterface $http, \Google\Site_Kit_Dependencies\Google\Auth\CredentialsLoader $credentials, callable $tokenCallback = null)
+    public function attachCredentials(\Google\Site_Kit_Dependencies\GuzzleHttp\ClientInterface $http, \Google\Site_Kit_Dependencies\Google\Auth\CredentialsLoader $credentials, ?callable $tokenCallback = null)
     {
         // use the provided cache
         if ($this->cache) {
@@ -31,7 +31,7 @@ class Guzzle6AuthHandler
         }
         return $this->attachCredentialsCache($http, $credentials, $tokenCallback);
     }
-    public function attachCredentialsCache(\Google\Site_Kit_Dependencies\GuzzleHttp\ClientInterface $http, \Google\Site_Kit_Dependencies\Google\Auth\FetchAuthTokenCache $credentials, callable $tokenCallback = null)
+    public function attachCredentialsCache(\Google\Site_Kit_Dependencies\GuzzleHttp\ClientInterface $http, \Google\Site_Kit_Dependencies\Google\Auth\FetchAuthTokenCache $credentials, ?callable $tokenCallback = null)
     {
         // if we end up needing to make an HTTP request to retrieve credentials, we
         // can use our existing one, but we need to throw exceptions so the error
@@ -71,6 +71,6 @@ class Guzzle6AuthHandler
     }
     private function createAuthHttp(\Google\Site_Kit_Dependencies\GuzzleHttp\ClientInterface $http)
     {
-        return new \Google\Site_Kit_Dependencies\GuzzleHttp\Client(['base_uri' => $http->getConfig('base_uri'), 'http_errors' => \true, 'verify' => $http->getConfig('verify'), 'proxy' => $http->getConfig('proxy')]);
+        return new \Google\Site_Kit_Dependencies\GuzzleHttp\Client(['http_errors' => \true] + $http->getConfig());
     }
 }

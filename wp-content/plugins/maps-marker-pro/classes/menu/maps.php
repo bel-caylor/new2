@@ -187,7 +187,7 @@ class Maps extends Menu {
 								</li>
 								<li><a href="<?= get_admin_url(null, 'admin.php?page=mapsmarkerpro_marker&basemap=' . $map->settings->basemapDefault . '&lat=' . $map->settings->lat . '&lng=' . $map->settings->lng . '&zoom=' . $map->settings->zoom . '&map=' . $map->id) ?>" target="_blank"><?= esc_html__('Add marker', 'mmp') ?></a></li>
 								<?php if (MMP::$settings['apiFullscreen']): ?>
-									<li><a href="<?= $api->link("/fullscreen/{$map->id}/") ?>" target="_blank" title="<?= esc_attr__('Open standalone map in fullscreen mode', 'mmp') ?>"><img src="<?= plugins_url('images/icons/fullscreen.png', MMP::$path) ?>" /></a></li>
+									<li><a href="<?= $api->link("/fullscreen/{$map->id}/") ?>" target="_blank" title="<?= esc_attr__('Open standalone map in fullscreen mode', 'mmp') ?>"><img src="<?= plugins_url('images/icons/fullscreen.svg', MMP::$path) ?>" /></a></li>
 									<li><a class="mmp-qrcode-link" href="" data-id="<?= $map->id ?>" data-url="<?= $api->link("/fullscreen/{$map->id}/") ?>" title="<?= esc_attr__('Show QR code for fullscreen map', 'mmp') ?>"><img src="<?= plugins_url('images/icons/qr-code.png', MMP::$path) ?>" /></a></li>
 								<?php endif; ?>
 								<?php if (MMP::$settings['apiExport']): ?>

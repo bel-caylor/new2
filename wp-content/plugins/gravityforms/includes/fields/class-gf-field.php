@@ -63,6 +63,17 @@ class GF_Field extends stdClass implements ArrayAccess {
 	}
 
 	/**
+	 * Whether the choice field has entries that persist after changing the field type.
+	 *
+	 * @since 2.9
+	 *
+	 * @return boolean
+	 */
+	public function has_persistent_choices() {
+		return in_array( $this->type, array( 'multi_choice', 'image_choice' ) );
+	}
+
+	/**
 	 * Fires the deprecation notice only once per page. Not fired during AJAX requests.
 	 *
 	 * @param string $offset The array key being accessed.
@@ -331,6 +342,26 @@ class GF_Field extends stdClass implements ArrayAccess {
 	}
 
 	/**
+	 * Returns the form editor icon for the field type.
+	 *
+	 * Sometimes the field type and the input type are not the same, but we want the field type icon.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @return string
+	 */
+	public function get_form_editor_field_type_icon() {
+		if ( $this->type !== $this->inputType ) {
+			$field_class = GF_Fields::get( $this->type );
+			if ( $field_class ) {
+				return $field_class->get_form_editor_field_icon();
+			}
+		}
+
+		return $this->get_form_editor_field_icon();
+	}
+
+	/**
 	 * Returns the field's form editor description.
 	 *
 	 * @since 2.5
@@ -456,18 +487,34 @@ class GF_Field extends stdClass implements ArrayAccess {
 
 		$label_tag = $this->get_field_label_tag( $form );
 
+		// Label wrapper is required for correct positioning of the legend in compact view in Safari.
+		$legend_wrapper       = $is_form_editor && 'legend' === $label_tag ? '<span>' : '';
+		$legend_wrapper_close = $is_form_editor && 'legend' === $label_tag ? '</span>' : '';
+
 		$for_attribute = empty( $target_input_id ) || $label_tag === 'legend' ? '' : "for='{$target_input_id}'";
 
 		$admin_hidden_markup = ( $this->visibility == 'hidden' ) ? $this->get_hidden_admin_markup() : '';
 
 		$description = $this->get_description( $this->description, 'gfield_description' );
 
-		if ( $this->is_description_above( $form ) ) {
-			$clear         = $is_admin ? "<div class='gf_clear'></div>" : '';
-			$field_content = sprintf( "%s%s<$label_tag class='%s' $for_attribute >%s%s</$label_tag>%s{FIELD}%s$clear", $admin_buttons, $admin_hidden_markup, esc_attr( $this->get_field_label_class() ), $field_label, $required_div, $description, $validation_message );
-		} else {
-			$field_content = sprintf( "%s%s<$label_tag class='%s' $for_attribute >%s%s</$label_tag>{FIELD}%s%s", $admin_buttons, $admin_hidden_markup, esc_attr( $this->get_field_label_class() ), $field_label, $required_div, $description, $validation_message );
+		$clear = '';
+
+		if( $this->is_description_above( $form ) || $this->is_validation_above( $form ) ) {
+			$clear = $is_admin ? "<div class='gf_clear'></div>" : '';
 		}
+
+		$field_content = sprintf(
+			"%s%s<$label_tag class='%s' $for_attribute>$legend_wrapper%s%s$legend_wrapper_close</$label_tag>%s%s{FIELD}%s%s$clear",
+			$admin_buttons,
+			$admin_hidden_markup,
+			esc_attr( $this->get_field_label_class() ),
+			$field_label,
+			$required_div,
+			$this->is_description_above( $form ) ? $description : '',
+			$this->is_validation_above( $form ) ? $validation_message : '',
+			$this->is_description_above( $form ) ? '' : $description,
+			$this->is_validation_above( $form ) ? '' : $validation_message
+		);
 
 		return $field_content;
 	}
@@ -488,6 +535,19 @@ class GF_Field extends stdClass implements ArrayAccess {
 
 		return $container_tag === 'fieldset' ? 'legend' : 'label';
 
+	}
+
+	/**
+	 * Checks if any messages should be displayed in the sidebar for this field, and returns the HTML markup for them.
+	 *
+	 * Messages could be warning messages, that will be displayed in error style, or notification messages, that will be displayed in info style.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return array[]|array|string An array of arrays that lists all the messages and their types, an array that contains one message and type, or a warning message string that defaults to the warning type.
+	 */
+	public function get_field_sidebar_messages() {
+		return '';
 	}
 
 	/**
@@ -517,11 +577,31 @@ class GF_Field extends stdClass implements ArrayAccess {
 			'data-field-position' => '',
 		) );
 
-		$tabindex_string = (rgar( $atts, 'tabindex' ) ) === '' ?  '' : ' tabindex="' . esc_attr( $atts['tabindex'] ) . '"';
+		$tabindex_string     = ( rgar( $atts, 'tabindex' ) ) === '' ?  '' : ' tabindex="' . esc_attr( $atts['tabindex'] ) . '"';
 		$disable_ajax_reload = $this->disable_ajax_reload();
 		$ajax_reload_id      = $disable_ajax_reload === 'skip' || $disable_ajax_reload === 'true' || $disable_ajax_reload === true ? 'true' : esc_attr( rgar( $atts, 'id' ) );
+		$is_form_editor      = $this->is_form_editor();
+		$target_input_id     = esc_attr( rgar( $atts, 'id' ) );
+
+		// Get the field sidebar messages, this could be an array of messages or a warning message string.
+		$field_sidebar_messages  = GFCommon::is_form_editor() ? $this->get_field_sidebar_messages() : '';
+		$sidebar_message_type    = 'warning';
+		$sidebar_message_content = $field_sidebar_messages;
+
+		if ( is_array( $field_sidebar_messages ) ) {
+			$sidebar_message         = is_array( rgar( $field_sidebar_messages, '0' ) ) ? array_shift( $field_sidebar_messages ) : $field_sidebar_messages;
+			$sidebar_message_type    = rgar( $sidebar_message, 'type' );
+			$sidebar_message_content = rgar( $sidebar_message, 'content' );
+		}
+
+		if ( ! empty( $sidebar_message_content ) ) {
+			$atts['class'] .= ' gfield-has-sidebar-message gfield-has-sidebar-message--type-' . ( $sidebar_message_type === 'error' ? 'warning' : $sidebar_message_type );
+			if ( $sidebar_message_type === 'error' ) {
+				$atts['aria-invalid'] = 'true';
+			}
+		}
 		return sprintf(
-			'<%1$s id="%2$s"  class="%3$s" %4$s%5$s%6$s%7$s%8$s%9$s data-js-reload="%10$s">{FIELD_CONTENT}</%1$s>',
+			'<%1$s id="%2$s" class="%3$s" %4$s%5$s%6$s%7$s%8$s%9$s %10$s>%11$s{FIELD_CONTENT}</%1$s>',
 			$tag,
 			esc_attr( rgar( $atts, 'id' ) ),
 			esc_attr( rgar( $atts, 'class' ) ),
@@ -531,7 +611,8 @@ class GF_Field extends stdClass implements ArrayAccess {
 			rgar( $atts, 'aria-live' ) ? ' aria-live="' . esc_attr( $atts['aria-live'] ) . '"' : '',
 			rgar( $atts, 'data-field-class' ) ? ' data-field-class="' . esc_attr( $atts['data-field-class'] ) . '"' : '',
 			rgar( $atts, 'data-field-position' ) ? ' data-field-position="' . esc_attr( $atts['data-field-position'] ) . '"' : '',
-			$ajax_reload_id
+			rgar( $atts, 'aria-invalid' ) ? ' aria-invalid="true"' : '',
+			empty( $sidebar_message_content ) ? '' : '<span class="field-sidebar-message-content field-sidebar-message-content--type-' . $sidebar_message_type . ' hidden">' . \GFCommon::maybe_wp_kses( $sidebar_message_content ) . '</span>'
 		);
 
 	}
@@ -600,7 +681,16 @@ class GF_Field extends stdClass implements ArrayAccess {
 		} else {
 			$label = wp_strip_all_tags( $this->get_field_label( true, '' ) );
 		}
-		return sprintf( '%1$s - %2$s, %3$s.', esc_attr( $label ), esc_attr( $this->type ), esc_attr( $action ) );
+
+		// Sometimes the field editor label is different from the field type, so make sure we're using the correct field type.
+		$field_class = GF_Fields::get( $this->type );
+		if ( is_object( $field_class ) ) {
+			$field_title = $field_class->get_form_editor_field_title();
+		} else {
+			$field_title = $this->type;
+		}
+
+		return sprintf( '%1$s - %2$s, %3$s.', esc_attr( $label ), esc_attr( $field_title ), esc_attr( $action ) );
 	}
 
 	// # SUBMISSION -----------------------------------------------------------------------------------------------------
@@ -617,6 +707,50 @@ class GF_Field extends stdClass implements ArrayAccess {
 	}
 
 	/**
+	 * Returns the input ID given the choice key for Multiple Choice and Image Choice fields.
+	 *
+	 * @since 2.9
+	 *
+	 * @param string $key The choice key.
+	 *
+	 * @return string
+	 */
+	public function get_input_id_from_choice_key( $key ) {
+		$input_id = '';
+		if ( is_array( $this->inputs ) ) {
+			foreach ( $this->inputs as $input ) {
+				if ( rgar( $input, 'key' ) == $key ) {
+					$input_id = rgar( $input, 'id' );
+					break;
+				}
+			}
+		}
+		return $input_id;
+	}
+
+	/**
+	 * Returns the choice ID given the input key for Multiple Choice and Image Choice fields.
+	 *
+	 * @since 2.9
+	 *
+	 * @param string $key The choice key.
+	 *
+	 * @return string
+	 */
+	public function get_choice_id_from_input_key( $key ) {
+		$choice_id = '';
+		if ( is_array( $this->choices ) ) {
+			foreach ( $this->choices as $index => $choice ) {
+				if ( rgar( $choice, 'key' ) == $key ) {
+					$choice_id = $index;
+					break;
+				}
+			}
+		}
+		return $choice_id;
+	}
+
+	/**
 	 * Used to determine the required validation result.
 	 *
 	 * @param int $form_id The ID of the form currently being processed.
@@ -627,7 +761,8 @@ class GF_Field extends stdClass implements ArrayAccess {
 
 		$copy_values_option_activated = $this->enableCopyValuesOption && rgpost( 'input_' . $this->id . '_copy_values_activated' );
 
-		if ( is_array( $this->inputs ) ) {
+		// GF_Field_Radio can now have inputs if it's a Choice or Image Choice field
+		if ( is_array( $this->inputs ) && ! ( $this instanceof GF_Field_Radio ) ) {
 			foreach ( $this->inputs as $input ) {
 
 				if ( $copy_values_option_activated ) {
@@ -864,7 +999,7 @@ class GF_Field extends stdClass implements ArrayAccess {
 		if ( is_array( $inputs ) ) {
 			$value = array();
 			foreach ( $inputs as $input ) {
-				$value[ strval( $input['id'] ) ] = $this->get_input_value_submission( 'input_' . str_replace( '.', '_', strval( $input['id'] ) ), RGForms::get( 'name', $input ), $field_values, $get_from_post_global_var );
+				$value[ strval( $input['id'] ) ] = $this->get_input_value_submission( 'input_' . str_replace( '.', '_', strval( $input['id'] ) ), rgar( $input, 'name' ), $field_values, $get_from_post_global_var );
 			}
 		} else {
 			$value = $this->get_input_value_submission( 'input_' . $this->id, $this->inputName, $field_values, $get_from_post_global_var );
@@ -1056,7 +1191,7 @@ class GF_Field extends stdClass implements ArrayAccess {
 		}
 
 		if ( $format === 'html' ) {
-			$value = nl2br( $value );
+			$value = nl2br( (string) $value );
 
 			$allowable_tags = $this->get_allowable_tags();
 
@@ -1397,17 +1532,50 @@ class GF_Field extends stdClass implements ArrayAccess {
 	 * @return bool
 	 */
 	public function is_description_above( $form ) {
-		$form_label_placement        = rgar( $form, 'labelPlacement' );
-		$field_label_placement       = $this->labelPlacement;
-		$form_description_placement  = rgar( $form, 'descriptionPlacement' );
-		$field_description_placement = $this->descriptionPlacement;
-		if ( empty( $field_description_placement ) ) {
-			$field_description_placement = $form_description_placement;
+		$field_description_setting = $this->descriptionPlacement;
+		$form_description_setting =  rgar( $form, 'descriptionPlacement' ) ? $form['descriptionPlacement'] : 'below';
+		$form_label_placement = rgar( $form, 'labelPlacement' ) ? $form['labelPlacement'] : 'top_label';
+
+		if( ! $field_description_setting ) {
+			$field_description_setting = $form_description_setting;
 		}
-		$is_description_above = $field_description_placement == 'above' && ( $field_label_placement == 'top_label' || $field_label_placement == 'hidden_label' || ( empty( $field_label_placement ) && $form_label_placement == 'top_label' ) );
+
+		$is_description_above = false;
+
+		$description_can_be_above = false;
+
+		if( $this->labelPlacement == 'top_label' || $this->labelPlacement == 'hidden_label' ) {
+			$description_can_be_above = true;
+		}
+
+		if( ! $this->labelPlacement && $form_label_placement == 'top_label' ) {
+			$description_can_be_above = true;
+		}
+
+		if ( $field_description_setting == 'above' && $description_can_be_above ) {
+			$is_description_above = true;
+		}
 
 		return $is_description_above;
 	}
+
+	/**
+	 * Determines if the field validation message should be positioned above or below the input.
+	 *
+	 * @since 2.8.8
+	 *
+	 * @param array $form The Form Object currently being processed.
+	 *
+	 * @return bool
+	 */
+	public function is_validation_above( $form ) {
+		$form_validation_placement = rgar( $form, 'validationPlacement' );
+
+		$is_validation_above = $form_validation_placement == 'above';
+
+		return $is_validation_above;
+	}
+
 
 
 	public function is_administrative() {
@@ -1513,10 +1681,10 @@ class GF_Field extends stdClass implements ArrayAccess {
 		if(  ! in_array( $this->type, $duplicate_disabled ) ) {
 			$duplicate_aria_action = __( 'duplicate this field', 'gravityforms' );
 			$duplicate_field_link = "
-				<button 
-					id='gfield_duplicate_{$this->id}' 
-					class='gfield-field-action gfield-duplicate' 
-					onclick='StartDuplicateField(this); return false;' 
+				<button
+					id='gfield_duplicate_{$this->id}'
+					class='gfield-field-action gfield-duplicate'
+					onclick='StartDuplicateField(this); return false;'
 					onkeypress='StartDuplicateField(this); return false;'
 					aria-label='" . esc_html( $this->get_field_action_aria_label( $duplicate_aria_action ) ) . "'
 				>
@@ -1540,10 +1708,10 @@ class GF_Field extends stdClass implements ArrayAccess {
 
 		$delete_aria_action = __( 'delete this field', 'gravityforms' );
 		$delete_field_link = "
-			<button 
-				id='gfield_delete_{$this->id}' 
-				class='gfield-field-action gfield-delete' 
-				onclick='DeleteField(this);' 
+			<button
+				id='gfield_delete_{$this->id}'
+				class='gfield-field-action gfield-delete'
+				onclick='DeleteField(this);'
 				onkeypress='DeleteField(this); return false;'
 				aria-label='" . esc_html( $this->get_field_action_aria_label( $delete_aria_action ) ) . "'
 			>
@@ -1564,10 +1732,10 @@ class GF_Field extends stdClass implements ArrayAccess {
 
 		$edit_aria_action = __( 'jump to this field\'s settings', 'gravityforms' );
 		$edit_field_link = "
-			<button 
-				id='gfield_edit_{$this->id}' 
+			<button
+				id='gfield_edit_{$this->id}'
 				class='gfield-field-action gfield-edit'
-				onclick='EditField(this);' 
+				onclick='EditField(this);'
 				onkeypress='EditField(this); return false;'
 				aria-label='" . esc_html( $this->get_field_action_aria_label( $edit_aria_action ) ) . "'
 			>
@@ -1592,15 +1760,41 @@ class GF_Field extends stdClass implements ArrayAccess {
 			$drag_handle = '';
 		}
 
-		$field_icon = '<span class="gfield-field-action gfield-icon">' . GFCommon::get_icon_markup( array( 'icon' => $this->get_form_editor_field_icon() ) ) . '</span>';
+		$field_icon = '<span class="gfield-field-action gfield-icon" title="' . $this->get_form_editor_field_title() . '">' . GFCommon::get_icon_markup( array( 'icon' => $this->get_form_editor_field_type_icon() ) ) . '</span>';
+
+		$field_id = '<span class="gfield-compact-icon--id">' . sprintf( esc_html__( 'ID: %s', 'gravityforms' ), $this->id ) . '</span>';
+
+		$conditional_display = rgars( $this, 'conditionalLogic/enabled' ) && $this->conditionalLogic['enabled'] ? 'block' : 'none';
+		$conditional         = "<span class='gfield-compact-icon--conditional' id='gfield_{$this->id}-conditional-logic-icon' title='" . esc_attr( 'Conditional Logic', 'gravityforms' ) . "' style='display: {$conditional_display}' aria-label=" . esc_html( 'Conditional Logic', 'gravityforms' ) . ">" . GFCommon::get_icon_markup( array( 'icon' => 'gform-icon--conditional-logic' ) ) . "<span class='screen-reader-text'>" . esc_attr( 'This field has conditional logic enabled.', 'gravityforms' ) . "</span></span>";
+
+		$field_sidebar_messages    = $this->get_field_sidebar_messages();
+		$sidebar_message           = is_array( rgar( $field_sidebar_messages, '0' ) ) ? array_shift( $field_sidebar_messages ) : $field_sidebar_messages;
+		$compact_view_sidebar_message_icon = '';
+		if ( ! empty( $sidebar_message ) ) {
+			$sidebar_message_types = array(
+				'warning' => array( 'gform-icon--exclamation-simple', 'gform-icon-preset--status-error' ),
+				'error'   => array( 'gform-icon--exclamation-simple', 'gform-icon-preset--status-error' ),
+				'info'    => array( 'gform-icon--information-simple', 'gform-icon-preset--status-info' ),
+				'notice'  => array( 'gform-icon--information-simple', 'gform-icon-preset--status-info' ),
+				'success' => array( 'gform-icon--checkmark-simple', 'gform-icon-preset--status-correct' ),
+			);
+			$compact_view_sidebar_message_icon_type        = is_array( $field_sidebar_messages ) ? rgar( $sidebar_message, 'type' ) : 'warning';
+			$compact_view_sidebar_message_icon_helper_text = is_array( $field_sidebar_messages ) ? rgar( $sidebar_message, 'icon_helper_text' ) : __( 'This field has an issue', 'gravityforms' );
+			$compact_view_sidebar_message_icon             = sprintf( '<span class="gfield-sidebar-message-icon gform-icon gform-icon--preset-active %1$s" title="%2$s" aria-label="%2$s"></span>', implode( ' ', $sidebar_message_types[ $compact_view_sidebar_message_icon_type ] ), esc_attr( $compact_view_sidebar_message_icon_helper_text ) );
+		}
 
 		$admin_buttons = "
-			<div class='gfield-admin-icons'>
+			<div class='gfield-admin-icons gform-theme__disable'>
 				{$drag_handle}
 				{$duplicate_field_link}
 				{$edit_field_link}
 				{$delete_field_link}
+				{$compact_view_sidebar_message_icon}
 				{$field_icon}
+			</div>
+			<div class='gfield-compact-icons gform-theme__disable'>
+				{$field_id}
+				{$conditional}
 			</div>";
 
 		return $admin_buttons;
@@ -1626,7 +1820,7 @@ class GF_Field extends stdClass implements ArrayAccess {
 	 */
 	public function get_hidden_admin_markup() {
 
-		 return "<div class='admin-hidden-markup'><i class='gform-icon gform-icon--hidden'></i><span>Hidden</span></div>";
+		 return '<div class="admin-hidden-markup"><i class="gform-icon gform-icon--hidden" aria-hidden="true" title="'. esc_attr( __( 'This field is hidden when viewing the form', 'gravityforms' ) ) .'"></i><span>'. esc_attr( __( 'This field is hidden when viewing the form', 'gravityforms' ) ) .'</span></div>';
 
 	}
 
@@ -2069,7 +2263,7 @@ class GF_Field extends stdClass implements ArrayAccess {
 		}
 
 		foreach ( $this->choices as $choice ) {
-			if ( $choice['text'] === $value ) {
+			if ( ! rgblank( $choice['text'] ) && $choice['text'] === $value ) {
 				return $choice['value'];
 			}
 		}
@@ -2475,7 +2669,7 @@ class GF_Field extends stdClass implements ArrayAccess {
 	 */
 	public function get_allowable_tags( $form_id = null ) {
 		if ( empty( $form_id ) ) {
-			$form_id = $this->form_id;
+			$form_id = $this->formId;
 		}
 		$form_id    = absint( $form_id );
 		$allow_html = $this->allow_html();

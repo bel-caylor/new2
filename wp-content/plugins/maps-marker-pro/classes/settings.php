@@ -279,6 +279,11 @@ class Settings {
 	 * @since 4.0
 	 */
 	public function settings_sanity() {
+		$settings['locationIqApiKey'] = array(
+			'type'    => 'string',
+			'default' => '',
+			'allowed' => true
+		);
 		$settings['googleApiKey'] = array(
 			'type'    => 'string',
 			'default' => '',
@@ -1503,6 +1508,15 @@ class Settings {
 		$settings['listLocation'] = array(
 			'type'    => 'bool',
 			'default' => false
+		);
+		$settings['listGeocodingShowMarker'] = array(
+			'type'    => 'bool',
+			'default' => false
+		);
+		$settings['listGeocodingMarkerIcon'] = array(
+			'type'    => 'string',
+			'default' => '',
+			'allowed' => true
 		);
 		$settings['listGeocodingZoom'] = array(
 			'type'    => 'absfloat',

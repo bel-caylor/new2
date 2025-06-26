@@ -116,10 +116,13 @@ function adrotate_license_deactivate_uninstall() {
 
 function adrotate_license_response($request = '', $a = array(), $uninstall = false, $force = false) {
 	$args = array();
+	$plugins = get_plugins();
+	$plugin_version = $plugins['adrotate-pro/adrotate-pro.php']['Version'];
+
 	if($request == 'activation') $args = array('request' => 'activation', 'email' => $a['email'], 'license_key' => $a['key'], 'product_id' => $a['type'], 'instance' => $a['instance'], 'platform' => $a['platform']);
 	if($request == 'deactivation') $args = array('request' => 'deactivation', 'email' => $a['email'], 'license_key' => $a['key'], 'product_id' => $a['type'], 'instance' => $a['instance']);
 
-	$http_args = array('timeout' => 5, 'sslverify' => false, 'headers' => array('user-agent' => 'AdRotate Pro;'));
+	$http_args = array('timeout' => 5, 'sslverify' => false, 'headers' => array('user-agent' => 'adrotate-pro/'.$plugin_version.';'));
 	$response = wp_remote_get(add_query_arg('wc-api', 'software-api', 'https://ajdg.solutions/') . '&' . http_build_query($args, '', '&'), $http_args);
 
 	if($uninstall) return; // If uninstall, skip the rest

@@ -1,9 +1,10 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
-  "apiVersion": 2,
+  "apiVersion": 3,
   "title": "Countdown",
   "name": "kadence/countdown",
   "category": "kadence-blocks",
+  "textdomain": "kadence-blocks",
   "description": "",
   "attributes": {
     "uniqueID": {
@@ -15,6 +16,10 @@
       "default": "date"
     },
     "date": {
+      "type": "string",
+      "default": ""
+    },
+    "endDate": {
       "type": "string",
       "default": ""
     },
@@ -42,10 +47,12 @@
       "type": "string"
     },
     "evergreenHours": {
-      "type": "number"
+      "type": "number",
+      "default": 0
     },
     "evergreenMinutes": {
-      "type": "number"
+      "type": "number",
+      "default": 0
     },
     "evergreenReset": {
       "type": "number",
@@ -54,6 +61,18 @@
     "evergreenStrict": {
       "type": "boolean",
       "default": false
+    },
+    "repeat": {
+      "type": "boolean",
+      "default": false
+    },
+    "stopRepeating": {
+      "type": "boolean",
+      "default": false
+    },
+    "frequency": {
+      "type": "string",
+      "default": "daily"
     },
     "enableTimer": {
       "type": "boolean",
@@ -463,6 +482,7 @@
       "full"
     ],
     "reusable": false,
-    "html": false
+    "html": false,
+    "kbMetadata": true
   }
 }

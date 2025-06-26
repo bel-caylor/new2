@@ -98,9 +98,7 @@ class Kadence_ActiveCampaign_REST_Controller extends WP_REST_Controller {
 			return array();
 		}
 
-
 		return $body;
-
 	}
 
 	/**
@@ -112,7 +110,7 @@ class Kadence_ActiveCampaign_REST_Controller extends WP_REST_Controller {
 		$query_params = parent::get_collection_params();
 
 		$query_params[ self::PROP_END_POINT ] = array(
-			'description' => __( 'Actionable endpoint for api call.', 'kadence-blocks-pro' ),
+			'description' => __( 'Actionable endpoint for api call.', 'kadence-blocks' ),
 			'type'        => 'string',
 		);
 

@@ -7,8 +7,7 @@
  * @package StellarWP\Telemetry
  *
  * @license GPL-2.0-or-later
- * Modified by kadencewp on 22-February-2023 using Strauss.
- * @see https://github.com/BrianHenryIE/strauss
+ * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace KadenceWP\KadenceBlocks\StellarWP\Telemetry\Last_Send;
@@ -134,5 +133,4 @@ class Last_Send {
 
 		return $result;
 	}
-
 }

@@ -105,16 +105,20 @@ class Kadence_Blocks_Singlebtn_Block extends Kadence_Blocks_Abstract_Block {
 			$css->add_property( 'background', $attributes['gradient'] . ' !important' );
 		}
 		$css->render_typography( $attributes, 'typography' );
-		$css->render_measure_output( $attributes, 'borderRadius', 'border-radius' );
+		$css->render_measure_output( $attributes, 'borderRadius', 'border-radius', array( 'unit_key' => 'borderRadiusUnit' ) );
 		$css->render_border_styles( $attributes, 'borderStyle', true );
-		$css->render_measure_output( $attributes, 'padding', 'padding', [ 'unit_key' => 'paddingUnit' ] );
-		$css->render_measure_output( $attributes, 'margin', 'margin', [ 'unit_key' => 'marginUnit' ] );
+		$css->render_measure_output( $attributes, 'padding', 'padding', array( 'unit_key' => 'paddingUnit' ) );
+		$css->render_measure_output( $attributes, 'margin', 'margin', array( 'unit_key' => 'marginUnit' ) );
 		if ( isset( $attributes['displayShadow'] ) && true === $attributes['displayShadow'] ) {
 			if ( isset( $attributes['shadow'] ) && is_array( $attributes['shadow'] ) && isset( $attributes['shadow'][0] ) && is_array( $attributes['shadow'][0] ) ) {
 				$css->add_property( 'box-shadow', ( isset( $attributes['shadow'][0]['inset'] ) && true === $attributes['shadow'][0]['inset'] ? 'inset ' : '' ) . ( isset( $attributes['shadow'][0]['hOffset'] ) && is_numeric( $attributes['shadow'][0]['hOffset'] ) ? $attributes['shadow'][0]['hOffset'] : '0' ) . 'px ' . ( isset( $attributes['shadow'][0]['vOffset'] ) && is_numeric( $attributes['shadow'][0]['vOffset'] ) ? $attributes['shadow'][0]['vOffset'] : '0' ) . 'px ' . ( isset( $attributes['shadow'][0]['blur'] ) && is_numeric( $attributes['shadow'][0]['blur'] ) ? $attributes['shadow'][0]['blur'] : '14' ) . 'px ' . ( isset( $attributes['shadow'][0]['spread'] ) && is_numeric( $attributes['shadow'][0]['spread'] ) ? $attributes['shadow'][0]['spread'] : '0' ) . 'px ' . $css->render_color( ( isset( $attributes['shadow'][0]['color'] ) && ! empty( $attributes['shadow'][0]['color'] ) ? $attributes['shadow'][0]['color'] : '#000000' ), ( isset( $attributes['shadow'][0]['opacity'] ) && is_numeric( $attributes['shadow'][0]['opacity'] ) ? $attributes['shadow'][0]['opacity'] : 0.2 ) ) );
 			} else {
 				$css->add_property( 'box-shadow', '1px 1px 2px 0px rgba(0, 0, 0, 0.2)' );
 			}
+		}
+		if ( ! empty( $attributes['textUnderline'] ) ) {
+			$css->set_selector( '.wp-block-kadence-advancedbtn .kb-btn' . $unique_id . '.kb-button:not(.specificity):not(.extra-specificity)' );
+			$css->add_property( 'text-decoration', $attributes['textUnderline'] );
 		}
 		// Icon.
 		$css->set_selector( '.kb-btn' . $unique_id . '.kb-button .kb-svg-icon-wrap' );
@@ -123,13 +127,13 @@ class Kadence_Blocks_Singlebtn_Block extends Kadence_Blocks_Abstract_Block {
 		}
 		$css->render_measure_output( $attributes, 'iconPadding', 'padding', array( 'unit_key' => 'iconPaddingUnit' ) );
 		$css->render_responsive_range( $attributes, 'iconSize', 'font-size', 'iconSizeUnit' );
-		// Icon Hover.
-		$css->set_selector( '.kb-btn' . $unique_id . '.kb-button:hover .kb-svg-icon-wrap' );
+		// Icon Hover-Focus.
+		$css->set_selector( '.kb-btn' . $unique_id . '.kb-button:hover .kb-svg-icon-wrap, .kb-btn' . $unique_id . '.kb-button:focus .kb-svg-icon-wrap' );
 		if ( ! empty( $attributes['iconColorHover'] ) ) {
 			$css->add_property( 'color', $css->render_color( $attributes['iconColorHover'] ) );
 		}
-		// Hover.
-		$css->set_selector( '.wp-block-kadence-advancedbtn .kb-btn' . $unique_id . '.kb-button:hover' );
+		// Hover-Focus.
+		$css->set_selector( '.wp-block-kadence-advancedbtn .kb-btn' . $unique_id . '.kb-button:hover, .wp-block-kadence-advancedbtn .kb-btn' . $unique_id . '.kb-button:focus' );
 		if ( ! empty( $attributes['colorHover'] ) ) {
 			$css->add_property( 'color', $css->render_color( $attributes['colorHover'] ) );
 		}
@@ -151,15 +155,13 @@ class Kadence_Blocks_Singlebtn_Block extends Kadence_Blocks_Abstract_Block {
 		}
 		// Hover before.
 		if ( 'gradient' === $bg_type && 'normal' === $bg_hover_type && ! empty( $attributes['backgroundHover'] ) ) {
-			$css->set_selector( '.kb-btn' . $unique_id . '.kb-button:hover::before' );
-			$css->add_property( 'background', $css->render_color( $attributes['backgroundHover'] ) );
 			$css->set_selector( '.kb-btn' . $unique_id . '.kb-button::before' );
+			$css->add_property( 'background', $css->render_color( $attributes['backgroundHover'] ) );
 			$css->add_property( 'transition', 'opacity .3s ease-in-out' );
 		}
 		if ( 'gradient' === $bg_hover_type && ! empty( $attributes['gradientHover'] ) ) {
-			$css->set_selector( '.kb-btn' . $unique_id . '.kb-button:hover::before' );
-			$css->add_property( 'background', $attributes['gradientHover'] );
 			$css->set_selector( '.kb-btn' . $unique_id . '.kb-button::before' );
+			$css->add_property( 'background', $attributes['gradientHover'] );
 			$css->add_property( 'transition', 'opacity .3s ease-in-out' );
 		}
 		// Only Icon.
@@ -176,12 +178,30 @@ class Kadence_Blocks_Singlebtn_Block extends Kadence_Blocks_Abstract_Block {
 				$css->add_property( 'display', 'block' );
 			}
 		}
+		if ( isset( $attributes['onlyText'][0] ) && '' !== $attributes['onlyText'][0] ) {
+			$css->set_media_state( 'tablet' );
+			$css->set_selector( '.kb-btn' . $unique_id . '.kb-button .kb-svg-icon-wrap' );
+			if ( true == $attributes['onlyText'][0] ) {
+				$css->add_property( 'display', 'none' );
+			} elseif ( false == $attributes['onlyText'][0] ) {
+				$css->add_property( 'display', 'block' );
+			}
+		}
 		if ( isset( $attributes['onlyIcon'][2] ) && '' !== $attributes['onlyIcon'][2] ) {
 			$css->set_media_state( 'mobile' );
 			$css->set_selector( '.kb-btn' . $unique_id . '.kb-button .kt-btn-inner-text' );
 			if ( true == $attributes['onlyIcon'][2] ) {
 				$css->add_property( 'display', 'none' );
 			} elseif ( false == $attributes['onlyIcon'][2] ) {
+				$css->add_property( 'display', 'block' );
+			}
+		}
+		if ( isset( $attributes['onlyText'][1] ) && '' !== $attributes['onlyText'][1] ) {
+			$css->set_media_state( 'mobile' );
+			$css->set_selector( '.kb-btn' . $unique_id . '.kb-button .kb-svg-icon-wrap' );
+			if ( true == $attributes['onlyText'][1] ) {
+				$css->add_property( 'display', 'none' );
+			} elseif ( false == $attributes['onlyText'][1] ) {
 				$css->add_property( 'display', 'block' );
 			}
 		}
@@ -199,6 +219,9 @@ class Kadence_Blocks_Singlebtn_Block extends Kadence_Blocks_Abstract_Block {
 	 * @return mixed
 	 */
 	public function build_html( $attributes, $unique_id, $content, $block_instance ) {
+		if ( ! empty( $attributes['tooltip'] ) ) {
+			$this->enqueue_script( 'kadence-blocks-tippy' );
+		}
 		$classes = array( 'kb-button', 'kt-button', 'button', 'kb-btn' . $unique_id );
 		$classes[] = ! empty( $attributes['sizePreset'] ) ? 'kt-btn-size-' . $attributes['sizePreset'] : 'kt-btn-size-standard';
 		$classes[] = ! empty( $attributes['widthType'] ) ? 'kt-btn-width-type-' . $attributes['widthType'] : 'kt-btn-width-type-auto';
@@ -240,6 +263,12 @@ class Kadence_Blocks_Singlebtn_Block extends Kadence_Blocks_Abstract_Block {
 				$wrapper_args['rel'] = $rel_add;
 			}
 		}
+		if ( ! empty( $attributes['tooltip'] ) ) {
+			$wrapper_args['data-kb-tooltip-content'] = esc_attr( $attributes['tooltip'] );
+			if ( ! empty( $attributes['tooltipPlacement'] ) ) {
+				$wrapper_args['data-tooltip-placement'] = esc_attr( $attributes['tooltipPlacement'] );
+			}
+		}
 		$wrapper_attributes = get_block_wrapper_attributes( $wrapper_args );
 
 		$text       = ! empty( $attributes['text'] ) ? '<span class="kt-btn-inner-text">' . $attributes['text'] . '</span>' : '';
@@ -253,11 +282,19 @@ class Kadence_Blocks_Singlebtn_Block extends Kadence_Blocks_Abstract_Block {
 			if ( $line_icon ) {
 				$stroke_width = 2;
 			}
-			$svg_icon = Kadence_Blocks_Svg_Render::render( $attributes['icon'], $fill, $stroke_width );
+			$title    = ( ! empty( $attributes['iconTitle'] ) ? $attributes['iconTitle'] : '' );
+			$hidden   = ( empty( $title ) ? true : false );
+			$svg_icon = Kadence_Blocks_Svg_Render::render( $attributes['icon'], $fill, $stroke_width, $title, $hidden );
 		}
 		$icon_left  = ! empty( $svg_icon ) && ! empty( $attributes['iconSide'] ) && 'left' === $attributes['iconSide'] ? '<span class="kb-svg-icon-wrap kb-svg-icon-' . esc_attr( $attributes['icon'] ) . ' kt-btn-icon-side-left">' . $svg_icon . '</span>' : '';
 		$icon_right = ! empty( $svg_icon ) && ! empty( $attributes['iconSide'] ) && 'right' === $attributes['iconSide'] ? '<span class="kb-svg-icon-wrap kb-svg-icon-' . esc_attr( $attributes['icon'] ) . ' kt-btn-icon-side-right">' . $svg_icon . '</span>' : '';
 		$html_tag   = ! empty( $attributes['link'] ) ? 'a' : 'span';
+
+		// Try to Detect if this is a show more button and make it a button.
+		if ( isset( $attributes['lock'] ) && $attributes['lock'] && isset( $attributes['lock']['remove'] ) && $attributes['lock']['remove'] && isset( $attributes['lock']['move'] ) && $attributes['lock']['move'] && empty( $attributes['link'] )) {
+			$html_tag = 'button';
+		}
+
 		$content    = sprintf( '<%1$s %2$s>%3$s%4$s%5$s</%1$s>', $html_tag, $wrapper_attributes, $icon_left, $text, $icon_right );
 
 		/*  Wrap in div is AOS is enabled. AOS transitions will interfere with hover transitions. */
@@ -292,6 +329,8 @@ class Kadence_Blocks_Singlebtn_Block extends Kadence_Blocks_Abstract_Block {
 		wp_register_style( 'kadence-glightbox', KADENCE_BLOCKS_URL . 'includes/assets/css/kb-glightbox.min.css', array(), KADENCE_BLOCKS_VERSION );
 		wp_register_script( 'kadence-glightbox', KADENCE_BLOCKS_URL . 'includes/assets/js/glightbox.min.js', array(), KADENCE_BLOCKS_VERSION, true );
 		wp_register_script( 'kadence-blocks-glight-video-init', KADENCE_BLOCKS_URL . 'includes/assets/js/kb-glight-video-init.min.js', array( 'kadence-glightbox' ), KADENCE_BLOCKS_VERSION, true );
+		wp_register_script( 'kadence-blocks-popper', KADENCE_BLOCKS_URL . 'includes/assets/js/popper.min.js', array(), KADENCE_BLOCKS_VERSION, true );
+		wp_register_script( 'kadence-blocks-tippy', KADENCE_BLOCKS_URL . 'includes/assets/js/kb-tippy.min.js', array( 'kadence-blocks-popper' ), KADENCE_BLOCKS_VERSION, true );
 	}
 }
 

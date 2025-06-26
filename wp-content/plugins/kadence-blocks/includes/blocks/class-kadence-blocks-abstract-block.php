@@ -128,6 +128,7 @@ class Kadence_Blocks_Abstract_Block {
 				if ( ! $css_class->has_styles( 'kb-' . $this->block_name . $unique_id ) && apply_filters( 'kadence_blocks_render_head_css', true, $this->block_name, $attributes ) ) {
 					// Filter attributes for easier dynamic css.
 					$attributes = apply_filters( 'kadence_blocks_' . $this->block_name . '_render_block_attributes', $attributes );
+					$unique_id  = str_replace( '/', '-', $unique_id );
 					$this->build_css( $attributes, $css_class, $unique_id, $unique_id );
 				}
 			}
@@ -165,11 +166,12 @@ class Kadence_Blocks_Abstract_Block {
 		$this->render_scripts( $attributes, true );
 		if ( isset( $attributes['uniqueID'] ) ) {
 			$unique_id = $attributes['uniqueID'];
+			$unique_id = str_replace( '/', '-', $unique_id );
 			$unique_style_id = apply_filters( 'kadence_blocks_build_render_unique_id', $attributes['uniqueID'], $this->block_name, $attributes );
 			$css_class = Kadence_Blocks_CSS::get_instance();
 
 			// If filter didn't run in header (which would have enqueued the specific css id ) then filter attributes for easier dynamic css.
-			$attributes = apply_filters( 'kadence_blocks_' . str_replace( '-', '_', $this->block_name ) . '_render_block_attributes', $attributes );
+			$attributes = apply_filters( 'kadence_blocks_' . str_replace( '-', '_', $this->block_name ) . '_render_block_attributes', $attributes, $block_instance );
 
 			$content   = $this->build_html( $attributes, $unique_id, $content, $block_instance );
 			if ( ! $css_class->has_styles( 'kb-' . $this->block_name . $unique_style_id ) && ! is_feed() && apply_filters( 'kadence_blocks_render_inline_css', true, $this->block_name, $unique_id ) ) {
@@ -253,4 +255,31 @@ class Kadence_Blocks_Abstract_Block {
 		wp_enqueue_style( $handle );
 	}
 
+
+	/**
+	 * Gets the HTML tag from the attributes.
+	 * If the tag provided isn't allowed, return the default value.
+	 *
+	 * @param array $attributes Array of the blocks attributes.
+	 * @param string $tag_key Offest on $attributes where the tag is set.
+	 * @param string $default Default tag to use if $tag_key attribue is undefined or invalid.
+	 * @param array $allowed_tags Array of allowed tags.
+	 * @param string $level_key If defined, we'll assume heading tags are allowed.
+	 *
+	 * @return string
+	 */
+	public function get_html_tag( $attributes, $tag_key, $default, $allowed_tags = array(), $level_key = '' ) {
+
+		if( !empty( $attributes[ $tag_key ] ) && in_array( $attributes[ $tag_key ], $allowed_tags ) ) {
+
+			if( $attributes[ $tag_key ] === 'heading' ) {
+				$level = !empty( $attributes[ $level_key ] ) ? $attributes[ $level_key ] : 2;
+				return 'h' . $level;
+			}
+
+			return $attributes[ $tag_key ];
+		}
+
+		return $default;
+	}
 }

@@ -8,6 +8,7 @@ use GFCommon;
 
 defined( 'ABSPATH' ) || die();
 
+#[\AllowDynamicProperties]
 class Base implements ArrayAccess {
 
 	/**
@@ -124,6 +125,149 @@ class Base implements ArrayAccess {
 	 */
 	public $settings;
 
+	/** Used to check if encryption is suppported.
+	 *
+	 * @since 2.7.15.2
+	 *
+	 * @var bool
+	 */
+	public $encrypt;
+
+	/**
+	 * Field id.
+	 *
+	 * @since 2.5
+	 *
+	 * @var int
+	 */
+	public $id;
+
+	/**
+	 * Field callback.
+	 *
+	 * @since 2.5
+	 *
+	 * @var callable
+	 */
+	protected $callback;
+
+	/**
+	 * Field feedback callback.
+	 *
+	 * @since 2.5
+	 *
+	 * @var callable
+	 */
+	protected $feedback_callback;
+
+	/**
+	 * Field hidden property.
+	 *
+	 * @since 2.5
+	 *
+	 * @var string
+	 */
+	public $hidden;
+
+	/**
+	 * Field html.
+	 *
+	 * @since 2.5
+	 *
+	 * @var string
+	 */
+	public $html;
+
+	/**
+	 * Field description.
+	 *
+	 * @since 2.5
+	 *
+	 * @var string
+	 */
+	protected $description;
+
+	/**
+	 * Field tooltip.
+	 *
+	 * @since 2.5
+	 *
+	 * @var string
+	 */
+	protected $tooltip;
+
+	/**
+	 * Field content after input.
+	 *
+	 * @since 2.5
+	 *
+	 * @var string
+	 */
+	protected $after_input;
+
+	/**
+	 * Field choices.
+	 *
+	 * @since 2.5
+	 *
+	 * @var array
+	 */
+	protected $choices;
+
+	/**
+	 * Field taxonomy.
+	 *
+	 * @since 2.5
+	 *
+	 * @var string
+	 */
+	protected $taxonomy;
+
+	/**
+	 * Field value.
+	 *
+	 * @since 2.5
+	 *
+	 * @var string
+	 */
+	protected $value;
+
+	/**
+	 * Field placeholder
+	 *
+	 * @since 2.5
+	 *
+	 * @var string
+	 */
+	protected $placeholder;
+
+	/**
+	 * Checkbox input attributes
+	 *
+	 * @since 2.5
+	 *
+	 * @var array
+	 */
+	protected $checkbox;
+
+	/**
+	 * Select input attributes
+	 *
+	 * @since 2.5
+	 *
+	 * @var array
+	 */
+	protected $select;
+
+	/**
+	 * Whether field is readonly
+	 *
+	 * @since 2.5
+	 *
+	 * @var string
+	 */
+	public $readonly;
+
 	/**
 	 * Field error message.
 	 *
@@ -131,7 +275,16 @@ class Base implements ArrayAccess {
 	 *
 	 * @var string|false
 	 */
-	private $error = false;
+	protected $error = false;
+
+	/**
+	 * Field onchange attribute.
+	 *
+	 * @since 2.5
+	 *
+	 * @var string|false
+	 */
+	public $onchange;
 
 	/**
 	 * Current function rendering field.
@@ -141,6 +294,8 @@ class Base implements ArrayAccess {
 	 * @var callable
 	 */
 	protected static $current_render_callback;
+
+
 
 	/**
 	 * Initialize field.
@@ -262,6 +417,7 @@ class Base implements ArrayAccess {
 		$default_atts = array(
 			'class'         => '',
 			'default_value' => '', // Default value that should be selected or entered for the field.
+			'placeholder'   => $this->placeholder,
 		);
 
 		// Add additional default attributes.

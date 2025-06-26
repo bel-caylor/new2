@@ -1,9 +1,10 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
-  "apiVersion": 2,
+  "apiVersion": 3,
   "title": "Tabs",
   "name": "kadence/tabs",
   "category": "kadence-blocks",
+  "textdomain": "kadence-blocks",
   "attributes": {
     "uniqueID": {
       "type": "string",
@@ -419,7 +420,7 @@
       "default": "px"
     },
     "size": {
-      "type": "number"
+      "type": "string"
     },
     "sizeType": {
       "type": "string",
@@ -433,13 +434,13 @@
       "default": "px"
     },
     "tabSize": {
-      "type": "number"
+      "type": "string"
     },
     "tabLineHeight": {
       "type": "number"
     },
     "mobileSize": {
-      "type": "number"
+      "type": "string"
     },
     "mobileLineHeight": {
       "type": "number"
@@ -563,9 +564,14 @@
         "",
         ""
       ]
+    },
+    "linkPaneCollapse": {
+      "type": "boolean",
+      "default": false
     }
   },
   "supports": {
-    "anchor": true
+    "anchor": true,
+    "kbMetadata": true
   }
 }

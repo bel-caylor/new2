@@ -1,10 +1,10 @@
 === Kadence Blocks Pro – Gutenberg Page Builder Toolkit ===
 Contributors: britner, oakesjosh, woodardmc
 Tags: gutenberg, blocks, page builder, google fonts, dual buttons, svg icons, editor width,
-Requires at least: 6.0
-Tested up to: 6.2
-Stable tag: 1.7.29
-Requires PHP: 7.2
+Requires at least: 6.2
+Tested up to: 6.6
+Stable tag: 2.4.6
+Requires PHP: 7.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,10 +18,384 @@ This plugin adds custom blocks to extend Gutenberg's editing capabilities. This 
 
 Install the plugin into the `/wp-content/plugins/` folder, and activate it. This plugin is an extension of Kadence Blocks, you will be asked to install it if you do not have it installed already.
 
+== Frequently Asked Questions ==
+
+= Where do I report security bugs found in this plugin? =
+Please report security bugs found in the source code of the
+Kadence Blocks Pro plugin through the Patchstack
+Vulnerability Disclosure Program https://patchstack.com/database/vdp/kadence-blocks-pro The
+Patchstack team will assist you with verification, CVE assignment, and
+notify the developers of this plugin.
+
+== Security Policy ==
+
+= Reporting Security Bugs =
+
+Please report security bugs found in the
+Kadence Blocks Pro plugin's source code through the
+Patchstack Vulnerability Disclosure
+Program https://patchstack.com/database/vdp/kadence-blocks-pro. The Patchstack team will
+assist you with verification, CVE assignment, and notify the
+developers of this plugin.
+
 == Changelog ==
 
+== 2.4.6 | 22nd August 2024 ==
+* Fix: Search term not showing in query loop results.
+* Fix: Issue with setting numeric and size based padding & margin.
+* Fix: Issue with shortcode context in query loop.
+
+== 2.4.5 | 8th August 2024 ==
+* Add: Modal aria label option for the modal block.
+* Fix: Issue with dynamic button links in Advanced Query loop.
+
+== 2.4.4 | 8th August 2024 ==
+* Enhancement: Improved performance of dynamic content in the Advanced Query Loop and Repeater blocks.
+* Fix: Repeater blocks not correctly updating their content when source changed.
+* Fix: Inability to edit a repeater block in query loop if first post had no repeater content.
+* Fix: Brevo contacts not updating contact details when resubmitting form.
+* Fix: Filter counts for Advanced Query loop when used on archive pages.
+* Fix: Issue when uploading custom SVGs in some environments.
+* Fix: Better handling when query loop index table is missing or deleted.
+* Fix: Query loop filter button CSS specificity.
+* Fix: Advanced slider CSS tweak and fix when used with image overlay.
+* Fix: Allow users to set custom filter limit in Advanced Query Loop using a WordPress filter.
+* Fix: Carousel column gap in editor when set to 0.
+
+== 2.4.3 | 17th July 2024 ==
+* Fix: Post grid title line height.
+
+== 2.4.2 | 16th July 2024 ==
+* Fix: Advanced Slider dotstyle not showing in editor.
+* Fix: Custom anchor tags on modals not displaying on front end.
+* Fix: Unitless line height on post grid title.
+* Fix: Query card selection dropdown overlapping in editor.
+* Fix: Query loop language incorrect after filtering when using polylang.
+* Fix: Adv Form Mailchimp submissions were not being saved if fields were previously mapped but are no longer.
+
+== 2.4.1 | 9th July 2024 ==
+* Fix: Some Query Loops not showing on sites without WooCommerce.
+
+== 2.4.0 | 8th July 2024 ==
+* Add: Ability to upload custom SVG icons to Kadence icon picker.
+* Add: Carousel Option to Advanced Slider
+* Add: New slider arrow style options
+* Add: Option to show slider overflow.
+* Add: Portfolio Grid option to only show posts by author.
+* Fix: Hidden Woo products being shown in advanced query loop results.
+* Fix: Filtering by in-stock status in advanced query loop.
+* Fix: Image overlay breaking when color pallet is deleted.
+* Fix: Checkbox ACF field in repeater block.
+* Fix: Box shadow on filter buttons in Adv query loop.
+* Fix: Repeater block not detecting Meta Box groups.
+* Fix: Query cards now save their preview post type.
+* Fix: Shortcodes in query cards when filtered.
+* Fix: split content block with image set to cover in loop items.
+
+== 2.3.11 | 18th June 2024 ==
+* Add: Post grid toggle to only show posts by author.
+* Add: Post grid option to force image to height of container.
+* Add: Post grid align options for content and read more text.
+* Fix: Inheriting pagination in query loop on archive pages.
+* Fix: Query loop input padding.
+* Fix: Query loop filter buttons border.
+* Fix: Query loop search filter padding in editor.
+* Fix: Repeater block compatibility in image overlay, modal, post grid, split content, and video popup.
+* Fix: Line height in dynamic html block.
+* Fix: Post save issue on some very long posts with lots of dynamic content.
+* Fix: Field border radius not saving in query loop fields.
+
+== 2.3.10 | 3rd June 2024 ==
+* Fix: Filtering by woo attributes in Adv query loop. Reindex your posts at Kadence -> Queries -> Force Reindex.
+* Fix: Filtering by woo meta in Adv query loop.
+* Fix: Filtering by post date in adv query loop.
+* Fix: Button filter border radius unit.
+* Fix: Custom CSS classes not applying to filters in query loop.
+
+== 2.3.9 | 14th May 2024 ==
+* Fix: Dynamic HTML block not rendering correctly if saved in 2.3.8.
+* Fix: Display of gradient picker when using color palette.
+
+== 2.3.8 | 8th May 2024 ==
+* Add: Ability to use fields inside ACF group fields as dynamic content.
+* Fix: Query loop filters based on post types displaying the slug instead of label.
+* Fix: Issue when filtering query loop on Woocommerce attributes.
+* Fix: Restrict some site settings from being used in dynamic content.
+* Fix: Restrict users without manage_options access from creating dynamic content with options.
+
+== 2.3.7 | 23rd April 2024 ==
+* Add: Link to view full changelog on Kadence website.
+* Fix: Dynamic HTML typography not applying if repeater field is used.
+* Fix: Product carousel in mega menu.
+* Fix: Portfolio Grid/Carousel not showing one less post when used in element.
+* Fix: Repeater block styles applying to unexpected elements.
+* Fix: Swatch filter when the term being used was the default and not specifically selected.
+* Fix: Query Loop filter result counts when children are sorted hierarchically.
+
+== 2.3.6 | 9th April 2024 ==
+* Add: Dynamic content for The Events Calendar.
+* Fix: Possible css issue in FSE templates.
+* Fix: Issue with theme colors not working when changing opacity.
+
+== 2.3.5 | 3rd April 2024 ==
+* Fix: Editing the repeater block in WordPress 6.5.
+
+== 2.3.4 | 2nd April 2024 ==
+* Add: Option to show author website link in post grid.
+* Fix: Filter results for advanced query loop range filter.
+* Fix: Issue where "Show children" option would show in query loop editor when it shouldn't.
+* Fix: Image path for ajax loading animation.
+
+== 2.3.3 | 19th March 2024 ==
+* Update: Block API version.
+* Update: improved js and css styling.
+* Fix: An issue when using custom meta key in Dynamic Content.
+* Fix: An issue with counts in the advanced query block.
+* Fix: An issue with templated field values in the auto response email in empty.
+* Fix: An issue with labels with dropdown fields for the advanced query block.
+
+== 2.3.2 | 6th March 2024 ==
+* Fix: Title & subtitle margins on image overlay block.
+* Fix: Selecting Kadence Elements as card in query loop.
+* Fix: Prevent lazy load class not applying to dynamic advanced images when setting was enabled.
+* Fix: Support page (pg) url parameter in query loop when using infinite scroll.
+* Fix: Not all posts type showing in advanced query filters when inheriting query.
+* Fix: Error when adding advanced query as a widget.
+* Fix: Modal block when used in query loop cards.
+* Fix: Issue where selecting a new field from the repeater sidebar would show no content.
+
+== 2.3.1 | 12th February 2024 ==
+* Fix: Error in editor when modifying conditional form settings.
+* Fix: Error in editor when modifying styles on query loop button filter.
+* Fix: Result count when using infinite scroll.
+* Fix: Infinite scroll output when using filters.
+* Fix: Button filter typography settings not applying
+* Fix: Excluded/included terms in query loop showing on front end.
+
+== 2.3.0 | 6th February 2024 ==
+
+* Add: Ability to use Kadence Elements as card in query loop.
+* Add: Ability to use Woo Templates as card in query loop.
+* Add: Infinite scroll to query loop.
+* Add: Range filter to query loop.
+* Add: Swatch filter to query loop.
+* Add: Rating filter to query loop.
+* Add: Related posts option to query loop.
+* Add: Ability to select individual posts in query loop.
+* Add: Ability to adjust term order in query loop.
+* Add: Ability to use icons in query loop filter labels.
+* Add: Toggle for sticky posts in query loop.
+* Add: Ability to limit text length in Dynamic HTML block.
+* Add: Ability to strip HTML in Dynamic HTML block.
+* Fix: query loop gap units not applying properly.
+* Fix: Image overlay block inside of query loop on non-Kadence themes.
+* Fix: Glightbox min.js file not being minified.
+* Fix: query loop block inside of mega menus.
+* Fix: Other various query loop bugs.
+
+== 2.2.5 | 5th February 2024 ==
+* Add: New Form Analytics option.
+* Add: New option to make sections conditional in forms.
+* Add: Get Response as an action option in the Advanced Form.
+* Fix: Improve dynamic html & list support in repeater block.
+* Fix: Incorrect column count in Query Loop block on product catalog page.
+* Fix: Image overlay border-radius not applying to the image.
+* Fix: Video popup gradient is not applied to overlay image.
+* Fix: Issue with PHP 8.2 and dynamic property warning.
+* Fix: Issue with sticky posts affecting editor post selection.
+* Fix: License link conditions.
+
+== 2.2.4 | 9th January 2024 ==
+* Fix: Undefined issue on settings page.
+
+== 2.2.3 | 8th January 2024 ==
+* Fix: Fix hard coded table name prefix.
+* Fix: Query loop API endpoint when site is in subfolder
+* Fix: Query loop API endpoint when not using pretty permalinks
+* Fix: Issue with RTL Carousels
+* Fix: Potential conflict with plugins that modify default post content
+* Fix: Advanced Query Loop labels not hiding when set to hidden
+* Fix: Icon based pagination links not clickable
+* Fix: Row & Column gap units not applying on Advanced Query Loop cards
+* Fix: Fix PHP undefined notice issue.
+
+== 2.2.2 | 3rd January 2024 ==
+* Add: Image Size option to split content block.
+* Update: Repeater Block to work in FSE template.
+* Update: Alt text input in split content and image overlay block.
+* Update: Obfuscate key input.
+* Fix: Box shadow display on front end for some query loop inputs
+* Fix: Inaccurate advanced query loop results when using more than 2 filters
+* Fix: Styling issue with checkbox and button filters.
+* Fix: Issue with pagination stylesheet.
+* Fix: Issue with alt text in some dynamic images.
+* Fix: Issue with modal styling in query loop.
+* Fix: Issue with slider padding.
+* Fix: Issue with portfolio block font size css.
+* Fix: Issue with widgets page notice.
+
+== 2.2.1 | 8th December 2023 ==
+* Fix: Issue with repeater and metabox.
+* Fix: RTL carousel css.
+* Fix: Multisite licensing issue.
+* Fix: Possible php notice with $group undefined.
+* Fix: Issue with image overlay css specificity.
+* Fix: Issue with border radius in portfolio grid.
+
+== 2.2.0 | 4th December 2023 ==
+* Add: New licensing.
+* Add: Connections with AI.
+
+== 2.1.5 | 30th November 2023 ==
+* Fix: Possible issue with PHP 7.3
+
+== 2.1.4 | 29th November 2023 ==
+* Update: Logic around inheriting queries in query loop.
+* Update: Logic around and/or with filters.
+* Fix: Issue with sliders in RTL
+* Fix: Arrow styles not showing on the front end.
+
+== 2.1.3 | 17th November 2023 ==
+* Add: Advanced query loop block
+* Fix: Post grid container padding not applying in editor
+
+== 2.1.2 BETA 3 | 11th October 2023 ==
+* Update: Add in 2.0.16
+* Update: Fix updater notice.
+
+== 2.1.1 BETA 2 | 5th October 2023 ==
+* Update: Text and Button blocks to use dynamic takeover instead of inline for repeater and query.
+
+== 2.1.0 BETA 1 | 16th August 2023 ==
+* Add: Repeater Field Block.
+
+== 2.0.17 | 13th November 2023 ==
+* Add: Setting to always show all custom fields in dynamic content.
+* Fix: Issue with Advanced From webhook values.
+* Fix: Post Grid custom except length when set greater than 55.
+* Fix: Setting post grid box shadow color
+* Fix: Post content & post excerpt both being selected in meta relationship dynamic content.
+* Fix: Better sizing for modal preview in editor.
+
+== 2.0.16 | 11th October 2023 ==
+* Update: Entry save when using multiple file uploads.
+* Update: ActiveCampaign connection.
+* Fix: Possible php notices.
+
+== 2.0.15 | 3rd October 2023 ==
+* Fix: Responsive max width issue in advanced slider.
+* Fix: Some Mailchimp API requests failing.
+* Fix: Possible issue with older PHP version.
+* Fix: Modal border radius not applying if no color is set on border.
+
+== 2.0.14 | 19th September 2023 ==
+* Add: Conditional fields for form block.
+* Add: Option in advanced slider to disable drag.
+* Fix: Portfolio fluid carousel issue.
+* Fix: Issue with dynamic posts page title.
+* Fix: Issue with slide render inline.
+
+== 2.0.13 | 11th September 2023 ==
+* Fix: Modal border not applying unless background color was set.
+* Fix: Modal border radius unit not applying.
+* Fix: Image overlay image ratios on front end and in editor.
+* Fix: Selecting a block inside a modal, from list view, will preview the modal.
+* Fix: Possible issue on widgets page.
+* Fix: Issue with Portfolio carousel in element.
+* Fix: Issue with mobile slider ratio setting.
+
+== 2.0.12 | 28th August 2023 ==
+* Fix: Advanced slider output on frontend.
+
+== 2.0.11 | 24th August 2023 ==
+* Update: Add attributes to portfolio filter query.
+* Fix: Issue with image overlay and firefox browser.
+* Fix: Issue with form, modal, video popup in advanced slider.
+* Fix: Min height issue in split content
+* Fix: Autoplay off in portfolio carousel.
+* Fix: Portfolio grid gap settings.
+
+== 2.0.10 | 16th August 2023 ==
+* Fix: Saving product carousel individual post selection.
+* Fix: Portfolio Grid single post selection ui.
+* Fix: Portfolio Grid gap not working on frontend.
+
+== 2.0.9 | 14th August 2023 ==
+* Update: Add filter for in query content.
+* Update: Blocks to API 3.
+
+== 2.0.8 | 4th August 2023 ==
+* Fix: Issue with portfolio grid filter.
+* Fix: Issue with media library filter bar.
+* Fix: Issue with excerpt length on Products in Post Grid.
+* Fix: Translation issue.
+
+== 2.0.7 | 2nd August 2023 ==
+* Fix: Issue with read more text color.
+* Fix: Manual post selection in Portfolio grid block.
+
+== 2.0.6 | 2nd August 2023 ==
+* Fix: Issue with missing css output when post grid block is present.
+* Fix: Issue with carousel align in post carousel.
+
+== 2.0.5 | 1st August 2023 ==
+* Fix: Template locate issue.
+* Fix: Splide Script name
+* Fix: Post grid taxonomy filtering.
+* Fix: Portfolio grid columns in editor when using column gaps.
+* Fix: Some responsive editor previews not displaying correctly.
+* Fix: Custom classes not applying to gallery when using Dynamic Content.
+* Fix: Portfolio grid carousel not initiating on frontend.
+* Fix: Toolbar appearing behind modal block preview in editor.
+* Fix: Modal hidden when link disabled.
+* Fix: Image overlay radio not working in editor.
+
+== 2.0.4 BETA 5 | 12 July 2023 ==
+* Fix: Improve PHP 8.2 support.
+* Fix: Issue with advanced form submit defaults.
+* Fix: "Select the post Taxonomy" not functioning.
+* Fix: Increase specificity of Splide CSS to avoid conflicts.
+* Fix: Product categories not showing while selecting individual products in Product Carousel.
+
+== 2.0.3 BETA 4 | 16th June 2023 ==
+* Fix: Class Conflict Issue.
+
+== 2.0.2 BETA 3 | 15th June 2023 ==
+* Update: Site wide Ids
+* Update: Pro Advanced Form Block
+* Update: Block Renaming
+
+== 2.0.1 BETA 2 | 3rd May 2023 ==
+* Update: Advanced slider to use splide.
+* Fix: Issue with post carousel defaults.
+
+== 2.0.0 BETA 1 | 28th April 2023 ==
+* Update: Use tabbed settings layout in all blocks
+* Update: Ability to copy/paste styles between blocks
+* Update: Support for variable font sizes
+* Update: Added block default settings
+* Update: All blocks using block API version 2
+* Update: Add more responsive setting to blocks and improve CSS output
+* Update: Use Kadence components for font, border, and spacing controls
+* Update: All sliders & carousels using Splide
+* Update: New border/radius controls for Image Overlay
+* Update: New border/radius controls for Portfolio grid
+* Update: New border/radius controls for Video Popup Block
+* Update: Improved clarity and organization for all block controls
+* Update: New editing experience for Modal block content
+* Fix: Various effects and style now properly applied for Video Popup Block
+* Fix: Theme style now more naturally apply to Product Carousel items.
+* Fix: Support for private, unlisted, and password protected Vimeo videos
+* Fix: Image overlay title line height when inserting via hooked element
+* Fix: Split content issue when min-height is removed
+* Fix: Image overlay focus-within hover displaying improperly
+* Fix: Modal z-index when inserted via hooked element
+* Fix: Issue with image overlay margin causing layout to shift.
+* Fix: Mobile preview of AOS.
+
+
 == 1.7.29 | 21st April 2023 ==
-* Update: Support for contextual media content in image block caption. 
+* Update: Support for contextual media content in image block caption.
 * Fix: Issue with saving form date when referer over 255 characters.
 * Fix: Issue with image overlay focus bug.
 
@@ -253,7 +627,7 @@ Install the plugin into the `/wp-content/plugins/` folder, and activate it. This
 * Add: Mapping for fields for Webhook.
 * Add: Post Grid title hover color option.
 * Fix: Thumbnail gallery load layout shift.
-* Fix: Issue with Image overlay. 
+* Fix: Issue with Image overlay.
 * Fix: Issue with post grid selecting by custom taxonomy.
 * Fix: Issue with product carousel individual select.
 

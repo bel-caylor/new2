@@ -14,6 +14,8 @@
 ---------------------------------------------------------------
  Changelog:
 ---------------------------------------------------------------
+2.2.6 - 6 December 2023
+	* Changed user agent to use slug
 2.2.5 - 30 March 2023
 	* Moved license created date earlier in the process
 2.2.4 - 21 February 2023
@@ -181,7 +183,7 @@ function adrotate_update_check() {
 		$plugin_version = $plugins['adrotate-pro/adrotate-pro.php']['Version'];
 
 		$request = array('slug' => "adrotate-pro", 'instance' => $license['instance'], 'platform' => strtolower(get_option('siteurl')), 'action' => 'basic_check', 'et' => microtime(true));
-		$args = array('headers' => array('Accept' => 'multipart/form-data'), 'body' => array('r' => serialize($request)), 'user-agent' => 'AdRotate Pro/'.$plugin_version.';', 'sslverify' => false, 'timeout' => 5);
+		$args = array('headers' => array('Accept' => 'multipart/form-data'), 'body' => array('r' => serialize($request)), 'user-agent' => $request['slug'].'/'.$plugin_version.';', 'sslverify' => false, 'timeout' => 5);
 
 		$response = wp_remote_post('https://ajdg.solutions/api/updates/8/', $args);
 

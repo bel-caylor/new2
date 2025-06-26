@@ -1,7 +1,7 @@
 <?php
 /* ------------------------------------------------------------------------------------
 *  COPYRIGHT AND TRADEMARK NOTICE
-*  Copyright 2008-2023 Arnan de Gans. All Rights Reserved.
+*  Copyright 2008-2024 Arnan de Gans. All Rights Reserved.
 *  ADROTATE is a registered trademark of Arnan de Gans.
 
 *  COPYRIGHT NOTICES AND ALL THE COMMENTS SHOULD REMAIN INTACT.
@@ -109,16 +109,22 @@ function adrotate_advertiser_insert_input() {
 			}
 
 			// Advert options/features
+			if($weight != 2 AND $weight != 4 AND $weight != 6 AND $weight != 8 AND $weight != 10) $weight = 6;
 			if(isset($desktop) AND strlen($desktop) != 0) $desktop = 'Y';
 				else $desktop = 'N';
 			if(isset($mobile) AND strlen($mobile) != 0) $mobile = 'Y';
 				else $mobile = 'N';
 			if(isset($tablet) AND strlen($tablet) != 0) $tablet = 'Y';
 				else $tablet = 'N';
+			if(isset($os_ios) AND strlen($os_ios) != 0) $os_ios = 'Y';
+				else $os_ios = 'N';
+			if(isset($os_android) AND strlen($os_android) != 0) $os_android = 'Y';
+				else $os_android = 'N';
+
+			// Geo Targeting
 			if(isset($state_req) AND strlen($state_req) != 0) $state_req = 'Y';
 				else $state_req = 'N';
 
-			// Geo Targeting
 			if(strlen($cities) > 0) {
 				$cities = explode(",", strtolower($cities));
 				foreach($cities as $key => $value) {

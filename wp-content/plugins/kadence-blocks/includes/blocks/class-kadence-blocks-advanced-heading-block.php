@@ -39,6 +39,13 @@ class Kadence_Blocks_Advancedheading_Block extends Kadence_Blocks_Abstract_Block
 	protected $has_script = false;
 
 	/**
+	 * Allowed HTML tags for front end output.
+	 *
+	 * @var string[]
+	 */
+	protected $allowed_html_tags = array( 'heading', 'p', 'span', 'div' );
+
+	/**
 	 * Instance Control
 	 */
 	public static function get_instance() {
@@ -95,7 +102,6 @@ class Kadence_Blocks_Advancedheading_Block extends Kadence_Blocks_Abstract_Block
 		}
 		$css->render_measure_output( $attributes, 'padding', 'padding' );
 		$css->render_measure_output( $attributes, 'margin', 'margin' );
-		$css->render_responsive_range( $attributes, 'maxWidth', 'max-width' );
 
 		// Style.
 		if ( isset( $attributes['align'] ) && ! empty( $attributes['align'] ) ) {
@@ -244,7 +250,7 @@ class Kadence_Blocks_Advancedheading_Block extends Kadence_Blocks_Abstract_Block
 			$css->set_selector( '.wp-block-kadence-advancedheading.kt-adv-heading' . $unique_id . '[data-kb-block="kb-adv-heading' . $unique_id . '"] .kb-adv-heading-icon' );
 			$css->render_color_output( $attributes, 'iconColor', 'color' );
 			$css->render_responsive_range( $attributes, 'iconSize', 'font-size', 'iconSizeUnit' );
-			$css->render_measure_output( $attributes, 'iconPadding', 'margin', array( 'unit_key' => 'iconSizeUnit' ) );
+			$css->render_measure_output( $attributes, 'iconPadding', 'margin', array( 'unit_key' => 'iconPaddingUnit' ) );
 			if ( isset( $attributes['lineHeight'] ) ) {
 				$css->add_property( 'line-height', $attributes['lineHeight'] . ( empty( $attributes['lineType'] ) ? 'px' : $attributes['lineType'] ) );
 			}
@@ -300,6 +306,15 @@ class Kadence_Blocks_Advancedheading_Block extends Kadence_Blocks_Abstract_Block
 			$css->add_property( 'border-style', $attributes['markBorderStyle'] );
 		}
 		$css->render_border_styles( $attributes, 'markBorderStyles' );
+		$css->render_border_radius( $attributes, 'markBorderRadius', ( ! empty( $attributes['markBorderRadiusUnit'] ) ? $attributes['markBorderRadiusUnit'] : 'px' ) );
+
+		$css->set_media_state( 'tablet' );
+		$css->render_border_radius( $attributes, 'tabletMarkBorderRadius', ( ! empty( $attributes['markBorderRadiusUnit'] ) ? $attributes['markBorderRadiusUnit'] : 'px' ) );
+		$css->set_media_state( 'desktop' );
+
+		$css->set_media_state( 'mobile' );
+		$css->render_border_radius( $attributes, 'mobileMarkBorderRadius', ( ! empty( $attributes['markBorderRadiusUnit'] ) ? $attributes['markBorderRadiusUnit'] : 'px' ) );
+		$css->set_media_state( 'desktop' );
 		$mark_padding_args = array(
 			'desktop_key' => 'markPadding',
 			'tablet_key'  => 'markTabPadding',
@@ -363,8 +378,11 @@ class Kadence_Blocks_Advancedheading_Block extends Kadence_Blocks_Abstract_Block
 		if ( strpos( $content, 'kt-typed-text') !== false ) {
 			$this->enqueue_script( 'kadence-blocks-' . $this->block_name );
 		}
+		if ( strpos( $content, 'kb-tooltips') !== false || ( ! empty( $attributes['icon'] ) && ! empty( $attributes['iconTooltip'] ) ) ) {
+			$this->enqueue_script( 'kadence-blocks-tippy' );
+		}
 		if ( ! empty( $attributes['icon'] ) ) {
-			$tag_name     = $this->get_tag_name( $attributes );
+			$tag_name     = $this->get_html_tag( $attributes, 'htmlTag', 'h2', $this->allowed_html_tags, 'level' );
 			$text_content = $this->get_inner_content( $content, $tag_name );
 			// Start empty.
 			$content = '';
@@ -422,7 +440,7 @@ class Kadence_Blocks_Advancedheading_Block extends Kadence_Blocks_Abstract_Block
 				$link_args = array(
 					'class' => implode( ' ', $link_classes ),
 				);
-				$link_args['href'] = do_shortcode( $attributes['link'] );
+				$link_args['href'] = esc_url( do_shortcode( $attributes['link'] ) );
 				$rel_add = '';
 				if ( ! empty( $attributes['linkTarget'] ) && $attributes['linkTarget'] ) {
 					$link_args['target'] = '_blank';
@@ -499,6 +517,9 @@ class Kadence_Blocks_Advancedheading_Block extends Kadence_Blocks_Abstract_Block
 		wp_add_inline_style( 'kadence-blocks-' . $this->block_name, $heading_css );
 		wp_register_script( 'kadence-blocks-typed-js', KADENCE_BLOCKS_URL . 'includes/assets/js/typed.min.js', array(), KADENCE_BLOCKS_VERSION, true );
 		wp_register_script( 'kadence-blocks-' . $this->block_name, KADENCE_BLOCKS_URL . 'includes/assets/js/kb-advanced-heading.min.js', array( 'kadence-blocks-typed-js' ), KADENCE_BLOCKS_VERSION, true );
+
+		wp_register_script( 'kadence-blocks-popper', KADENCE_BLOCKS_URL . 'includes/assets/js/popper.min.js', array(), KADENCE_BLOCKS_VERSION, true );
+		wp_register_script( 'kadence-blocks-tippy', KADENCE_BLOCKS_URL . 'includes/assets/js/kb-tippy.min.js', array( 'kadence-blocks-popper' ), KADENCE_BLOCKS_VERSION, true );
 	}
 	/**
 	 * Get the text content.
@@ -531,23 +552,20 @@ class Kadence_Blocks_Advancedheading_Block extends Kadence_Blocks_Abstract_Block
 			if ( $line_icon ) {
 				$stroke_width = 2;
 			}
-			$svg_icon = Kadence_Blocks_Svg_Render::render( $attributes['icon'], $fill, $stroke_width );
+			$title = ( ! empty ( $attributes['iconTitle'] ) ? $attributes['iconTitle'] : '' );
+			$hidden = ( empty( $title ) ? true : false );
+			$svg_icon = Kadence_Blocks_Svg_Render::render( $attributes['icon'], $fill, $stroke_width, $title, $hidden );
 		}
-		return '<span class="kb-svg-icon-wrap kb-adv-heading-icon kb-svg-icon-' . esc_attr( $attributes['icon'] ) . ' kb-adv-heading-icon-side-' . esc_attr( $icon_side ) . '">' . $svg_icon . '</span>';
+		$tooltip_placement = '';
+		if ( ! empty( $attributes['iconTooltip'] ) && ! empty( $attributes['iconTooltipPlacement'] ) ) {
+			$tooltip_placement = ' data-tooltip-placement="' . esc_attr( $attributes['iconTooltipPlacement'] ) . '"';
+		}
+		if ( ! empty( $attributes['iconTooltip'] ) && isset( $attributes['iconTooltipDash'] ) && $attributes['iconTooltipDash'] ) {
+			$tooltip_placement = ' data-kb-tooltip-dash="border"';
+		}
+		return '<span class="kb-svg-icon-wrap kb-adv-heading-icon kb-svg-icon-' . esc_attr( $attributes['icon'] ) . ' kb-adv-heading-icon-side-' . esc_attr( $icon_side ) . '"' . ( ! empty( $attributes['iconTooltip'] ) ? ' data-kb-tooltip-content="' . esc_attr( $attributes['iconTooltip'] ) . '" tabindex="0"' . $tooltip_placement : '' ) . '>' . $svg_icon . '</span>';
 	}
 
-	/**
-	 * Get the html tag name.
-	 *
-	 * @param array $attributes the blocks attributes.
-	 */
-	private function get_tag_name( $attributes ) {
-		if ( $attributes['htmlTag'] === 'heading' ) {
-			return 'h' . $attributes['level'];
-		}
-
-		return $attributes['htmlTag'];
-	}
 }
 
 Kadence_Blocks_Advancedheading_Block::get_instance();

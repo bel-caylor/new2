@@ -18,7 +18,7 @@ class Update {
 	 * @since 4.0
 	 */
 	public function __construct() {
-		$this->page = isset($_GET['page']) ? $_GET['page'] : null;
+		$this->page = isset($_GET['page']) ? $_GET['page'] : '';
 	}
 
 	/**

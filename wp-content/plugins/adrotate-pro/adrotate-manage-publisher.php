@@ -1,7 +1,7 @@
 <?php
 /* ------------------------------------------------------------------------------------
 *  COPYRIGHT AND TRADEMARK NOTICE
-*  Copyright 2008-2023 Arnan de Gans. All Rights Reserved.
+*  Copyright 2008-2024 Arnan de Gans. All Rights Reserved.
 *  ADROTATE is a registered trademark of Arnan de Gans.
 
 *  COPYRIGHT NOTICES AND ALL THE COMMENTS SHOULD REMAIN INTACT.
@@ -32,6 +32,12 @@ function adrotate_generate_input() {
 		if(isset($_POST['adrotate_medium_dropdown'])) $medium_image = strip_tags(trim($_POST['adrotate_medium_dropdown']));
 		if(isset($_POST['adrotate_large_dropdown'])) $large_image = strip_tags(trim($_POST['adrotate_large_dropdown']));
 
+		$video_aspect_ratio = 0;
+		$video_autoplay = $video_muted = '';
+		if(isset($_POST['adrotate_video_ratio'])) $video_aspect_ratio = strip_tags(trim($_POST['adrotate_video_ratio']));
+		if(isset($_POST['adrotate_video_autoplay'])) $video_autoplay = strip_tags(trim($_POST['adrotate_video_autoplay']));
+		if(isset($_POST['adrotate_video_muted'])) $video_muted = strip_tags(trim($_POST['adrotate_video_muted']));
+
 		$new_window = $nofollow = $title_attr = $alt_attr = '';
 		if(isset($_POST['adrotate_newwindow'])) $new_window = strip_tags(trim($_POST['adrotate_newwindow']));
 		if(isset($_POST['adrotate_nofollow'])) $nofollow = strip_tags(trim($_POST['adrotate_nofollow']));
@@ -53,6 +59,21 @@ function adrotate_generate_input() {
 				} else {
 					$targeturl = '#';
 				}
+
+				// Video ad, aspect ratio?
+				if($video_aspect_ratio > 0) {
+					if($video_aspect_ratio == 1) $padding = '12.82%';
+					else if($video_aspect_ratio == 2) $padding = '12.36%';
+					else if($video_aspect_ratio == 3) $padding = '100%';
+					else if($video_aspect_ratio == 4) $padding = '56.25%';
+					else if($video_aspect_ratio == 5) $padding = '177.77%';
+					else if($video_aspect_ratio == 6) $padding = '75%';
+					else $padding = '12.36%';
+				}
+
+				// Video player options
+				if(isset($video_muted) AND strlen($video_muted) != 0) $video_muted = ' muted';
+					else $video_muted = '';
 
 				// Open in a new window?
 				if(isset($new_window) AND strlen($new_window) != 0) {
@@ -95,18 +116,19 @@ function adrotate_generate_input() {
 					$srcset[] = '<source srcset="'.$small_path.'" media="(min-width:620px)">';
 					unset($small_path, $small_image);
 				}
+
+				// Generate ad code
 				if(count($srcset) > 0) {
-					$asset = "\r<picture>\r\t".implode("\r\t", $srcset)."\r\t<img src=\"%asset%\" style=\"width:auto;\"".$alt_attr." />\r</picture>\r";
+					$bannercode = "<a href=\"".$targeturl."\"".$new_window.$nofollow.$title_attr.">\r<picture>\r\t".implode("\r\t", $srcset)."\r\t<img src=\"%asset%\" style=\"width:auto;\"".$alt_attr." />\r</picture>\r</a>";
+				} else if($video_aspect_ratio > 0) {
+					$bannercode = "<div style=\"position:relative; padding-bottom:".$padding."; height:0; background-color:#fefefe; cursor:pointer;\">\r\t<video style=\"position:absolute; top:0; left:0; width:100%; height:100%;\" ".$video_muted." autoplay loop>\r\t\t<source src=\"%asset%\" type=\"video/mp4\">\r\t</video>\r\t<a href=\"".$targeturl."\"><span style=\"position:absolute; width:100%; height:100%; top:0; left:0; z-index:1;\"></span></a>\r</div>";
 				} else {
-					$asset = "<img src=\"%asset%\" style=\"width:auto;\"".$alt_attr." />";
+					$bannercode = "<a href=\"".$targeturl."\"".$new_window.$nofollow.$title_attr."><img src=\"%asset%\" style=\"width:auto;\"".$alt_attr." /></a>";
 				}
 
 				// Determine image settings
 				$imagetype = "dropdown";
 				$image = WP_CONTENT_URL."/%folder%/".$fullsize_image;
-
-				// Generate code
-				$bannercode = "<a href=\"".$targeturl."\"".$new_window.$nofollow.$title_attr.">".$asset."</a>";
 
 				// Save the ad to the DB
 				$wpdb->update($wpdb->prefix.'adrotate', array('bannercode' => $bannercode, 'imagetype' => $imagetype, 'image' => $image), array('id' => $id));
@@ -114,7 +136,7 @@ function adrotate_generate_input() {
 				$portability = adrotate_portable_hash('import', $portability);
 
 				// Save the advert to the DB
-				$wpdb->update($wpdb->prefix.'adrotate', array('title' => $portability['title'], 'bannercode' => $portability['bannercode'], 'thetime' => $portability['thetime'], 'updated' => current_time('timestamp'), 'author' => $portability['author'],  'imagetype' => $portability['imagetype'], 'image' => $portability['image'], 'tracker' => $portability['tracker'], 'show_everyone' => $portability['show_everyone'], 'desktop' => $portability['desktop'], 'mobile' => $portability['mobile'], 'tablet' => $portability['tablet'], 'os_ios' => $portability['os_ios'], 'os_android' => $portability['os_android'], 'os_other' => $portability['os_other'], 'weight' => $portability['weight'], 'autodelete' => $portability['autodelete'], 'budget' => $portability['budget'], 'crate' => $portability['crate'], 'irate' => $portability['irate'], 'state_req' => $portability['state_req'], 'cities' => $portability['cities'], 'states' => $portability['states'], 'countries' => $portability['countries']), array('id' => $id));
+				$wpdb->update($wpdb->prefix.'adrotate', array('title' => $portability['title'], 'bannercode' => $portability['bannercode'], 'thetime' => $portability['thetime'], 'updated' => current_time('timestamp'), 'author' => $portability['author'],  'imagetype' => $portability['imagetype'], 'image' => $portability['image'], 'tracker' => $portability['tracker'], 'show_everyone' => $portability['show_everyone'], 'desktop' => $portability['desktop'], 'mobile' => $portability['mobile'], 'tablet' => $portability['tablet'], 'os_ios' => $portability['os_ios'], 'os_android' => $portability['os_android'], 'weight' => $portability['weight'], 'autodelete' => $portability['autodelete'], 'budget' => $portability['budget'], 'crate' => $portability['crate'], 'irate' => $portability['irate'], 'state_req' => $portability['state_req'], 'cities' => $portability['cities'], 'states' => $portability['states'], 'countries' => $portability['countries']), array('id' => $id));
 			}
 
 			adrotate_return('adrotate', 226, array('view' => 'edit', 'ad'=> $id));
@@ -326,7 +348,7 @@ function adrotate_insert_input() {
 		if(isset($_POST['groupselect'])) $groups = $_POST['groupselect'];
 
 		// Advert options
-		$image_field = $image_dropdown = $tracker = $tracker_clicks = $tracker_impressions = $mobile = $tablet = $os_ios = $os_android = $os_other = $type = $weight = '';
+		$image_field = $image_dropdown = $tracker = $tracker_clicks = $tracker_impressions = $mobile = $tablet = $os_ios = $os_android = $type = $weight = '';
 		if(isset($_POST['adrotate_image'])) $image_field = strip_tags(trim($_POST['adrotate_image']));
 		if(isset($_POST['adrotate_image_dropdown'])) $image_dropdown = strip_tags(trim($_POST['adrotate_image_dropdown']));
 		if(isset($_POST['adrotate_tracker_clicks'])) $tracker_clicks = strip_tags(trim($_POST['adrotate_tracker_clicks']));
@@ -337,7 +359,6 @@ function adrotate_insert_input() {
 		if(isset($_POST['adrotate_tablet'])) $tablet = strip_tags(trim($_POST['adrotate_tablet']));
 		if(isset($_POST['adrotate_ios'])) $os_ios = strip_tags(trim($_POST['adrotate_ios']));
 		if(isset($_POST['adrotate_android'])) $os_android = strip_tags(trim($_POST['adrotate_android']));
-		if(isset($_POST['adrotate_other'])) $os_other = strip_tags(trim($_POST['adrotate_other']));
 		if(isset($_POST['adrotate_type'])) $type = strip_tags(trim($_POST['adrotate_type']));
 		if(isset($_POST['adrotate_weight'])) $weight = strip_tags($_POST['adrotate_weight']);
 		if(isset($_POST['adrotate_autodelete'])) $autodelete = strip_tags($_POST['adrotate_autodelete']);
@@ -453,8 +474,6 @@ function adrotate_insert_input() {
 				else $os_ios = 'N';
 			if(isset($os_android) AND strlen($os_android) != 0) $os_android = 'Y';
 				else $os_android = 'N';
-			if(isset($os_other) AND strlen($os_other) != 0) $os_other = 'Y';
-				else $os_other = 'N';
 			if(isset($autodelete) AND strlen($autodelete) != 0) $autodelete = 'Y';
 				else $autodelete = 'N';
 
@@ -527,7 +546,7 @@ function adrotate_insert_input() {
 			}
 
 			// Save the ad to the DB
-			$wpdb->update($wpdb->prefix.'adrotate', array('title' => $title, 'bannercode' => $bannercode, 'updated' => $thetime, 'author' => $author, 'imagetype' => $imagetype, 'image' => $image, 'tracker' => $tracker, 'show_everyone' => $show_everyone, 'desktop' => $desktop, 'mobile' => $mobile, 'tablet' => $tablet, 'os_ios' => $os_ios, 'os_android' => $os_android, 'os_other' => $os_other, 'type' => $active, 'weight' => $weight, 'autodelete' => $autodelete, 'budget' => $budget, 'crate' => $crate, 'irate' => $irate, 'state_req' => $state_req, 'cities' => $cities, 'states' => $states, 'countries' => $countries), array('id' => $id));
+			$wpdb->update($wpdb->prefix.'adrotate', array('title' => $title, 'bannercode' => $bannercode, 'updated' => $thetime, 'author' => $author, 'imagetype' => $imagetype, 'image' => $image, 'tracker' => $tracker, 'show_everyone' => $show_everyone, 'desktop' => $desktop, 'mobile' => $mobile, 'tablet' => $tablet, 'os_ios' => $os_ios, 'os_android' => $os_android, 'type' => $active, 'weight' => $weight, 'autodelete' => $autodelete, 'budget' => $budget, 'crate' => $crate, 'irate' => $irate, 'state_req' => $state_req, 'cities' => $cities, 'states' => $states, 'countries' => $countries), array('id' => $id));
 
 			// Fetch group records for the ad
 			$groupmeta = $wpdb->get_results($wpdb->prepare("SELECT `group` FROM `{$wpdb->prefix}adrotate_linkmeta` WHERE `ad` = %d AND `user` = 0 AND `schedule` = 0;", $id));
@@ -636,10 +655,11 @@ function adrotate_insert_group() {
 		if(isset($_POST['adrotate_adspeed'])) $adspeed = sanitize_key(trim($_POST['adrotate_adspeed']));
 		if(isset($_POST['adrotate_repeat_impressions'])) $repeat_impressions = strip_tags(trim($_POST['adrotate_repeat_impressions']));
 
-		$fallback = $ads = $geo = $mobile = $align = '';
+		$geo = $mobile = $fallback = $network = $ads = $align = '';
 		if(isset($_POST['adrotate_geo'])) $geo = strip_tags(trim($_POST['adrotate_geo']));
 		if(isset($_POST['adrotate_mobile'])) $mobile = strip_tags(trim($_POST['adrotate_mobile']));
 		if(isset($_POST['adrotate_fallback'])) $fallback = strip_tags(trim($_POST['adrotate_fallback']));
+		if(isset($_POST['adrotate_network'])) $network = strip_tags(trim($_POST['adrotate_network']));
 		if(isset($_POST['adselect'])) $ads = $_POST['adselect'];
 		if(isset($_POST['adrotate_align'])) $align = strip_tags(trim($_POST['adrotate_align']));
 
@@ -674,6 +694,7 @@ function adrotate_insert_group() {
 			if(is_numeric($mobile)) $mobile = 1;
 				else $mobile = 0;
 			if(!is_numeric($fallback) OR $fallback == $id) $fallback = 0;
+			if(!is_numeric($network)) $network = 0;
 
 			// Sort out block shape and advert size
 			if($rows < 1 OR $rows == '' OR !is_numeric($rows)) $rows = 2;
@@ -729,7 +750,7 @@ function adrotate_insert_group() {
 			unset($value);
 
 			// Update the group itself
-			$wpdb->update($wpdb->prefix.'adrotate_groups', array('name' => $name, 'modus' => $modus, 'fallback' => $fallback, 'cat' => $category, 'cat_loc' => $category_loc,  'cat_par' => $category_par, 'page' => $page, 'page_loc' => $page_loc, 'page_par' => $page_par, 'woo_cat' => $woo_cat, 'woo_loc' => $woo_loc, 'bbpress' => $forum, 'bbpress_loc' => $forum_loc, 'mobile' => $mobile, 'geo' => $geo, 'wrapper_before' => $wrapper_before, 'wrapper_after' => $wrapper_after, 'align' => $align, 'gridrows' => $rows, 'gridcolumns' => $columns, 'admargin' => $admargin_top, 'admargin_bottom' => $admargin_bottom, 'admargin_left' => $admargin_left, 'admargin_right' => $admargin_right, 'adwidth' => $adwidth, 'adheight' => $adheight, 'adspeed' => $adspeed, 'repeat_impressions' => $repeat_impressions), array('id' => $id));
+			$wpdb->update($wpdb->prefix.'adrotate_groups', array('name' => $name, 'modus' => $modus, 'fallback' => $fallback, 'network' => $network, 'cat' => $category, 'cat_loc' => $category_loc,  'cat_par' => $category_par, 'page' => $page, 'page_loc' => $page_loc, 'page_par' => $page_par, 'woo_cat' => $woo_cat, 'woo_loc' => $woo_loc, 'bbpress' => $forum, 'bbpress_loc' => $forum_loc, 'mobile' => $mobile, 'geo' => $geo, 'wrapper_before' => $wrapper_before, 'wrapper_after' => $wrapper_after, 'align' => $align, 'gridrows' => $rows, 'gridcolumns' => $columns, 'admargin' => $admargin_top, 'admargin_bottom' => $admargin_bottom, 'admargin_left' => $admargin_left, 'admargin_right' => $admargin_right, 'adwidth' => $adwidth, 'adheight' => $adheight, 'adspeed' => $adspeed, 'repeat_impressions' => $repeat_impressions), array('id' => $id));
 
 			// Determine GeoLocation Library requirement
 			$geo_count = $wpdb->get_var("SELECT COUNT(*) as `total` FROM `{$wpdb->prefix}adrotate_groups` WHERE `name` != '' AND `geo` = 1;");
@@ -1352,7 +1373,7 @@ function adrotate_duplicate($id) {
 
 		$duplicate_id = $wpdb->get_row("SELECT * FROM `{$wpdb->prefix}adrotate` WHERE `id` = {$id};");
 
-		$wpdb->insert($wpdb->prefix.'adrotate', array('title' => $duplicate_id->title.' (Copy of #'.$id.')', 'bannercode' => $duplicate_id->bannercode, 'thetime' => $thetime, 'updated' => $thetime, 'author' => $duplicate_id->author, 'imagetype' => $duplicate_id->imagetype, 'image' => $duplicate_id->image, 'tracker' => $duplicate_id->tracker, 'desktop' => $duplicate_id->desktop, 'mobile' => $duplicate_id->mobile, 'tablet' => $duplicate_id->tablet, 'os_ios' => $duplicate_id->os_ios, 'os_android' => $duplicate_id->os_android, 'os_other' => $duplicate_id->os_other, 'type' => $duplicate_id->type, 'weight' => $duplicate_id->weight, 'budget' => $duplicate_id->budget, 'crate' => $duplicate_id->crate, 'irate' => $duplicate_id->irate, 'cities' => $duplicate_id->cities, 'countries' => $duplicate_id->countries));
+		$wpdb->insert($wpdb->prefix.'adrotate', array('title' => $duplicate_id->title.' (Copy of #'.$id.')', 'bannercode' => $duplicate_id->bannercode, 'thetime' => $thetime, 'updated' => $thetime, 'author' => $duplicate_id->author, 'imagetype' => $duplicate_id->imagetype, 'image' => $duplicate_id->image, 'tracker' => $duplicate_id->tracker, 'desktop' => $duplicate_id->desktop, 'mobile' => $duplicate_id->mobile, 'tablet' => $duplicate_id->tablet, 'os_ios' => $duplicate_id->os_ios, 'os_android' => $duplicate_id->os_android, 'type' => $duplicate_id->type, 'weight' => $duplicate_id->weight, 'budget' => $duplicate_id->budget, 'crate' => $duplicate_id->crate, 'irate' => $duplicate_id->irate, 'cities' => $duplicate_id->cities, 'countries' => $duplicate_id->countries));
 
 		$new_id = $wpdb->insert_id;
 

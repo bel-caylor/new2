@@ -80,10 +80,12 @@ class Kadence_Blocks_Image_Block extends Kadence_Blocks_Abstract_Block {
 		}
 		$align = ( ! empty( $attributes['align'] ) ? $attributes['align'] : '' );
 		if ( $align !== 'wide' && $align !== 'full' ) {
-			$css->set_selector( '.kb-image' . $unique_id . '.kb-image-is-ratio-size, .kb-image' . $unique_id . ' .kb-image-is-ratio-size' );
 			if ( isset( $attributes['imgMaxWidth'] ) && is_numeric( $attributes['imgMaxWidth'] ) ) {
+				$css->set_selector( '.kb-image' . $unique_id . '.kb-image-is-ratio-size, .kb-image' . $unique_id . ' .kb-image-is-ratio-size' );
 				$css->add_property( 'max-width', $attributes['imgMaxWidth'] . 'px' );
 				$css->add_property( 'width', '100%' );
+				$css->set_selector( '.wp-block-kadence-column > .kt-inside-inner-col > .kb-image' . $unique_id . '.kb-image-is-ratio-size, .wp-block-kadence-column > .kt-inside-inner-col > .kb-image' . $unique_id . ' .kb-image-is-ratio-size' );
+				$css->add_property( 'align-self', 'unset' );
 			}
 		}
 		if ( $align === 'center' || $align === 'right' || $align === 'left' ) {
@@ -137,6 +139,7 @@ class Kadence_Blocks_Image_Block extends Kadence_Blocks_Abstract_Block {
 		$overlay_type = ! empty( $attributes['overlayType'] ) ? $attributes['overlayType'] : 'normal';
 		$css->set_selector( '.kb-image' . $unique_id . ' .kb-image-has-overlay:after' );
 		$opacity = isset( $attributes['overlayOpacity'] ) ? $attributes['overlayOpacity'] : 0.3;
+
 		if ( $css->is_number( $opacity ) ) {
 			$css->add_property( 'opacity', $opacity );
 		}
@@ -155,8 +158,12 @@ class Kadence_Blocks_Image_Block extends Kadence_Blocks_Abstract_Block {
 				}
 				break;
 		}
-		$css->set_selector( '.kb-image' . $unique_id . ' img.kb-img, .kb-image' . $unique_id . ' .kb-img img' );
 
+		// Border Radius.
+		$css->render_measure_output( $attributes, 'borderRadius', 'border-radius', array( 'unit_key' => 'borderRadiusUnit' ) );
+
+		$css->set_media_state( 'desktop' );
+		$css->set_selector( '.kb-image' . $unique_id . ' img.kb-img, .kb-image' . $unique_id . ' .kb-img img' );
 		// Support borders saved pre 3.0
 		if ( !empty( $attributes['borderColor'] ) ) {
 			$css->add_property( 'border-style', 'solid' );
@@ -241,6 +248,11 @@ class Kadence_Blocks_Image_Block extends Kadence_Blocks_Abstract_Block {
 			}
 		}
 
+		// Object position
+		if ( isset( $attributes['imagePosition'] ) && $attributes['imagePosition'] ) {
+			$css->add_property( 'object-position', $attributes['imagePosition'] );
+		}
+
 		// Caption Font
 		if ( ! isset( $attributes['showCaption'] ) && isset( $attributes['captionStyles'] ) && is_array( $attributes['captionStyles'] ) && is_array( $attributes['captionStyles'][0] ) ) {
 			$caption_font = $attributes['captionStyles'][0];
@@ -279,7 +291,12 @@ class Kadence_Blocks_Image_Block extends Kadence_Blocks_Abstract_Block {
 			if ( isset( $caption_font['textTransform'] ) && ! empty( $caption_font['textTransform'] ) ) {
 				$css->add_property( 'text-transform', $caption_font['textTransform'] );
 			}
-			if ( isset( $caption_font['family'] ) && ! empty( $caption_font['family'] ) ) {
+			if ( isset( $caption_font['google']) && ! empty($caption_font['google'] ) ) {
+				$google = $caption_font['google'] ? true : false;
+				$google = $google && ( isset( $caption_font['loadGoogle'] ) && $caption_font['loadGoogle'] || ! isset( $caption_font['loadGoogle'] ) ) ? true : false;
+				$variant = ! empty( $caption_font['variant'] ) ? $caption_font['variant'] : null;
+				$css->add_property( 'font-family', $css->render_font_family( $caption_font['family'], $google, $variant ) );
+			} elseif ( isset( $caption_font['family'] ) && ! empty( $caption_font['family'] ) ) {
 				$css->add_property( 'font-family', $caption_font['family'] );
 			}
 			if ( isset( $caption_font['style'] ) && ! empty( $caption_font['style'] ) ) {
@@ -314,8 +331,45 @@ class Kadence_Blocks_Image_Block extends Kadence_Blocks_Abstract_Block {
 
 		return $css->css_output();
 	}
-
-
+	/**
+	 * Build HTML for dynamic blocks
+	 *
+	 * @param $attributes
+	 * @param $unique_id
+	 * @param $content
+	 * @param WP_Block $block_instance The instance of the WP_Block class that represents the block being rendered.
+	 *
+	 * @return mixed
+	 */
+	public function build_html( $attributes, $unique_id, $content, $block_instance ) {
+		$update_alt_globally = isset( $attributes['globalAlt'] ) && true === $attributes['globalAlt'] ? true : false;
+		if ( apply_filters( 'kadence_blocks_update_alt_text_globally', $update_alt_globally, $attributes ) && ! empty( $attributes['id'] ) ) {
+			// Check if we can get the alt text.
+			$alt = get_post_meta( $attributes['id'], '_wp_attachment_image_alt', true );
+			if ( ! empty( $alt ) ) {
+				$content = str_replace( 'alt=""', 'alt="' . esc_attr( $alt ) . '"', $content );
+			}
+		}
+		if ( strpos( $content, 'kb-tooltip-hidden-content') !== false ) {
+			$this->enqueue_script( 'kadence-blocks-tippy' );
+		}
+		return $content;
+	}
+	/**
+	 * Registers scripts and styles.
+	 */
+	public function register_scripts() {
+		parent::register_scripts();
+		// If in the backend, bail out.
+		if ( is_admin() ) {
+			return;
+		}
+		if ( apply_filters( 'kadence_blocks_check_if_rest', false ) && kadence_blocks_is_rest() ) {
+			return;
+		}
+		wp_register_script( 'kadence-blocks-popper', KADENCE_BLOCKS_URL . 'includes/assets/js/popper.min.js', array(), KADENCE_BLOCKS_VERSION, true );
+		wp_register_script( 'kadence-blocks-tippy', KADENCE_BLOCKS_URL . 'includes/assets/js/kb-tippy.min.js', array( 'kadence-blocks-popper' ), KADENCE_BLOCKS_VERSION, true );
+	}
 }
 
 Kadence_Blocks_Image_Block::get_instance();
