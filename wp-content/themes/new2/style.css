@@ -338,6 +338,10 @@ body {
     line-height: var(--line-height--medium)
 }
 
+body p {
+    font-size: var(--wp--preset--font-size--large);
+}
+
 .entry-content {
     position: relative;
     z-index: 0
