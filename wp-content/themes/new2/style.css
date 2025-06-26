@@ -4,7 +4,7 @@ Theme URI: http://new2satx.com
 Author: Belinda Caylor
 Author URI: https://www.linkedin.com/in/belinda-caylor/
 Description: New2 Theme
-Version: 0.1.21
+Version: 0.1.22
 Tested up to: 6.2
 Requires PHP: 7.4
 License: GNU General Public License v2 or later
@@ -336,6 +336,11 @@ html {
 body {
     font-size: var(--wp--preset--font-size--medium);
     line-height: var(--line-height--medium)
+}
+
+body p {
+    font-size: var(--wp--preset--font-size--large);
+    margin-bottom: var(--global-kb-spacing-sm);
 }
 
 .entry-content {
